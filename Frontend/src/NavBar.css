@@ -1,12 +1,9 @@
-nav{
-    background-color: white;
-  }
 
-  .navbar {
+.navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #dcdcdc;
+  background-color: black;
   padding: 12px 20px;
   border-bottom: 2px solid #bfbfbf;
 }
@@ -27,6 +24,7 @@ img {
 .title {
   font-size: 20px;
   font-weight: bold;
+  color: white;
  
 }
 
@@ -34,4 +32,22 @@ img {
   display: flex;
   align-items: center;
   gap: 10px;
+  border: none;
+
 }
+
+.nav-btn {
+  padding: 6px 16px;
+border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: 0.3s ease;
+}
+
+.nav-btn:hover {
+  background: #ebebeb;
+}
+
+
