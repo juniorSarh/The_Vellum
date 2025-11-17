@@ -2,6 +2,7 @@ import React from "react";
 import "../NavBar.css";
 import logo from "../assets/The-vellum-logo.png"
 
+
 const NavBar = () => {
   return (
     <nav className="navbar">
