@@ -1,0 +1,86 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Roboto:wght@300;400;500&display=swap');
+
+.footer-container {
+  width: 100%;
+  padding: 4px;
+  background-color: #000000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #ffffff;
+}
+
+.footer-text {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+}
+
+.footer-text h1 {
+  font-family: 'Cinzel', serif;
+  margin: 0;
+  font-size: 28px;
+  color: #ffffff;
+  padding: 15px;
+}
+
+.footer-text p {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  font-size: 14px;
+  color: #ffffff;
+  padding: 15px;
+  margin-top: 10px;
+}
+
+.footer-icons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background-color: #000000;
+}
+
+.footer-icons button span {
+  font-size: 20px;
+}
+
+.footer-buttons{
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: #000000;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.footer-buttons:hover {
+  transform: translateY(-4px);
+}
+
+.footer-icons span{
+    font-size: 20px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.footer-icons span:hover {
+  transform: translateY(-4px);
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 600px) {
+  .footer-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+  }
+
+  .footer-icons {
+    justify-content: center;
+  }
+}
