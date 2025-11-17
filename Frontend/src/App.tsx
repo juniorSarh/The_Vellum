@@ -39,38 +39,34 @@ function App() {
   );
 
   return (
+    <Routes>
+      {/* ---------- Public routes ---------- */}
+      <Route path="/" element={<Landing />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/hotel/:id" element={<HotelDetail />} />
 
-    <>
-    <ListCard username="John Doe" onDelete={() => {}} />
-    </>
-    // <Routes>
-    //   {/* ---------- Public routes ---------- */}
-    //   <Route path="/" element={<Landing />} />
-    //   <Route path="/login" element={<Login />} />
-    //   <Route path="/register" element={<Register />} />
-    //   <Route path="/hotel/:id" element={<HotelDetail />} />
+      {/* ---------- Protected routes ---------- */}
+      <Route element={<ProtectedRoute isAuthenticated={!!isAuthenticated} />}>
+        <Route path="/home" element={<Home />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/payment" element={<Payment />} />
+        <Route path="/user-profile" element={<UserProfile />} />
+        <Route path="/favourites" element={<Favourites />} />
+        <Route path="/booking-history" element={<BookingHistory />} />
 
-    //   {/* ---------- Protected routes ---------- */}
-    //   <Route element={<ProtectedRoute isAuthenticated={!!isAuthenticated} />}>
-    //     <Route path="/home" element={<Home />} />
-    //     <Route path="/checkout" element={<Checkout />} />
-    //     <Route path="/payment" element={<Payment />} />
-    //     <Route path="/user-profile" element={<UserProfile />} />
-    //     <Route path="/favourites" element={<Favourites />} />
-    //     <Route path="/booking-history" element={<BookingHistory />} />
+        {/* Admin-style routes */}
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/reservations" element={<Reservations />} />
+        <Route path="/registered-users" element={<RegisteredUsers />} />
+        <Route path="/add-hotel" element={<AddHotel />} />
+        <Route path="/add-admin" element={<AddAdmin />} />
+        <Route path="/admin-profile" element={<AdminProfile />} />
+      </Route>
 
-    //     {/* Admin-style routes */}
-    //     <Route path="/dashboard" element={<Dashboard />} />
-    //     <Route path="/reservations" element={<Reservations />} />
-    //     <Route path="/registered-users" element={<RegisteredUsers />} />
-    //     <Route path="/add-hotel" element={<AddHotel />} />
-    //     <Route path="/add-admin" element={<AddAdmin />} />
-    //     <Route path="/admin-profile" element={<AdminProfile />} />
-    //   </Route>
-
-    //   {/* Fallback */}
-    //   <Route path="*" element={<Error404/>} />
-    // </Routes>
+      {/* Fallback */}
+      <Route path="*" element={<Error404/>} />
+    </Routes>
   );
 }
 
