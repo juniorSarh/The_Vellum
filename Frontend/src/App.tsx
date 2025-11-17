@@ -17,7 +17,7 @@ import Reservations from "../CMS/pages/reservations";
 import RegisteredUsers from "../CMS/pages/registeredusers";
 import AddHotel from "../CMS/pages/addhotel";
 import AddAdmin from "../CMS/pages/addadmin";
-import AdminProfile from "../CMS/pages/adminprofile"; 
+import AdminProfile from "../CMS/pages/adminprofile";
 import Error404 from "../public_pages/error404";
 // ---- ProtectedRoute wrapper ----
 type ProtectedRouteProps = {
