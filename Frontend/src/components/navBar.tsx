@@ -1,9 +1,22 @@
-import React from 'react'
+import React from "react";
+import "../NavBar.css";
+import logo from "../assets/The-vellum-logo.png"
 
-export default function NavBar(){
+const NavBar = () => {
   return (
-    <div>
+    <nav className="navbar">
+      <div className="navbar-left">
+        <div className="b">
+        <img src={logo} alt="" />
+        </div>
+        <h1 className="title">The Vellum</h1>
+      </div>
 
-    </div>
-  )
-}
+      <div className="navbar-right">
+       
+      </div>
+    </nav>
+  );
+};
+
+export default NavBar;
