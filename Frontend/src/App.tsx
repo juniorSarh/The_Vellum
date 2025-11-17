@@ -19,7 +19,6 @@ import AddHotel from "../CMS/pages/addhotel";
 import AddAdmin from "../CMS/pages/addadmin";
 import AdminProfile from "../CMS/pages/adminprofile";
 import Error404 from "../public_pages/error404";
-import HotelCard from "./components/hotelCard";
 // ---- ProtectedRoute wrapper ----
 type ProtectedRouteProps = {
   isAuthenticated: boolean;
@@ -37,7 +36,7 @@ function App() {
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth?.isAuthenticated
   );
-  
+
   return (
     <Routes>
       {/* ---------- Public routes ---------- */}

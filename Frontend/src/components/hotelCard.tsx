@@ -28,7 +28,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
   return (
     <div className="hotel-card" onClick={onClick}>
       <div className="hotel-image-container">
-        <img src={hotelImage} alt={name} className="hotel-image" />
+        <img src={image} alt={name} className="hotel-image" />
         <div className="favorite-icon" onClick={toggleFavorite}>
           {isFavorite ? <FaHeart color="#EAC248" /> : <FaRegHeart color="#fff" />}
         </div>
