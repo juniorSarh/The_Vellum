@@ -19,7 +19,7 @@ import AddHotel from "../CMS/pages/addhotel";
 import AddAdmin from "../CMS/pages/addadmin";
 import AdminProfile from "../CMS/pages/adminprofile";
 import Error404 from "../public_pages/error404";
-import ListCard from "./components/listCard";
+
 // ---- ProtectedRoute wrapper ----
 type ProtectedRouteProps = {
   isAuthenticated: boolean;

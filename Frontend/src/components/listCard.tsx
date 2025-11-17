@@ -19,7 +19,7 @@ const ListCard: React.FC<UserListItemProps> = ({ username, onDelete }) => {
         backgroundColor=" #555151"
         color="#fff"
         className="user-delete-btn"
-        onClick={() => {}}
+        onClick={() => {onDelete();}}
       />
     </div>
   );
