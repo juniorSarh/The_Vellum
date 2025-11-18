@@ -14,4 +14,4 @@ const startServer = async () => {
     console.log(`Server is listening on port http://localhost:${PORT}`);
   });
 };
-
+ startServer();
