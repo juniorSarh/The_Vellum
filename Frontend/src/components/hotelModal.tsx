@@ -22,7 +22,7 @@ function HotelForm() {
           <Button
                  name="Submit"
                  color="white"
-                 backgroundColor="Blue"
+                 backgroundColor="#007bff"
                  className="addHotel"
                />
     </form>
