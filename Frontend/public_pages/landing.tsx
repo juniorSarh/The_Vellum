@@ -1,7 +1,5 @@
 import React from "react";
 import NavBar from "../src/components/navBar";
-import StatCard from "../src/components/statCard";
-import { FaCalendarCheck, FaCreditCard, FaHome, FaHotel } from "react-icons/fa";
 import Footer from "../src/components/Footer";
 import HotelCard from "../src/components/hotelCard";
 import logo from "../src/assets/hotelImage.jpg";
