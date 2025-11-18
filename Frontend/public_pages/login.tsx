@@ -1,21 +1,55 @@
 import React, { useState } from "react";
-import SearchBar from "../src/components/searchBar";
+import Input from "../src/components/input";
+import Button from "../src/components/Button";
+import "./login.css";
 
-const Home: React.FC = () => {
-  const [query, setQuery] = useState("");
+const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!email || !password) {
+      alert("Please fill in both fields.");
+      return;
+    }
+
+    console.log("Login Submitted:", { email, password });
+  };
 
   return (
-    <div style={{ padding: "16px", maxWidth: "600px" }}>
-      <SearchBar
-        value={query}
-        onChange={setQuery}
-        onFilterClick={() => {
-          // Here you can open a modal for date/location/availability filters
-          console.log("Open filter panel");
-        }}
-      />
+    <div className="login-container">
+      <h2 className="login-title">Sign In</h2>
+
+      <form className="login-form" onSubmit={handleSubmit}>
+        <Input
+          label="Email"
+          type="email"
+          placeholder="example@gmail.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <Input
+          label="Password"
+          type="password"
+          placeholder="Enter password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <Button
+          name="Login"
+          backgroundColor="#846D29"
+          color="#fff"
+          className="login-btn"
+          // required so button submits the form instead of only clicking
+          onClick={handleSubmit}
+        />
+      </form>
     </div>
   );
 };
 
-export default Home;
+export default Login;
