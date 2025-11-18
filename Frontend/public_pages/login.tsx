@@ -3,26 +3,26 @@ import Input from "../src/components/input";
 import Button from "../src/components/Button";
 import "./login.css";
 
-const Login = () => {
+export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!email || !password) {
-      alert("Please fill in both fields.");
+      alert("Email and password required");
       return;
     }
 
-    console.log("Login Submitted:", { email, password });
+    console.log("Logged in:", { email, password });
   };
 
   return (
     <div className="login-container">
-      <h2 className="login-title">Sign In</h2>
+      <h2 className="login-title">Login</h2>
 
-      <form className="login-form" onSubmit={handleSubmit}>
+      <form className="login-form" onSubmit={handleLogin}>
         <Input
           label="Email"
           type="email"
@@ -44,12 +44,9 @@ const Login = () => {
           backgroundColor="#846D29"
           color="#fff"
           className="login-btn"
-          // required so button submits the form instead of only clicking
-          onClick={handleSubmit}
+          onClick={handleLogin}
         />
       </form>
     </div>
   );
-};
-
-export default Login;
+}
