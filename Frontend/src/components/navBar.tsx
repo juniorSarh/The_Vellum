@@ -1,8 +1,8 @@
 import React from "react";
 import Button from "../components/Button";
+import { Link } from "react-router-dom";
 import "../NavBar.css";
-import logo from "../assets/The-vellum-logo.png"
-
+import logo from "../assets/The-vellum-logo.png";
 
 const NavBar = () => {
   return (
@@ -10,28 +10,30 @@ const NavBar = () => {
       {/* Left Section */}
       <div className="navbar-left">
         <div className="logo-box">
-          <img src={logo} alt="" />
+          <img src={logo} alt="The Vellum Logo" />
         </div>
         <h1 className="title">The Vellum</h1>
       </div>
 
-   
+      {/* Right Section */}
       <div className="navbar-right">
-        <Button
-          name="Register"
-          color="black"
-          backgroundColor="white"
-          className="nav-btn"
-          onClick={() => console.log("Register clicked")}
-        />
+        <Link to="/register" className="link-reset">
+          <Button
+            name="Register"
+            color="black"
+            backgroundColor="white"
+            className="nav-btn"
+          />
+        </Link>
 
-        <Button
-          name="Login"
-          color="black"
-          backgroundColor="white"
-          className="nav-btn"
-          onClick={() => console.log("Login clicked")}
-        />
+        <Link to="/login" className="link-reset">
+          <Button
+            name="Login"
+            color="black"
+            backgroundColor="white"
+            className="nav-btn"
+          />
+        </Link>
       </div>
     </nav>
   );
