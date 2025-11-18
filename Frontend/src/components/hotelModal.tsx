@@ -4,17 +4,17 @@ function HotelForm() {
   return (
     <form className="hotel-form">
       <div className="form-group">
-        <label>Hotel Name</label>
+        <label>Hotel Name: </label>
         <input type="text" />
       </div>
 
       <div className="form-group">
-        <label>Location</label>
+        <label>Location: </label>
         <input type="text" />
       </div>
 
       <div className="form-group">
-        <label>Amenities (Comma separated)</label>
+        <label>Amenities (Comma separated): </label>
         <input type="text" />
       </div>
 
