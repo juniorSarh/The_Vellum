@@ -1,15 +1,21 @@
-import React from 'react'
-import Button from '../src/components/Button'
+import React, { useState } from "react";
+import SearchBar from "../src/components/searchBar";
 
-export default function Login() {
+const Home: React.FC = () => {
+  const [query, setQuery] = useState("");
+
   return (
-    <div>
-      <Button 
-      color='blue'
-        text='Click Me'
-        onClick={() => alert('Button Clicked!')}
-
-        />
+    <div style={{ padding: "16px", maxWidth: "600px" }}>
+      <SearchBar
+        value={query}
+        onChange={setQuery}
+        onFilterClick={() => {
+          // Here you can open a modal for date/location/availability filters
+          console.log("Open filter panel");
+        }}
+      />
     </div>
-  )
-}
+  );
+};
+
+export default Home;

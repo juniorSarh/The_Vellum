@@ -1,22 +1,9 @@
-import React, { useState } from "react";
-import ProfileModal from "../src/components/profileModal";
-import Button from "../src/components/Button";
-import NavBar from "../src/components/navBar";
+import React from 'react'
 
-export default function Register() {
-  const [open, setOpen] = useState(false);
-
+export default function register() {
   return (
-    <>
-  
-      <Button
-        name="Edit Profile"
-        backgroundColor="black"
-        color="white"
-        onClick={() => setOpen(true)}
-      />
-
-      <ProfileModal isOpen={open} onClose={() => setOpen(false)} />
-    </>
-  );
+    <div>
+      
+    </div>
+  )
 }
