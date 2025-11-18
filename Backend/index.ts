@@ -2,7 +2,7 @@ import express, {Request, Response} from "express";
 import {testConnection} from "../Backend/src/config/db";
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 4040;
 
 app.get("/", (req :Request, res: Response) => {
   res.send("Hello World!");
