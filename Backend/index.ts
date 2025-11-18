@@ -1,34 +1,71 @@
-import express, {Request, Response} from "express";
-import dotenv from "dotenv";
-dotenv.config();
+import "dotenv/config";
+import express from "express";
+import cors from "cors";
+import { customerRouter } from "./src/routes/customer.routes";
+import { createCustomerTable } from "./src/models/customer.model";
+import { testConnection } from "./src/config/db";
 
-import {neon} from "@neondatabase/serverless";
-
-// Initialize Neon client
-export const sql = neon(process.env.DATABASE_URL!); 
-
-
+// Initialize Express app
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-app.get("/", async (req, res) => {
-   try {
-    await sql`
-      CREATE TABLE IF NOT EXISTS customers (
-        id serial PRIMARY KEY,
-        name text,
-        email text,
-        lastname text
-      );
-    `;
-    const customers = await sql`SELECT * FROM customers;`;
-    res.json(customers);
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Routes
+app.use("/api/customers", customerRouter);
+
+// Health check endpoint
+app.get("/", (req, res) => {
+  res.json({
+    status: "API is running",
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      customers: {
+        getAll: "GET /api/customers",
+        create: "POST /api/customers",
+        getOne: "GET /api/customers/:id",
+        update: "PATCH /api/customers/:id",
+        delete: "DELETE /api/customers/:id",
+      },
+    },
+  });
+});
+
+// Initialize database and start server
+async function startServer() {
+  try {
+    // Test database connection
+    const isConnected = await testConnection();
+    if (!isConnected) {
+      throw new Error("Failed to connect to database");
+    }
+
+    // Create required tables
+    await createCustomerTable();
+
+    // Start the server
+    app.listen(port, () => {
+      console.log(`Server is running on http://localhost:${port}`);
+      console.log("Available endpoints:");
+      console.log(`- GET    http://localhost:${port}/api/customers`);
+      console.log(`- POST   http://localhost:${port}/api/customers`);
+      console.log(`- GET    http://localhost:${port}/api/customers/:id`);
+      console.log(`- PATCH  http://localhost:${port}/api/customers/:id`);
+      console.log(`- DELETE http://localhost:${port}/api/customers/:id`);
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error" );
+    console.error("Failed to start server:", error);
+    process.exit(1);
   }
-  res.send("Hello, The Vellum!");
+}
+
+// Handle unhandled promise rejections
+process.on("unhandledRejection", (err: Error) => {
+  console.error("Unhandled Rejection:", err);
+  process.exit(1);
 });
-app.listen(port, () => {
-  console.log(`The Vellum app listening on port ${port}`);
-});
+
+// Start the application
+startServer();
