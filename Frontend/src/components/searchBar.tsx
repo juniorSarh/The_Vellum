@@ -2,8 +2,8 @@ import React from "react";
 import "./searchBar.css";
 
 type SearchBarProps = {
-  value: string;
-  onChange: (value: string) => void;
+  value?: string;
+  onChange?: (value: string) => void;
   onFilterClick?: () => void;
   placeholder?: string;
 };

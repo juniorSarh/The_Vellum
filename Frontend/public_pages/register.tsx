@@ -1,6 +1,5 @@
-<<<<<<< HEAD
-import React from 'react'
-=======
+
+
 import { useState } from "react";
 import Input from "../src/components/input";
 import Button from "../src/components/Button";
@@ -38,17 +37,10 @@ const Register = () => {
 
     console.log("REGISTER DETAILS:", formData);
   };
->>>>>>> feat/ProfileModal
 
-export default function register() {
-  return (
+return (
     <div>
-<<<<<<< HEAD
-      
-    </div>
-  )
-}
-=======
+
        <div>
         <NavBar />
         </div>
@@ -109,5 +101,4 @@ export default function register() {
   );
 };
 
-export default Register;
->>>>>>> feat/ProfileModal
+export default Register
