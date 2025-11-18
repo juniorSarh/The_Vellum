@@ -1,4 +1,5 @@
 import "../HotelForm.css"; 
+import Button from "./Button";
 
 function HotelForm() {
   return (
@@ -18,7 +19,12 @@ function HotelForm() {
         <input type="text" />
       </div>
 
-     
+          <Button
+                 name="Submit"
+                 color="white"
+                 backgroundColor="#007bff"
+                 className="addHotel"
+               />
     </form>
   );
 }
