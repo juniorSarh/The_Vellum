@@ -1,0 +1,43 @@
+.user-item {
+  width: 100%;
+  max-width: 100%; /* prevent overflow */
+  box-sizing: border-box; /* include padding in width */
+  background: #e5e5e5;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+  gap: 1%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  overflow-wrap: break-word; /* wrap long text */
+}
+
+.inner-user-item {
+  width: 100%;
+  box-sizing: border-box; /* include padding in width */
+  background: #555151;
+  padding: 6px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  overflow-wrap: break-word; /* wrap long text */
+  background-color: "#555151";
+}
+
+.user-name {
+  font-size: 16px;
+  color: #FFFFFF;
+  font-weight: 500;
+}
+
+.user-delete-btn {
+  background: #d9534f;
+  color: #fff;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
