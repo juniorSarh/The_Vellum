@@ -1,0 +1,50 @@
+.table-wrapper {
+  width: 100%;
+  padding: 20px;
+  border-radius: 6px;
+}
+
+.table-title {
+  font-size: 20px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+/* Table Styling */
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.custom-table th {
+  text-align: left;
+  padding: 10px;
+  font-weight: bold;
+}
+
+.custom-table td {
+  padding: 12px 10px;
+}
+
+.custom-table tbody tr {
+  border-bottom: 1px solid #999;
+}
+
+/* Make button smaller inside table */
+.table-btn {
+  background-color: #846d29;
+  padding: 5px 12px;
+  font-size: 14px;
+  border-radius: 7px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .custom-table {
+    font-size: 14px;
+  }
+
+  .table-btn {
+    font-size: 12px;
+  }
+}
