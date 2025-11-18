@@ -8,7 +8,7 @@ interface HotelCardProps {
   name: string;
   location: string;
   price: number;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 const HotelCard: React.FC<HotelCardProps> = ({

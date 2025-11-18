@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import ProfileModal from "../src/components/profileModal";
 import Button from "../src/components/Button";
+import NavBar from "../src/components/navBar";
 
 export default function Register() {
   const [open, setOpen] = useState(false);
 
   return (
     <>
+  
       <Button
         name="Edit Profile"
         backgroundColor="black"
