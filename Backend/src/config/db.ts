@@ -8,3 +8,14 @@ export const pool = new Pool({
     rejectUnauthorized: false, // Required for Render PostgreSQL
   },
 });
+
+export const testConnection = async () => {
+  try {
+    const client = await pool.connect();
+    console.log("Connected to database");
+    client.release();
+  } catch (error) {
+    console.error("failed to connect to database", error);
+    process.exit(1);
+  }
+};
