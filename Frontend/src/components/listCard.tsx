@@ -1,14 +1,15 @@
-export interface UserListItemProps {
-  username: string;
-  onDelete: () => void;
-}
-
 import React from "react";
 import "./listCard.css";
 import Button from "./Button";
 import { FaTrash } from "react-icons/fa";
 
-const ListCard: React.FC<UserListItemProps> = ({ username, onDelete }) => {
+
+export interface ListCardProps {
+  username: string;
+  onDelete: () => void;
+}
+
+const ListCard: React.FC<ListCardProps> = ({ username, onDelete }) => {
   return (
     <div className="user-item">
       <div className="inner-user-item">
