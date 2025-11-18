@@ -1,6 +1,6 @@
 import React from "react";
 import Button from "../components/Button";
-import "../EditModal.css";
+import "../ProfileModal.css";
 
 interface UpdateModalProps {
   isOpen: boolean;
