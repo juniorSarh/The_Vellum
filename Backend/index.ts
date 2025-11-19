@@ -22,12 +22,15 @@ app.get("/", (req, res) => {
     status: "API is running",
     timestamp: new Date().toISOString(),
     endpoints: {
+      auth: {
+        register: "POST /api/customers/register",
+        login: "POST /api/customers/login",
+      },
       customers: {
         getAll: "GET /api/customers",
-        create: "POST /api/customers",
-        getOne: "GET /api/customers/:id",
-        update: "PATCH /api/customers/:id",
-        delete: "DELETE /api/customers/:id",
+        getProfile: "GET /api/customers/:id",
+        updateProfile: "PATCH /api/customers/:id",
+        deactivate: "DELETE /api/customers/:id/deactivate",
       },
     },
   });
@@ -49,11 +52,16 @@ async function startServer() {
     app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
       console.log("Available endpoints:");
+      console.log("\nAuthentication:");
+      console.log(`- POST   http://localhost:${port}/api/customers/register`);
+      console.log(`- POST   http://localhost:${port}/api/customers/login`);
+      console.log("\nProfile Management:");
       console.log(`- GET    http://localhost:${port}/api/customers`);
-      console.log(`- POST   http://localhost:${port}/api/customers`);
       console.log(`- GET    http://localhost:${port}/api/customers/:id`);
       console.log(`- PATCH  http://localhost:${port}/api/customers/:id`);
-      console.log(`- DELETE http://localhost:${port}/api/customers/:id`);
+      console.log(
+        `- DELETE http://localhost:${port}/api/customers/:id/deactivate`
+      );
     });
   } catch (error) {
     console.error("Failed to start server:", error);

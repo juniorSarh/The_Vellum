@@ -3,17 +3,12 @@ import * as customerController from "../controllers/customer.controller";
 
 export const customerRouter = Router();
 
-// Create a new customer
-customerRouter.post("/", customerController.createCustomer);
+// Authentication endpoints
+customerRouter.post("/register", customerController.registerCustomer);
+customerRouter.post("/login", customerController.loginCustomer);
 
-// Get all customers
+// Profile management endpoints
 customerRouter.get("/", customerController.getCustomers);
-
-// Get a single customer by ID
-customerRouter.get("/:id", customerController.getCustomer);
-
-// Update a customer
-customerRouter.patch("/:id", customerController.updateCustomer);
-
-// Delete a customer
-customerRouter.delete("/:id", customerController.deleteCustomer);
+customerRouter.get("/:id", customerController.getProfile);
+customerRouter.patch("/:id", customerController.updateProfile);
+customerRouter.delete("/:id/deactivate", customerController.deactivateAccount);
