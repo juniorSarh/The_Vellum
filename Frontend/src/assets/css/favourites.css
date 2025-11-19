@@ -8,7 +8,10 @@ body,
 #root {
   width: 100%;
   height: 100%;
+  overflow: hidden;   /* hide horizontal overflow */
+  overflow-y: auto;
 }
+
 .landing {
   width: 100%;
   height: 100vh;
@@ -29,7 +32,10 @@ flex-direction: row;
 gap: 1rem;
 grid-template-columns:repeat(6,1fr);
 padding: 10px;
+}
 
+.cards:hover {
+  transform: translateY(-5px);
 }
 
 .footer{

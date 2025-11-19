@@ -20,8 +20,15 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+<<<<<<< HEAD
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "pg": "^8.16.3"
+=======
+    "@neondatabase/serverless": "^1.0.2",
+    "@types/dotenv": "^6.1.1",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0"
+>>>>>>> dev
   }
 }

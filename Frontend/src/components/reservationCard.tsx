@@ -15,19 +15,22 @@ const ReservationCard: React.FC<ListCardProps> = ({ username, onDelete }) => {
       </div>
       <Button
         icon={<FaEdit color=" #846D29" />}
-        backgroundColor=" #555151"
+        backgroundColor="  #e5e5e5"
         color="#fff"
         className="reservation-edit-btn"
-        onClick={() => {onDelete();}}
+        onClick={() => {
+          onDelete();
+        }}
       />
       <Button
         icon={<FaTrash color=" #846D29" />}
-        backgroundColor=" #555151"
+        backgroundColor=" #e5e5e5"
         color="#fff"
         className="reservation-delete-btn"
-        onClick={() => {onDelete();}}
+        onClick={() => {
+          onDelete();
+        }}
       />
-      
     </div>
   );
 };

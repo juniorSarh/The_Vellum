@@ -1,0 +1,53 @@
+.searchbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+/* Left: rounded search box */
+.searchbar-input-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  background-color: #e0e0e0; /* light grey like your screenshot */
+  border-radius: 999px; /* pill shape */
+}
+
+.searchbar-input-icon {
+  margin-right: 6px;
+  font-size: 0.85rem;
+  color: #333;
+}
+
+.searchbar-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 0.9rem;
+  color: #111;
+}
+
+/* Right: filter button */
+.searchbar-filter-button {
+  min-width: 80px;
+  padding: 6px 16px;
+  background-color: #e0e0e0; /* same grey as input */
+  border: none;
+  border-radius: 2px; /* more square */
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #222;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.05s ease;
+}
+
+.searchbar-filter-button:hover {
+  background-color: #d5d5d5;
+}
+
+.searchbar-filter-button:active {
+  transform: translateY(1px);
+}

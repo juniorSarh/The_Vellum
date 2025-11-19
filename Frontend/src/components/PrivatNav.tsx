@@ -1,9 +1,10 @@
 import Button from "../components/Button";
 import { Link } from "react-router-dom";
-import "../NavBar.css";
+import "../PrivatNav.css";
 import logo from "../assets/The-vellum-logo.png";
+import { FaUser } from "react-icons/fa";
 
-const NavBar = () => {
+const PrivatNav = () => {
   return (
     <nav className="navbar">
       {/* Left Section */}
@@ -18,7 +19,8 @@ const NavBar = () => {
       <div className="navbar-right">
         <Link to="/register" className="link-reset">
           <Button
-            name="Register"
+            name=""
+            icon={<FaUser style={{ marginRight: "8px" }} />}
             color="black"
             backgroundColor="white"
             className="nav-btn"
@@ -27,7 +29,7 @@ const NavBar = () => {
 
         <Link to="/login" className="link-reset">
           <Button
-            name="Login"
+            name="Logout"
             color="black"
             backgroundColor="white"
             className="nav-btn"
@@ -38,4 +40,4 @@ const NavBar = () => {
   );
 };
 
-export default NavBar;
+export default PrivatNav;

@@ -2,6 +2,7 @@ import Button from "../components/Button";
 import { Link } from "react-router-dom";
 import "../NavBar.css";
 import logo from "../assets/The-vellum-logo.png";
+import { FaUserCircle } from "react-icons/fa";
 
 const NavBar = () => {
   return (
@@ -18,7 +19,7 @@ const NavBar = () => {
       <div className="navbar-right">
         <Link to="/register" className="link-reset">
           <Button
-            name="Register"
+            name="Logout"
             color="black"
             backgroundColor="white"
             className="nav-btn"
@@ -27,10 +28,10 @@ const NavBar = () => {
 
         <Link to="/login" className="link-reset">
           <Button
-            name="Login"
+            icon={<FaUserCircle />}
             color="black"
             backgroundColor="white"
-            className="nav-btn"
+            className="profile-btn"
           />
         </Link>
       </div>
