@@ -1,7 +1,5 @@
-import React from "react";
 import Button from "./Button";
 import "../assets/css/table.css";
-
 
 interface Booking {
   guest: string;

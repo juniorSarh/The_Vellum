@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import "./searchBar.css";
-import FilterModal from "./filterModal"
+import FilterModal from "./filterModal";
 
 type SearchBarProps = {
   value?: string;
   onChange: (value: string) => void;
   placeholder?: string;
+};
+
+type FilterData = {
+  type: "date" | "location" | "price";
+  value: string;
 };
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -19,7 +24,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     setIsModalOpen(true);
   };
 
-  const handleApplyFilters = (filters: any) => {
+  const handleApplyFilters = (filters: FilterData) => {
     console.log("Applied Filters:", filters);
 
     // Example: if you want filter text to reflect applied values in search input
