@@ -1,8 +1,10 @@
 import React from 'react'
 
-export default function Error404() {
+export default function error404() {
   return (
     <div>
+      
     </div>
-  );
+  )
 }
+
