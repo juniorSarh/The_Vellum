@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-export default function Registeredusers() {
-  return <div></div>;
-}
-=======
-import React, { useState } from "react";
+import { useState } from "react";
 import SearchBar from "../../src/components/searchBar";
 import RegUsers from "../../src/components/regUsers";
 import Footer from "../../src/components/Footer";
@@ -67,4 +62,3 @@ const RegisteredUsers = () => {
 };
 
 export default RegisteredUsers;
->>>>>>> feat/regusers

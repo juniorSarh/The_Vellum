@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-export default function Reservations() {
-  return <div></div>;
-}
-=======
-import React, { useState } from "react";
+
+import { useState } from "react";
 import SearchBar from "../../src/components/searchBar";
 import ReservationCard from "../../src/components/reservationCard";
 import Footer from "../../src/components/Footer";
@@ -67,4 +63,4 @@ const ReservationList = () => {
 };
 
 export default ReservationList;
->>>>>>> feat/regusers
+
