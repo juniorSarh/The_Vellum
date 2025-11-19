@@ -2,7 +2,7 @@
   width: 100%;
   max-width: 100%; 
   box-sizing: border-box; 
-  background: #e5e5e5;
+  background:#555151;
   padding: 16px;
   border-radius: 8px;
   gap: 1%;
@@ -15,19 +15,19 @@
 .inner-reservation-item {
   width: 100%;
   box-sizing: border-box;
-  background: #555151;
+  background: #e5e5e5 ;
   padding: 8px 14px;
   border-radius: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   overflow-wrap: break-word; 
-  background-color: #555151;
+  background-color:  #e5e5e5;
 }
 
 .reservation-name {
   font-size: 16px;
-  color: #FFFFFF;
+  color: black;
   font-weight: 500;
   margin: 0px;
 

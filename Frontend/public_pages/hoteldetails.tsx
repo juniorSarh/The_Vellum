@@ -1,13 +1,9 @@
 import React from 'react'
 
-
-export default function Hoteldetails() {
+export default function hoteldetails() {
   return (
     <div>
-
+      
     </div>
-  );
+  )
 }
-
-
-
