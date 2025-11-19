@@ -37,7 +37,11 @@ const FilterModal = ({ isOpen, onClose, onApply }: FilterModalProps) => {
           <select
             className="input-field"
             value={selectedFilterType}
-            onChange={(e) => setSelectedFilterType(e.target.value as any)}
+            onChange={(e) =>
+              setSelectedFilterType(
+                e.target.value as "date" | "location" | "price"
+              )
+            }
           >
             <option value="date">Date</option>
             <option value="location">Location</option>

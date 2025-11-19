@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import NavBar from "../src/components/navBar";
 import Footer from "../src/components/Footer";
 import HotelCard from "../src/components/hotelCard";
-import logo from "../src/assets/hotelImage.jpg";
+import logo from "../src/assets/The-vellum-logo.png";
 import SearchBar from "../src/components/searchBar";
-  
 
-export default function landing() {
+export default function Landing() {
   const [searchTerm, setSearchTerm] = useState("");
 
   // This function will receive the search input value whenever it changes
@@ -20,7 +19,7 @@ export default function landing() {
         <NavBar />
       </div>
       <SearchBar
-        value={searchTerm}           // current search term
+        value={searchTerm} // current search term
         onChange={handleSearchChange} // updates search term
         placeholder="Search items..." // optional, defaults to "Search"
       />
@@ -47,4 +46,3 @@ export default function landing() {
     </div>
   );
 }
-

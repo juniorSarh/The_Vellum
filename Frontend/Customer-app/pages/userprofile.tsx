@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState } from "react";
 import Button from "../../src/components/Button";
 import ProfileModal from "../../src/components/profileModal";
@@ -111,3 +112,8 @@ const ProfilePage: React.FC = () => {
 };
 
 export default ProfilePage;
+=======
+export default function Userprofile() {
+  return <div></div>;
+}
+>>>>>>> origin

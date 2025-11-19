@@ -1,4 +1,7 @@
 import express, {Request, Response} from "express";
+<<<<<<< HEAD
+import {testConnection} from "../Backend/src/config/db";
+=======
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -7,9 +10,10 @@ import {neon} from "@neondatabase/serverless";
 // Initialize Neon client
 export const sql = neon(process.env.DATABASE_URL!); 
 
+>>>>>>> dev
 
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 4040;
 
 app.get("/", async (req, res) => {
    try {
@@ -29,6 +33,17 @@ app.get("/", async (req, res) => {
   }
   res.send("Hello, The Vellum!");
 });
+<<<<<<< HEAD
+
+const startServer = async () => {
+  await testConnection();
+  app.listen(PORT, () => {
+    console.log(`Server is listening on port http://localhost:${PORT}`);
+  });
+};
+ startServer();
+=======
 app.listen(port, () => {
   console.log(`The Vellum app listening on port ${port}`);
 });
+>>>>>>> dev

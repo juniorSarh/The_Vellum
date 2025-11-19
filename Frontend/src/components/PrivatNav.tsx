@@ -1,9 +1,8 @@
-import React from "react";
 import Button from "../components/Button";
 import { Link } from "react-router-dom";
 import "../PrivatNav.css";
 import logo from "../assets/The-vellum-logo.png";
-import { FaUser } from "react-icons/fa"; 
+import { FaUser } from "react-icons/fa";
 
 const PrivatNav = () => {
   return (
