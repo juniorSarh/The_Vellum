@@ -14,9 +14,6 @@ export default function Landing() {
     console.log("Searching for:", value);
   };
   return (
-<<<<<<< HEAD
-    <div>
-=======
     <div className="landing">
       <div className="nav">
         <NavBar />
@@ -46,7 +43,6 @@ export default function Landing() {
       <div className="footer">
         <Footer />
       </div>
->>>>>>> dev
     </div>
   );
 }
