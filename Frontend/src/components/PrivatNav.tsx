@@ -18,7 +18,7 @@ const PrivatNav = () => {
 
       {/* Right Section */}
       <div className="navbar-right">
-        <Link to="/register" className="link-reset">
+        <Link to="/profile" className="link-reset">
           <Button
             name=""
             icon={<FaUser style={{ marginRight: "8px" }} />}
@@ -28,7 +28,7 @@ const PrivatNav = () => {
           />
         </Link>
 
-        <Link to="/login" className="link-reset">
+        <Link to="/" className="link-reset">
           <Button
             name="Logout"
             color="black"
