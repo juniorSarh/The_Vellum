@@ -26,11 +26,14 @@ app.get("/", (req, res) => {
         register: "POST /api/customers/register",
         login: "POST /api/customers/login",
       },
-      customers: {
+      customer: {
+        getProfile: "GET /api/customers/profile",
+        updateProfile: "PATCH /api/customers/profile",
         getAll: "GET /api/customers",
-        getProfile: "GET /api/customers/:id",
-        updateProfile: "PATCH /api/customers/:id",
-        deactivate: "DELETE /api/customers/:id/deactivate",
+        getOne: "GET /api/customers/:id",
+        update: "PATCH /api/customers/:id",
+        delete: "DELETE /api/customers/:id",
+        deactivate: "PATCH /api/customers/:id/deactivate",
       },
     },
   });
@@ -55,12 +58,16 @@ async function startServer() {
       console.log("\nAuthentication:");
       console.log(`- POST   http://localhost:${port}/api/customers/register`);
       console.log(`- POST   http://localhost:${port}/api/customers/login`);
-      console.log("\nProfile Management:");
+      console.log("\nCustomer Profile:");
+      console.log(`- GET    http://localhost:${port}/api/customers/profile`);
+      console.log(`- PATCH  http://localhost:${port}/api/customers/profile`);
+      console.log("\nAdmin Operations:");
       console.log(`- GET    http://localhost:${port}/api/customers`);
       console.log(`- GET    http://localhost:${port}/api/customers/:id`);
       console.log(`- PATCH  http://localhost:${port}/api/customers/:id`);
+      console.log(`- DELETE http://localhost:${port}/api/customers/:id`);
       console.log(
-        `- DELETE http://localhost:${port}/api/customers/:id/deactivate`
+        `- PATCH  http://localhost:${port}/api/customers/:id/deactivate`
       );
     });
   } catch (error) {
