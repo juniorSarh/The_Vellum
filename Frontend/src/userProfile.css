@@ -1,0 +1,109 @@
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #fafafa;
+}
+
+/* MAIN WRAPPER (makes footer stick down) */
+.profile-wrapper {
+  flex: 1;
+  display: flex;
+  padding: 25px;
+  gap: 30px;
+  justify-content: center;
+}
+
+/* Sidebar */
+.profile-sidebar {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.sidebar-logo img {
+  width: 150px;
+  height: 150px;
+  background: #E6E6E6;
+  border: 2px dashed #999;
+  object-fit: contain;
+}
+
+.sidebar-option {
+  background: #D9D9D9;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+/* Centered main profile block */
+.profile-content {
+  width: 500px;
+  height: 50vh;
+  padding: 25px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0px 0px 8px rgba(0,0,0,0.1);
+}
+
+/* Profile image */
+.profile-image-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.profile-image-circle {
+  width: 130px;
+  height: 130px;
+  background: #D9D9D9;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.profile-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Text */
+.profile-info {
+  margin-top: 10px;
+}
+
+.profile-label {
+  font-weight: bold;
+  margin-top: 12px;
+}
+
+.profile-value {
+  margin-bottom: 8px;
+}
+
+/* Buttons */
+.profile-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+.profile-btn {
+  width: 140px;
+  padding: 10px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+/* Footer stays at bottom */
+footer {
+  margin-top: auto;
+}

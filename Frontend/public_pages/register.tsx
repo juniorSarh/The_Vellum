@@ -38,66 +38,66 @@ const Register = () => {
   };
 
  return (
-    <div>
+   <div>
+     <div>
+       <NavBar />
+     </div>
 
-       <div>
-        <NavBar />
-        </div>
+     <div className="register-container">
+       <form className="register-box" onSubmit={handleSubmit}>
+         <h2>Create Account</h2>
 
-      <div className="register-container">
-        <form className="register-box" onSubmit={handleSubmit}>
-          <h2>Create Account</h2>
+         <Input
+           label="Full Name"
+           placeholder="Enter full name"
+           value={formData.fullName}
+           onChange={(e) => handleChange("fullName", e.target.value)}
+         />
 
-          <Input
-            label="Full Name"
-            placeholder="Enter full name"
-            value={formData.fullName}
-            onChange={(e) => handleChange("fullName", e.target.value)}
-          />
+         <Input
+           label="Email"
+           type="email"
+           placeholder="Enter email"
+           value={formData.email}
+           onChange={(e) => handleChange("email", e.target.value)}
+         />
 
-          <Input
-            label="Email"
-            type="email"
-            placeholder="Enter email"
-            value={formData.email}
-            onChange={(e) => handleChange("email", e.target.value)}
-          />
+         <Input
+           label="Password"
+           type="password"
+           placeholder="Enter password"
+           value={formData.password}
+           onChange={(e) => handleChange("password", e.target.value)}
+         />
 
-          <Input
-            label="Password"
-            type="password"
-            placeholder="Enter password"
-            value={formData.password}
-            onChange={(e) => handleChange("password", e.target.value)}
-          />
+         <Input
+           label="Confirm Password"
+           type="password"
+           placeholder="Confirm password"
+           value={formData.confirmPassword}
+           onChange={(e) => handleChange("confirmPassword", e.target.value)}
+         />
 
-          <Input
-            label="Confirm Password"
-            type="password"
-            placeholder="Confirm password"
-            value={formData.confirmPassword}
-            onChange={(e) => handleChange("confirmPassword", e.target.value)}
-          />
+         <Link to="/home" className="link-reset">
+           <Button
+             name="Register"
+             backgroundColor="#846D29"
+             color="white"
+             className="auth-btn"
+             onClick={handleSubmit}
+           />
+         </Link>
 
-          <Button
-            name="Register"
-            backgroundColor="#846D29"
-            color="white"
-            className="auth-btn"
-            onClick={handleSubmit}
-          />
-
-          <p className="auth-link">
-            Already have an account? <Link to="/login">Login</Link>
-          </p>
-        </form>
-       
-      </div>
-      <div>
-        <Footer />
-      </div>
-    </div>
-  );
+         <p className="auth-link">
+           Already have an account? <Link to="/login">Login</Link>
+         </p>
+       </form>
+     </div>
+     <div>
+       <Footer />
+     </div>
+   </div>
+ );
 };
 
 export default Register;

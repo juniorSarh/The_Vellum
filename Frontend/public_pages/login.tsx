@@ -4,6 +4,7 @@ import Button from "../src/components/Button";
 import "../src/Login.css";
 import NavBar from "../src/components/navBar";
 import Footer from "../src/components/Footer";
+import { Link } from "react-router-dom";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -44,14 +45,15 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-
-          <Button
-            name="Login"
-            backgroundColor="#846D29"
-            color="#fff"
-            className="login-btn"
-            onClick={handleLogin}
-          />
+          <Link to="/home" className="link-reset">
+            <Button
+              name="Login"
+              backgroundColor="#846D29"
+              color="#fff"
+              className="login-btn"
+              onClick={handleLogin}
+            />
+          </Link>
         </form>
       </div>
 
