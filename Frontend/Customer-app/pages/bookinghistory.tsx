@@ -3,7 +3,8 @@ import BookingCard from "../../src/components/bookingCard";
 import SearchBar from "../../src/components/searchBar";
 import Footer from "../../src/components/Footer";
 import { useNavigate } from "react-router-dom";
-import "../../src/BookingCard.css"
+import "../../src/bookinghistory.css"
+
 
 const BookingsPage: React.FC = () => {
   const [search, setSearch] = useState("");

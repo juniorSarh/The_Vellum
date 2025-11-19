@@ -1,0 +1,32 @@
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.bookings-wrapper {
+  width: 85%;
+  margin: auto;
+  flex: 1;
+  padding: 20px;
+}
+
+.back-btn {
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 25px;
+}
+
+.empty-message {
+  margin-top: 20px;
+  font-size: 14px;
+  opacity: 0.6;
+  font-style: italic;
+}

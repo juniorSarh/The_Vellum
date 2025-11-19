@@ -2,7 +2,7 @@
 import React from "react";
 import { FaShareAlt, FaHeart } from "react-icons/fa";
 import Button from "./Button";
-import "./bookingCard.css";
+import "../../src/BookingCard.css";
 
 interface BookingCardProps {
   title: string;
