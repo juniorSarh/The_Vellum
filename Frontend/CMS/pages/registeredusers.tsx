@@ -4,7 +4,7 @@ import RegUsers from "../../src/components/regUsers";
 import Footer from "../../src/components/Footer";
 import Button from "../../src/components/Button";
 import { useNavigate } from "react-router-dom";
-import "../src/reservationPage.css";
+import "../../src/reservationPage.css";
 import { FaArrowLeft } from "react-icons/fa";
 import PrivatNav from "../../src/components/PrivatNav";
 
