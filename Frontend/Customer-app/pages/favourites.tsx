@@ -5,9 +5,9 @@ import SearchBar from "../../src/components/searchBar";
 import Button from "../../src/components/Button";
 import HotelCard from "../../src/components/hotelCard";
 
-import "../src/assets/css/favourites.css";
+import "../../src/assets/css/favourites.css";
 import { FaArrowLeft } from "react-icons/fa";
-import logo from "../src/assets/hotelImage.jpg";
+import logo from "../../src/assets/hotelImage.jpg";
 
 export default function Favourites() {
    const [searchTerm, setSearchTerm] = useState("");
