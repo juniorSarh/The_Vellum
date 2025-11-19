@@ -1,19 +1,11 @@
 import express, {Request, Response} from "express";
-<<<<<<< HEAD
 import {testConnection} from "../Backend/src/config/db";
-=======
-import dotenv from "dotenv";
-dotenv.config();
-
-import {neon} from "@neondatabase/serverless";
-
-// Initialize Neon client
-export const sql = neon(process.env.DATABASE_URL!); 
-
->>>>>>> dev
+import {sql} from "../Backend/src/config/db";
 
 const app = express();
 const PORT = process.env.PORT || 4040;
+
+const sql = require("../Backend/src/config/db").sql;
 
 app.get("/", async (req, res) => {
    try {
@@ -33,7 +25,6 @@ app.get("/", async (req, res) => {
   }
   res.send("Hello, The Vellum!");
 });
-<<<<<<< HEAD
 
 const startServer = async () => {
   await testConnection();
@@ -42,8 +33,3 @@ const startServer = async () => {
   });
 };
  startServer();
-=======
-app.listen(port, () => {
-  console.log(`The Vellum app listening on port ${port}`);
-});
->>>>>>> dev
