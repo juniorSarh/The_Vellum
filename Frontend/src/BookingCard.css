@@ -1,0 +1,27 @@
+.booking-card {
+  width: 100%;
+  background: #e6e6e6;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  border-radius: 5px;
+}
+
+.booking-text {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.booking-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.booking-btn {
+  width: 40px;
+  height: 35px;
+  border-radius: 5px;
+  cursor: pointer;
+}
