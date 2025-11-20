@@ -2,7 +2,6 @@ import { useState } from "react";
 import NavBar from "../src/components/navBar";
 import Footer from "../src/components/Footer";
 import HotelCard from "../src/components/hotelCard";
-import logo from "../src/assets/images.jpg";
 import SearchBar from "../src/components/searchBar";
 import "../src/Landing.css";
 
@@ -14,6 +13,7 @@ export default function Landing() {
   };
 
   return (
+
     <div className="landing-wrapper">
       <NavBar />
 
@@ -47,13 +47,15 @@ export default function Landing() {
               name="The Vellum"
               location="KwaZulu-Natal, South Africa"
               price={2000}
-              image={logo}
-            />
+              image="../src/assets/images.jpg"
+              />
           ))}
+
         </div>
       </section>
 
       <Footer />
     </div>
   );
+     
 }

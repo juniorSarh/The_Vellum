@@ -1,0 +1,71 @@
+.landing-wrapper {
+  background-color: #fafafa;
+  font-family: "Poppins", sans-serif;
+}
+
+.hero-banner {
+
+  height: 60vh;
+ background: url("./assets/hotel-1749602_1280.jpg")
+    center/cover no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0 0 40px 40px;
+  color: white;
+  text-shadow: 0px 4px 10px rgba(0,0,0,0.4);
+  animation: fadeHero 1.4s ease-in-out;
+}
+
+.hero-content {
+  text-align: center;
+  width: 70%;
+  max-width: 700px;
+}
+
+.hero-heading {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.hero-text {
+  font-size: 1.2rem;
+  margin-bottom: 25px;
+  opacity: 0.95;
+}
+
+.hero-search {
+  margin-top: 20px;
+  animation: fadeUp 1.2s ease;
+}
+
+.recommend-section {
+  padding: 50px 30px;
+  text-align: center;
+}
+
+.section-heading {
+  font-size: 2rem;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+.hotel-card-grid {
+  display: grid;
+  gap: 25px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  padding: 20px;
+  animation: fadeUp 1.2s ease-in-out;
+}
+
+/* Animations */
+@keyframes fadeHero {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
