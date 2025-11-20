@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import * as customerModel from "../services/customer.service";
+import * as customerModel from "../models/customer.model";
 
 export const registerCustomer = async (req: Request, res: Response) => {
   try {
