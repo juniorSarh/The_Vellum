@@ -1,4 +1,4 @@
-.reservation-item {
+.userItem {
   width: 100%;
   max-width: 100%; 
   box-sizing: border-box; 
@@ -12,7 +12,7 @@
   overflow-wrap: break-word;
 }
 
-.inner-reservation-item {
+.innerUserItem {
   width: 100%;
   box-sizing: border-box;
   background: #e5e5e5 ;
@@ -25,7 +25,7 @@
   background-color:  #e5e5e5;
 }
 
-.reservation-name {
+.userName {
   font-size: 16px;
   color: black;
   font-weight: 500;
@@ -33,7 +33,7 @@
 
 }
 
-.reservation-delete-btn , .reservation-edit-btn {
+.userdeletebtn {
   background: #d9534f;
   color: #fff;
   padding: 8px 14px;

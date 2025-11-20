@@ -1,7 +1,5 @@
-import React from "react";
 import Button from "./Button";
 import "../assets/css/table.css";
-
 
 interface Booking {
   guest: string;
@@ -45,7 +43,7 @@ export default function Table({ title, data }: TableProps) {
                 <Button
                   name="View details"
                   backgroundColor="#846d29"
-                  color="#000"
+                  color="white"
                   className="table-btn"
                 />
               </td>

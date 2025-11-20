@@ -1,50 +1,61 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import NavBar from "../src/components/navBar";
 import Footer from "../src/components/Footer";
 import HotelCard from "../src/components/hotelCard";
-import logo from "../src/assets/hotelImage.jpg";
 import SearchBar from "../src/components/searchBar";
-  
+import "../src/Landing.css";
 
-export default function landing() {
+export default function Landing() {
   const [searchTerm, setSearchTerm] = useState("");
 
-  // This function will receive the search input value whenever it changes
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
-    console.log("Searching for:", value);
   };
-  return (
-    <div className="landing">
-      <div className="nav">
-        <NavBar />
-      </div>
-      <SearchBar
-        value={searchTerm}           // current search term
-        onChange={handleSearchChange} // updates search term
-        placeholder="Search items..." // optional, defaults to "Search"
-      />
-      <div className="cards">
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-      </div>
 
-      <div className="footer">
-        <Footer />
-      </div>
+  return (
+
+    <div className="landing-wrapper">
+      <NavBar />
+
+      {/* Hero Section */}
+      <section className="hero-banner">
+        <div className="hero-content">
+          <h1 className="hero-heading">Discover Places You’ll Love 💛</h1>
+          <p className="hero-text">
+            Stay in stunning destinations, curated for comfort and unforgettable
+            memories.
+          </p>
+
+          <div className="hero-search">
+            <SearchBar
+              value={searchTerm}
+              onChange={handleSearchChange}
+              placeholder="Where would you like to stay?"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Recommended Section */}
+      <section className="recommend-section">
+        <h2 className="section-heading">Recommended For You ✨</h2>
+
+        <div className="hotel-card-grid">
+          {[...Array(12)].map((_, i) => (
+            <HotelCard
+              key={i}
+              name="The Vellum"
+              location="KwaZulu-Natal, South Africa"
+              price={2000}
+              image="../src/assets/images.jpg"
+              />
+          ))}
+
+        </div>
+      </section>
+
+      <Footer />
     </div>
   );
+     
 }
-
