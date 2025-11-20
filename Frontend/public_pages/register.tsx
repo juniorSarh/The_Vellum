@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../src/storeSlices/hooks";
 import { registerCustomer } from "../src/storeSlices/customerSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function Register() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const { customer, loading, error } = useAppSelector(
     (state) => state.customer
   );
@@ -20,77 +23,108 @@ export default function Register() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Update the handleSubmit function in register.tsx
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Basic validation
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match");
       return;
     }
 
-    // Dispatch the registerCustomer thunk
-    dispatch(
-      registerCustomer({
-        email: formData.email,
-        first_name: formData.first_name,
-        last_name: formData.last_name,
-        password: formData.password,
-      })
-    );
+    try {
+      // Dispatch and wait for the registration to complete
+      await dispatch(
+        registerCustomer({
+          email: formData.email,
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+          password: formData.password,
+        })
+      ).unwrap();
+
+      // If we get here, registration was successful
+      // The useEffect will handle the redirection when customer state updates
+    } catch (error) {
+      console.error("Registration failed:", error);
+      // Error is already handled by the Redux slice
+    }
   };
 
+  // Update the useEffect to handle redirection
+  useEffect(() => {
+    if (customer) {
+      navigate("/home");
+    }
+  }, [customer, navigate]);
   return (
-    <div style={{ maxWidth: "400px", margin: "0 auto" }}>
-      <h2>Create Account</h2>
-      <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit}>
+      {/* First Name */}
+      <div>
+        <label htmlFor="first_name">First Name</label>
         <input
+          id="first_name"
           name="first_name"
-          placeholder="First Name"
           value={formData.first_name}
           onChange={handleChange}
+          type="text"
         />
+      </div>
+
+      {/* Last Name */}
+      <div>
+        <label htmlFor="last_name">Last Name</label>
         <input
+          id="last_name"
           name="last_name"
-          placeholder="Last Name"
           value={formData.last_name}
           onChange={handleChange}
+          type="text"
         />
+      </div>
+
+      {/* Email */}
+      <div>
+        <label htmlFor="email">Email</label>
         <input
+          id="email"
           name="email"
-          type="email"
-          placeholder="Email"
           value={formData.email}
           onChange={handleChange}
+          type="email"
         />
+      </div>
+
+      {/* Password */}
+      <div>
+        <label htmlFor="password">Password</label>
         <input
+          id="password"
           type="password"
           name="password"
-          placeholder="Password"
           value={formData.password}
           onChange={handleChange}
         />
+      </div>
+
+      {/* Confirm Password */}
+      <div>
+        <label htmlFor="confirmPassword">Confirm Password</label>
         <input
+          id="confirmPassword"
           type="password"
           name="confirmPassword"
-          placeholder="Confirm Password"
           value={formData.confirmPassword}
           onChange={handleChange}
         />
+      </div>
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Registering..." : "Register"}
-        </button>
-      </form>
+      <button type="submit" disabled={loading}>
+        Register
+      </button>
 
-      {/* Display success message */}
-      {customer && (
-        <p style={{ color: "green", marginTop: "10px" }}>
-          Registered successfully! Welcome {customer.first_name}.
-        </p>
-      )}
-
-      {/* Display error message */}
-      {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
-    </div>
+      {error && <p>{error}</p>}
+    </form>
   );
 }

@@ -13,7 +13,7 @@ export interface Customer {
 }
 
 export interface CustomerState {
-  user: Customer | null;
+  customer: Customer | null;
   loading: boolean;
   error: string | null;
 }
