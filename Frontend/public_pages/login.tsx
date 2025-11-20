@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../src/storeSlices/hooks";
 import { loginCustomer } from "../src/storeSlices/customerSlice";
+import { loginAdmin } from "../src/storeSlices/adminSlice";
 import { useNavigate } from "react-router-dom";
-import "../src/Login.css"; // <-- Make sure your CSS file is imported
+import "../src/Login.css";
 import Footer from "../src/components/Footer";
 import NavBar from "../src/components/navBar";
 
@@ -10,21 +11,35 @@ export default function Login() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const { customer, loading, error } = useAppSelector(
-    (state) => state.customer
-  );
+  // ---- Grab both slices ----
+  const {
+    customer,
+    loading: customerLoading,
+    error: customerError,
+  } = useAppSelector((state) => state.customer);
+
+  const {
+    admin,
+    loading: adminLoading,
+    error: adminError,
+  } = useAppSelector((state) => state.admin);
+
+  // "customer" | "admin" toggle
+  const [loginAs, setLoginAs] = useState<"customer" | "admin">("customer");
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
-  // Redirect to home after successful login
+  // Redirect after successful login
   useEffect(() => {
-    if (customer) {
+    if (admin) {
+      navigate("/dashboard");
+    } else if (customer) {
       navigate("/home");
     }
-  }, [customer, navigate]);
+  }, [admin, customer, navigate]);
 
   // handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,16 +49,54 @@ export default function Login() {
   // submit form
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(loginCustomer(formData));
+
+    if (loginAs === "admin") {
+      dispatch(loginAdmin(formData));
+    } else {
+      dispatch(loginCustomer(formData));
+    }
   };
+
+  // derived UI state
+  const loading = loginAs === "admin" ? adminLoading : customerLoading;
+  const error = loginAs === "admin" ? adminError : customerError;
 
   return (
     <>
-    <NavBar />
+      <NavBar />
       <div className="loginPage">
         <div className="login-container">
           <form className="login-form" onSubmit={handleSubmit}>
             <h2 className="login-title">Welcome Back</h2>
+
+            {/* Role toggle */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                gap: "1rem",
+                marginBottom: "1rem",
+              }}
+            >
+              <label>
+                <input
+                  type="radio"
+                  value="customer"
+                  checked={loginAs === "customer"}
+                  onChange={() => setLoginAs("customer")}
+                />{" "}
+                Customer
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  value="admin"
+                  checked={loginAs === "admin"}
+                  onChange={() => setLoginAs("admin")}
+                />{" "}
+                Admin
+              </label>
+            </div>
 
             {/* Email */}
             <input
