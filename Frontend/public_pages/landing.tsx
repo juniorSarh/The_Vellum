@@ -4,7 +4,7 @@ import Footer from "../src/components/Footer";
 import HotelCard from "../src/components/hotelCard";
 
 import SearchBar from "../src/components/searchBar";
-
+import "../src/Landing.css";
 
 export default function Landing() {
   const [searchTerm, setSearchTerm] = useState("");
