@@ -27,7 +27,7 @@ const PrivatNav = () => {
           />
         </Link>
 
-        <Link to="/login" className="link-reset">
+        <Link to="/" className="link-reset">
           <Button
             name="Logout"
             color="black"

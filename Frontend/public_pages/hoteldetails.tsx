@@ -1,4 +1,10 @@
 import React from 'react'
+import NavBar from '../src/components/navBar'
+import Button from '../src/components/Button'
+import Footer from '../src/components/Footer'
+import { FaArrowLeft, FaRegHeart, FaShare, FaMapMarkerAlt } from 'react-icons/fa'
+//import '../../src/HotelDetails.css'
+// import hotelImage from '../assets/hotel.jpg'
 
 
 export default function HotelDetails() {

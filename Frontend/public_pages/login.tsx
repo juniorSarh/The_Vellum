@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../src/storeSlices/hooks";
 import { loginCustomer } from "../src/storeSlices/customerSlice";
+import { useNavigate } from "react-router-dom";
+import "../src/Login.css"; // <-- Make sure your CSS file is imported
+import Footer from "../src/components/Footer";
+import NavBar from "../src/components/navBar";
 
 export default function Login() {
   const dispatch = useAppDispatch();
@@ -16,51 +19,94 @@ export default function Login() {
     password: "",
   });
 
-  // Redirect when logged in
+  // Redirect to home after successful login
   useEffect(() => {
     if (customer) {
-      navigate("/home", { replace: true });
+      navigate("/home");
     }
   }, [customer, navigate]);
 
+  // handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // submit form
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     dispatch(loginCustomer(formData));
   };
 
   return (
-    <div className="login-container">
-      <form className="login-box" onSubmit={handleSubmit}>
-        <h2>Login</h2>
+    <>
+    <NavBar />
+      <div className="loginPage">
+        <div className="login-container">
+          <form className="login-form" onSubmit={handleSubmit}>
+            <h2 className="login-title">Welcome Back</h2>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Enter email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
+            {/* Email */}
+            <input
+              className="input-field"
+              name="email"
+              type="email"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              style={{
+                width: "100%",
+                padding: "12px",
+                marginBottom: "15px",
+                borderRadius: "6px",
+                border: "1px solid #ccc",
+              }}
+            />
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Enter password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
+            {/* Password */}
+            <input
+              className="input-field"
+              name="password"
+              type="password"
+              placeholder="Enter your password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              style={{
+                width: "100%",
+                padding: "12px",
+                marginBottom: "15px",
+                borderRadius: "6px",
+                border: "1px solid #ccc",
+              }}
+            />
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
+            {/* Error message */}
+            {error && (
+              <p
+                style={{
+                  color: "red",
+                  marginBottom: "10px",
+                  textAlign: "center",
+                }}
+              >
+                {error}
+              </p>
+            )}
 
-        {error && <p className="error">{error}</p>}
-      </form>
-    </div>
+            {/* Login button */}
+            <button
+              type="submit"
+              className="login-btn"
+              style={{ backgroundColor: "#846D29", color: "white" }}
+              disabled={loading}
+            >
+              {loading ? "Logging in..." : "Login"}
+            </button>
+          </form>
+        </div>
+      </div>
+      <Footer />
+    </>
   );
 }

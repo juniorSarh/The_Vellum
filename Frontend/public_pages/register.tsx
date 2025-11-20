@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../src/storeSlices/hooks";
 import { registerCustomer } from "../src/storeSlices/customerSlice";
-import { useNavigate } from "react-router-dom";
+import "../src/Register.css"; // Make sure this CSS file includes your styles or reuse Login.css
+import Footer from "../src/components/Footer";
+import NavBar from "../src/components/navBar";
 
 export default function Register() {
   const dispatch = useAppDispatch();
@@ -12,119 +15,159 @@ export default function Register() {
   );
 
   const [formData, setFormData] = useState({
-    email: "",
     first_name: "",
     last_name: "",
+    email: "",
     password: "",
     confirmPassword: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  // Update the handleSubmit function in register.tsx
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Basic validation
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
-
-    try {
-      // Dispatch and wait for the registration to complete
-      await dispatch(
-        registerCustomer({
-          email: formData.email,
-          first_name: formData.first_name,
-          last_name: formData.last_name,
-          password: formData.password,
-        })
-      ).unwrap();
-
-      // If we get here, registration was successful
-      // The useEffect will handle the redirection when customer state updates
-    } catch (error) {
-      console.error("Registration failed:", error);
-      // Error is already handled by the Redux slice
-    }
-  };
-
-  // Update the useEffect to handle redirection
+  // Redirect if registered
   useEffect(() => {
     if (customer) {
       navigate("/home");
     }
   }, [customer, navigate]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    const payload = {
+      first_name: formData.first_name,
+      last_name: formData.last_name,
+      email: formData.email,
+      password: formData.password,
+    };
+
+    dispatch(registerCustomer(payload));
+  };
+
   return (
-    <form onSubmit={handleSubmit}>
-      {/* First Name */}
-      <div>
-        <label htmlFor="first_name">First Name</label>
-        <input
-          id="first_name"
-          name="first_name"
-          value={formData.first_name}
-          onChange={handleChange}
-          type="text"
-        />
+    <>
+    <NavBar />
+      <div className="loginPage">
+        <div className="login-container">
+          <form className="login-form" onSubmit={handleSubmit}>
+            <h2 className="login-title">Create Account</h2>
+
+            {/* First Name */}
+            <input
+              name="first_name"
+              placeholder="First name"
+              value={formData.first_name}
+              onChange={handleChange}
+              required
+              style={{
+                width: "100%",
+                padding: "12px",
+                marginBottom: "15px",
+                borderRadius: "6px",
+                border: "1px solid #ccc",
+              }}
+            />
+
+            {/* Last Name */}
+            <input
+              name="last_name"
+              placeholder="Last name"
+              value={formData.last_name}
+              onChange={handleChange}
+              required
+              style={{
+                width: "100%",
+                padding: "12px",
+                marginBottom: "15px",
+                borderRadius: "6px",
+                border: "1px solid #ccc",
+              }}
+            />
+
+            {/* Email */}
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              style={{
+                width: "100%",
+                padding: "12px",
+                marginBottom: "15px",
+                borderRadius: "6px",
+                border: "1px solid #ccc",
+              }}
+            />
+
+            {/* Password */}
+            <input
+              type="password"
+              name="password"
+              placeholder="Enter password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              style={{
+                width: "100%",
+                padding: "12px",
+                marginBottom: "15px",
+                borderRadius: "6px",
+                border: "1px solid #ccc",
+              }}
+            />
+
+            {/* Confirm Password */}
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirm password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+              style={{
+                width: "100%",
+                padding: "12px",
+                marginBottom: "15px",
+                borderRadius: "6px",
+                border: "1px solid #ccc",
+              }}
+            />
+
+            {/* Error */}
+            {error && (
+              <p
+                style={{
+                  color: "red",
+                  marginBottom: "10px",
+                  textAlign: "center",
+                }}
+              >
+                {error}
+              </p>
+            )}
+
+            {/* Register button */}
+            <button
+              type="submit"
+              className="login-btn"
+              style={{ backgroundColor: "#846D29", color: "white" }}
+              disabled={loading}
+            >
+              {loading ? "Registering..." : "Register"}
+            </button>
+          </form>
+        </div>
       </div>
-
-      {/* Last Name */}
-      <div>
-        <label htmlFor="last_name">Last Name</label>
-        <input
-          id="last_name"
-          name="last_name"
-          value={formData.last_name}
-          onChange={handleChange}
-          type="text"
-        />
-      </div>
-
-      {/* Email */}
-      <div>
-        <label htmlFor="email">Email</label>
-        <input
-          id="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          type="email"
-        />
-      </div>
-
-      {/* Password */}
-      <div>
-        <label htmlFor="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-        />
-      </div>
-
-      {/* Confirm Password */}
-      <div>
-        <label htmlFor="confirmPassword">Confirm Password</label>
-        <input
-          id="confirmPassword"
-          type="password"
-          name="confirmPassword"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-        />
-      </div>
-
-      <button type="submit" disabled={loading}>
-        Register
-      </button>
-
-      {error && <p>{error}</p>}
-    </form>
+      <Footer />
+    </>
   );
 }
