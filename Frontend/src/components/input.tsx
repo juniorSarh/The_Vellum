@@ -1,33 +1,35 @@
-import React from "react";
-import "../input.css"
+// src/components/input.tsx
+import React, { type ChangeEvent } from "react";
 
 interface InputProps {
-  label?: string;
-  type?: string;
+  label: string;
   placeholder?: string;
-  value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  className?: string;
+  type?: string;
+  value: string | undefined;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  name?: string; // ✅ Add this
 }
 
-export default function Input({
+const Input: React.FC<InputProps> = ({
   label,
-  type = "text",
   placeholder,
+  type = "text",
   value,
   onChange,
-  className,
-}: InputProps) {
+  name,
+}) => {
   return (
-    <div className="input-wrapper">
-      {label && <label className="input-label">{label}</label>}
+    <div className="input-group">
+      <label>{label}</label>
       <input
         type={type}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className={`input-field ${className}`}
+        name={name} // ✅ Pass the name to the input element
       />
     </div>
   );
-}
+};
+
+export default Input;
