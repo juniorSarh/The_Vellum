@@ -1,104 +1,130 @@
+import { useState, useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../src/storeSlices/hooks";
+import { registerCustomer } from "../src/storeSlices/customerSlice";
+import { useNavigate } from "react-router-dom";
 
-import { useState } from "react";
-import Input from "../src/components/input";
-import Button from "../src/components/Button";
-import { Link } from "react-router-dom";
-import "../src/Register.css"
-import NavBar from "../src/components/navBar";
-import Footer from "../src/components/Footer";
+export default function Register() {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-interface RegisterFormValues {
-  fullName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
+  const { customer, loading, error } = useAppSelector(
+    (state) => state.customer
+  );
 
-const Register = () => {
-  const [formData, setFormData] = useState<RegisterFormValues>({
-    fullName: "",
+  const [formData, setFormData] = useState({
     email: "",
+    first_name: "",
+    last_name: "",
     password: "",
     confirmPassword: "",
   });
 
-  const handleChange = (field: keyof RegisterFormValues, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Update the handleSubmit function in register.tsx
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Basic validation
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match");
       return;
     }
 
-    console.log("REGISTER DETAILS:", formData);
+    try {
+      // Dispatch and wait for the registration to complete
+      await dispatch(
+        registerCustomer({
+          email: formData.email,
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+          password: formData.password,
+        })
+      ).unwrap();
+
+      // If we get here, registration was successful
+      // The useEffect will handle the redirection when customer state updates
+    } catch (error) {
+      console.error("Registration failed:", error);
+      // Error is already handled by the Redux slice
+    }
   };
 
- return (
-    <div>
-
-       <div>
-        <NavBar />
-        </div>
-
-      <div className="register-container">
-        <form className="register-box" onSubmit={handleSubmit}>
-          <h2>Create Account</h2>
-
-          <Input
-            label="Full Name"
-            placeholder="Enter full name"
-            value={formData.fullName}
-            onChange={(e) => handleChange("fullName", e.target.value)}
-          />
-
-          <Input
-            label="Email"
-            type="email"
-            placeholder="Enter email"
-            value={formData.email}
-            onChange={(e) => handleChange("email", e.target.value)}
-          />
-
-          <Input
-            label="Password"
-            type="password"
-            placeholder="Enter password"
-            value={formData.password}
-            onChange={(e) => handleChange("password", e.target.value)}
-          />
-
-          <Input
-            label="Confirm Password"
-            type="password"
-            placeholder="Confirm password"
-            value={formData.confirmPassword}
-            onChange={(e) => handleChange("confirmPassword", e.target.value)}
-          />
-
-          <Button
-            name="Register"
-            backgroundColor="#846D29"
-            color="white"
-            className="auth-btn"
-            onClick={handleSubmit}
-          />
-
-          <p className="auth-link">
-            Already have an account? <Link to="/login">Login</Link>
-          </p>
-        </form>
-       
-      </div>
+  // Update the useEffect to handle redirection
+  useEffect(() => {
+    if (customer) {
+      navigate("/home");
+    }
+  }, [customer, navigate]);
+  return (
+    <form onSubmit={handleSubmit}>
+      {/* First Name */}
       <div>
-        <Footer />
+        <label htmlFor="first_name">First Name</label>
+        <input
+          id="first_name"
+          name="first_name"
+          value={formData.first_name}
+          onChange={handleChange}
+          type="text"
+        />
       </div>
-    </div>
+
+      {/* Last Name */}
+      <div>
+        <label htmlFor="last_name">Last Name</label>
+        <input
+          id="last_name"
+          name="last_name"
+          value={formData.last_name}
+          onChange={handleChange}
+          type="text"
+        />
+      </div>
+
+      {/* Email */}
+      <div>
+        <label htmlFor="email">Email</label>
+        <input
+          id="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          type="email"
+        />
+      </div>
+
+      {/* Password */}
+      <div>
+        <label htmlFor="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+        />
+      </div>
+
+      {/* Confirm Password */}
+      <div>
+        <label htmlFor="confirmPassword">Confirm Password</label>
+        <input
+          id="confirmPassword"
+          type="password"
+          name="confirmPassword"
+          value={formData.confirmPassword}
+          onChange={handleChange}
+        />
+      </div>
+
+      <button type="submit" disabled={loading}>
+        Register
+      </button>
+
+      {error && <p>{error}</p>}
+    </form>
   );
-};
-
-export default Register;
-
+}

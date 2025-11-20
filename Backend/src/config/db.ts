@@ -1,21 +1,20 @@
-import pkg from "pg";
-import dotenv from "dotenv";
-dotenv.config();
-const { Pool } = pkg;
-export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false, // Required for Render PostgreSQL
-  },
-});
+import { neon } from "@neondatabase/serverless";
 
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL environment variable is not set");
+}
+
+// Initialize Neon client
+export const sql = neon(process.env.DATABASE_URL);
+
+// Test the database connection
 export const testConnection = async () => {
   try {
-    const client = await pool.connect();
-    console.log("Connected to database");
-    client.release();
+    await sql`SELECT 1`;
+    console.log("✅ Database connection successful");
+    return true;
   } catch (error) {
-    console.error("failed to connect to database", error);
-    process.exit(1);
+    console.error("❌ Database connection failed:", error);
+    return false;
   }
 };

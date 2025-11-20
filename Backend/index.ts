@@ -1,11 +1,15 @@
 import express, {Request, Response} from "express";
-import {testConnection} from "../Backend/src/config/db";
-import {sql} from "../Backend/src/config/db";
+import dotenv from "dotenv";
+dotenv.config();
+
+import {neon} from "@neondatabase/serverless";
+
+// Initialize Neon client
+export const sql = neon(process.env.DATABASE_URL!); 
+
 
 const app = express();
-const PORT = process.env.PORT || 4040;
-
-const sql = require("../Backend/src/config/db").sql;
+const port = 3000;
 
 app.get("/", async (req, res) => {
    try {
@@ -20,16 +24,11 @@ app.get("/", async (req, res) => {
     const customers = await sql`SELECT * FROM customers;`;
     res.json(customers);
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error" );
+    console.error("❌ Failed to start server:", error);
+    process.exit(1);
   }
   res.send("Hello, The Vellum!");
 });
-
-const startServer = async () => {
-  await testConnection();
-  app.listen(PORT, () => {
-    console.log(`Server is listening on port http://localhost:${PORT}`);
-  });
-};
- startServer();
+app.listen(port, () => {
+  console.log(`The Vellum app listening on port ${port}`);
+});

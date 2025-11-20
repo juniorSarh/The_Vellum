@@ -1,63 +1,66 @@
-import React, { useState } from "react";
-import Input from "../src/components/input";
-import Button from "../src/components/Button";
-import "../src/Login.css";
-import NavBar from "../src/components/navBar";
-import Footer from "../src/components/Footer";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../src/storeSlices/hooks";
+import { loginCustomer } from "../src/storeSlices/customerSlice";
 
-export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function Login() {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
+  const { customer, loading, error } = useAppSelector(
+    (state) => state.customer
+  );
 
-    if (!email || !password) {
-      alert("Email and password required");
-      return;
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  // Redirect when logged in
+  useEffect(() => {
+    if (customer) {
+      navigate("/home", { replace: true });
     }
+  }, [customer, navigate]);
 
-    console.log("Logged in:", { email, password });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    dispatch(loginCustomer(formData));
   };
 
   return (
-    <div className="loginPage">
-      <div>
-        <NavBar />
-      </div>
+    <div className="login-container">
+      <form className="login-box" onSubmit={handleSubmit}>
+        <h2>Login</h2>
 
-      <div className="login-container">
-        <form className="login-form" onSubmit={handleLogin}>
-          <h2 className="login-title">Login</h2>
-          <Input
-            label="Email"
-            type="email"
-            placeholder="example@gmail.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+        <input
+          type="email"
+          name="email"
+          placeholder="Enter email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
 
-          <Input
-            label="Password"
-            type="password"
-            placeholder="Enter password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+        <input
+          type="password"
+          name="password"
+          placeholder="Enter password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
 
-          <Button
-            name="Login"
-            backgroundColor="#846D29"
-            color="#fff"
-            className="login-btn"
-            onClick={handleLogin}
-          />
-        </form>
-      </div>
+        <button type="submit" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </button>
 
-      <div>
-        <Footer />
-      </div>
+        {error && <p className="error">{error}</p>}
+      </form>
     </div>
   );
 }

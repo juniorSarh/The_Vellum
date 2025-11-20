@@ -1,7 +1,9 @@
 import "./App.css";
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useAppSelector } from "./storeSlices/hooks";
 import type { RootState } from "../store";
+
+
 import Landing from "../public_pages/landing";
 import Login from "../public_pages/login";
 import Register from "../public_pages/register";
@@ -33,10 +35,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ isAuthenticated }) => {
 };
 
 function App() {
-  // 🔐 adjust this selector to match your store shape
-  const isAuthenticated = useSelector(
-    (state: RootState) => state.auth?.isAuthenticated
-  );
+  // Use customerSlice state with proper typing
+  const user = useAppSelector((state: RootState) => state.customer);
+  const isAuthenticated = Boolean(user);
 
   return (
     <Routes>
@@ -47,7 +48,7 @@ function App() {
       <Route path="/hotel" element={<HotelDetail />} />
 
       {/* ---------- Protected routes ---------- */}
-      <Route element={<ProtectedRoute isAuthenticated={!!isAuthenticated} />}>
+      <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
         <Route path="/home" element={<Home />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/payment" element={<Payment />} />
@@ -65,7 +66,7 @@ function App() {
       </Route>
 
       {/* Fallback */}
-      <Route path="*" element={<Error404/>} />
+      <Route path="*" element={<Error404 />} />
     </Routes>
   );
 }
