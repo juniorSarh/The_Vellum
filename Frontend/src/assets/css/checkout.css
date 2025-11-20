@@ -1,0 +1,157 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Roboto:wght@300;400;500&display=swap');
+
+/* NEW → Makes page scrollable and hides overflow */
+* {
+  scrollbar-width: none; /* Firefox */
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.checkout-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  /* NEW → scrollable area */
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.checkout-content {
+  flex: 1;
+  padding: 1%;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* TOP SECTION */
+.checkout-top-section {
+  display: flex;
+  width: 100%;
+  height: auto;
+}
+
+.checkout-image-box {
+  width: 40%;
+}
+
+.image {
+  width: 100%;
+  height: auto;
+  background: #e3e3e3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.checkout-info-box {
+  width: 80%;
+  background: #555155;
+  font-family: 'Roboto', sans-serif;
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5%;
+}
+
+/* FORM */
+.checkout-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 65vh;
+  background: #ffffff;
+  padding: 2%;
+}
+
+.form {
+  width: 100%;
+  max-width: 400px;
+  background: white;
+  padding: 28px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+}
+
+.form-column {
+  display: flex;
+  gap: 20px;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: start;
+}
+
+.form-input {
+  width: 50%;
+  padding: 14px;
+  font-size: 18px;
+  background: #e3e3e3;
+  border: none;
+  align-items: baseline;
+}
+
+/* BUTTONS */
+.checkout-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn:hover {
+  opacity: 0.8;
+  transform: translateY(-4px);
+}
+
+/* RESPONSIVE - MOBILE */
+@media (max-width: 768px) {
+  .checkout-top-section {
+    flex-direction: column;
+  }
+
+  .checkout-image-box,
+  .checkout-info-box {
+    width: 100%;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .form-input {
+    width: 100%;
+  }
+
+  .checkout-buttons {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
