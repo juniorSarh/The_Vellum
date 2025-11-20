@@ -1,4 +1,3 @@
-import React from "react";
 import PrivatNav from "../../src/components/PrivatNav";
 import Footer from "../../src/components/Footer";
 import Button from "../../src/components/Button";

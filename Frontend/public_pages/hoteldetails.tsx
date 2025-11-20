@@ -1,13 +1,3 @@
-<<<<<<< HEAD
-import React from 'react'
-<<<<<<< HEAD
-
-export default function hoteldetails() {
-  return (
-    <div>
-      
-=======
-import React from "react";
 import NavBar from "../src/components/navBar";
 import Footer from "../src/components/Footer";
 import Button from "../src/components/Button";
@@ -19,15 +9,16 @@ import {
 } from "react-icons/fa";
 
 import "../src/assets/css/hotelDetails.css";
-import hotelImage from "../src/assets/hotelImage.jpg";
+// import hotelImage from "../src/assets/images/hotel.jpg";
 
-export default function Hoteldetails() {
+export default function HotelDetails() {
   return (
     <div className="hotel-details-page">
       {/* NAV */}
       <div className="nav-row">
         <NavBar />
       </div>
+
       <Button icon={<FaArrowLeft />} backgroundColor="white" color="black" />
 
       {/* MAIN WRAPPER */}
@@ -38,7 +29,7 @@ export default function Hoteldetails() {
           <p className="hotel-location">Location Name</p>
 
           <div className="image-container">
-            <img src={hotelImage} alt="Hotel" />
+            {/* <img src={hotelImage} alt="Hotel" /> */}
           </div>
 
           <h2 className="desc-title">Description:</h2>
@@ -47,7 +38,7 @@ export default function Hoteldetails() {
             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dicta,
             eligendi. Accusamus, assumenda voluptas saepe qui commodi laboriosam
             error dicta at animi enim excepturi, tempora optio repellat impedit
-            nihil doloribus nostrum? <br />
+            nihil doloribus nostrum. <br />
             Lorem ipsum dolor sit amet consectetur, adipisicing elit.
             Necessitatibus, consequuntur dolore. Labore accusamus minus eaque
             eum perspiciatis earum corporis autem molestias debitis voluptate,
@@ -121,24 +112,10 @@ export default function Hoteldetails() {
         </div>
       </div>
 
+      {/* FOOTER */}
       <div className="footer">
-        {/* FOOTER */}
         <Footer />
       </div>
->>>>>>> feat/hotelDetails
     </div>
-  )
+  );
 }
-<<<<<<< HEAD
-=======
->>>>>>> feat/addadmin
-
-export default function hoteldetails() {
-  return (
-    <div>
-      
-    </div>
-  )
-}
-=======
->>>>>>> feat/hotelDetails
