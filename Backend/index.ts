@@ -1,9 +1,15 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import { customerRouter } from "./src/routes/customer.routes";
-import { createCustomerTable } from "./src/models/customer.model";
 import { testConnection } from "./src/config/db";
+
+// Routers
+import customerRouter from "./src/routes/customer.routes";
+import adminRouter from "./src/routes/admin.routes";
+
+// Services
+import { createCustomerTable } from "./src/services/customer.service";
+import { createAdminTable } from "./src/services/admin.service";
 
 // Initialize Express app
 const app = express();
@@ -15,6 +21,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/customers", customerRouter);
+app.use("/api/admins", adminRouter);
 
 // Health check endpoint
 app.get("/", (req, res) => {
@@ -22,18 +29,21 @@ app.get("/", (req, res) => {
     status: "API is running",
     timestamp: new Date().toISOString(),
     endpoints: {
-      auth: {
+      customer: {
         register: "POST /api/customers/register",
         login: "POST /api/customers/login",
-      },
-      customer: {
-        getProfile: "GET /api/customers/profile",
-        updateProfile: "PATCH /api/customers/profile",
         getAll: "GET /api/customers",
         getOne: "GET /api/customers/:id",
         update: "PATCH /api/customers/:id",
-        delete: "DELETE /api/customers/:id",
         deactivate: "PATCH /api/customers/:id/deactivate",
+      },
+      admin: {
+        register: "POST /api/admins/register",
+        login: "POST /api/admins/login",
+        getAll: "GET /api/admins",
+        getOne: "GET /api/admins/:id",
+        update: "PATCH /api/admins/:id",
+        deactivate: "PATCH /api/admins/:id/deactivate",
       },
     },
   });
@@ -50,28 +60,29 @@ async function startServer() {
 
     // Create required tables
     await createCustomerTable();
+    await createAdminTable();
 
     // Start the server
     app.listen(port, () => {
-      console.log(`Server is running on http://localhost:${port}`);
-      console.log("Available endpoints:");
-      console.log("\nAuthentication:");
-      console.log(`- POST   http://localhost:${port}/api/customers/register`);
-      console.log(`- POST   http://localhost:${port}/api/customers/login`);
-      console.log("\nCustomer Profile:");
-      console.log(`- GET    http://localhost:${port}/api/customers/profile`);
-      console.log(`- PATCH  http://localhost:${port}/api/customers/profile`);
-      console.log("\nAdmin Operations:");
-      console.log(`- GET    http://localhost:${port}/api/customers`);
-      console.log(`- GET    http://localhost:${port}/api/customers/:id`);
-      console.log(`- PATCH  http://localhost:${port}/api/customers/:id`);
-      console.log(`- DELETE http://localhost:${port}/api/customers/:id`);
-      console.log(
-        `- PATCH  http://localhost:${port}/api/customers/:id/deactivate`
-      );
+      console.log(`\n🚀 Server is running at: http://localhost:${port}\n`);
+      console.log("📌 Customer Endpoints:");
+      console.log(`➡ POST    /api/customers/register`);
+      console.log(`➡ POST    /api/customers/login`);
+      console.log(`➡ GET     /api/customers`);
+      console.log(`➡ GET     /api/customers/:id`);
+      console.log(`➡ PATCH   /api/customers/:id`);
+      console.log(`➡ PATCH   /api/customers/:id/deactivate\n`);
+
+      console.log("📌 Admin Endpoints:");
+      console.log(`➡ POST    /api/admins/register`);
+      console.log(`➡ POST    /api/admins/login`);
+      console.log(`➡ GET     /api/admins`);
+      console.log(`➡ GET     /api/admins/:id`);
+      console.log(`➡ PATCH   /api/admins/:id`);
+      console.log(`➡ PATCH   /api/admins/:id/deactivate\n`);
     });
   } catch (error) {
-    console.error("Failed to start server:", error);
+    console.error("❌ Failed to start server:", error);
     process.exit(1);
   }
 }

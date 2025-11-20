@@ -3,11 +3,10 @@ export interface Admin {
   email: string;
   first_name: string;
   last_name: string;
-  password_hash?: string;
-  phone?: string;
-  address?: string;
+  phone?: string | null;
+  address?: string | null;
   is_active?: boolean;
-  last_login?: Date;
+  last_login?: Date | null;
   created_at?: Date;
   updated_at?: Date;
 }

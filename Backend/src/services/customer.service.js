@@ -1,17 +1,16 @@
-import { sql } from "../../src/config/db";
-import bcrypt from "bcryptjs";
-import {
-  Customer,
-  CustomerRegistration,
-  CustomerLogin,
-  CustomerProfileUpdate,
-} from "../models/customer.model";
-
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.deactivateCustomer = exports.updateLastLogin = exports.getCustomerByEmailWithPassword = exports.getCustomerByEmail = exports.updateCustomerProfile = exports.loginCustomer = exports.registerCustomer = exports.updateCustomer = exports.getCustomerById = exports.getCustomers = exports.createCustomer = exports.createCustomerTable = void 0;
+const db_1 = require("../../src/config/db");
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 // ============================
 // CREATE CUSTOMERS TABLE
 // ============================
-export const createCustomerTable = async () => {
-  await sql`
+const createCustomerTable = async () => {
+    await (0, db_1.sql) `
     CREATE TABLE IF NOT EXISTS customers (
       id SERIAL PRIMARY KEY,
       email VARCHAR(255) UNIQUE NOT NULL,
@@ -27,58 +26,49 @@ export const createCustomerTable = async () => {
     );
   `;
 };
-
+exports.createCustomerTable = createCustomerTable;
 // ============================
 // CREATE CUSTOMER (NO PASSWORD)
 // ============================
-export const createCustomer = async (
-  customer: Omit<Customer, "id" | "created_at" | "updated_at">
-) => {
-  const { email, first_name, last_name } = customer;
-
-  const result = await sql`
+const createCustomer = async (customer) => {
+    const { email, first_name, last_name } = customer;
+    const result = await (0, db_1.sql) `
     INSERT INTO customers (email, first_name, last_name)
     VALUES (${email}, ${first_name}, ${last_name})
     RETURNING id, email, first_name, last_name, created_at, updated_at;
   `;
-
-  return result[0] as Customer;
+    return result[0];
 };
-
+exports.createCustomer = createCustomer;
 // ============================
 // GET ALL CUSTOMERS
 // ============================
-export const getCustomers = async () => {
-  return (await sql`
+const getCustomers = async () => {
+    return (await (0, db_1.sql) `
     SELECT id, email, first_name, last_name, phone, address, created_at, updated_at
     FROM customers
     ORDER BY created_at DESC;
-  `) as Customer[];
+  `);
 };
-
+exports.getCustomers = getCustomers;
 // ============================
 // GET CUSTOMER BY ID
 // ============================
-export const getCustomerById = async (id: number) => {
-  const result = await sql`
+const getCustomerById = async (id) => {
+    const result = await (0, db_1.sql) `
     SELECT id, email, first_name, last_name, phone, address, is_active, last_login, created_at, updated_at
     FROM customers
     WHERE id = ${id};
   `;
-
-  return result[0] as Customer | undefined;
+    return result[0];
 };
-
+exports.getCustomerById = getCustomerById;
 // ============================
 // UPDATE BASIC CUSTOMER FIELDS
 // ============================
-export const updateCustomer = async (
-  id: number,
-  customerData: Partial<Customer>
-) => {
-  const { email, first_name, last_name } = customerData;
-
-  const result = await sql`
+const updateCustomer = async (id, customerData) => {
+    const { email, first_name, last_name } = customerData;
+    const result = await (0, db_1.sql) `
     UPDATE customers
     SET
       email = COALESCE(${email}, email),
@@ -88,69 +78,54 @@ export const updateCustomer = async (
     WHERE id = ${id}
     RETURNING id, email, first_name, last_name, created_at, updated_at;
   `;
-
-  return result[0] as Customer | undefined;
+    return result[0];
 };
-
+exports.updateCustomer = updateCustomer;
 // ============================
 // REGISTER CUSTOMER (WITH PASSWORD)
 // ============================
-export const registerCustomer = async (customerData: CustomerRegistration) => {
-  const { email, first_name, last_name, password, phone, address } =
-    customerData;
-
-  const existing = await getCustomerByEmail(email);
-  if (existing) {
-    throw new Error("Customer with this email already exists");
-  }
-
-  const password_hash = await bcrypt.hash(password, 10);
-
-  const result = await sql`
+const registerCustomer = async (customerData) => {
+    const { email, first_name, last_name, password, phone, address } = customerData;
+    const existing = await (0, exports.getCustomerByEmail)(email);
+    if (existing) {
+        throw new Error("Customer with this email already exists");
+    }
+    const password_hash = await bcryptjs_1.default.hash(password, 10);
+    const result = await (0, db_1.sql) `
     INSERT INTO customers (email, first_name, last_name, password_hash, phone, address)
     VALUES (${email}, ${first_name}, ${last_name}, ${password_hash}, ${phone}, ${address})
     RETURNING id, email, first_name, last_name, phone, address, is_active, created_at, updated_at;
   `;
-
-  return result[0] as Customer;
+    return result[0];
 };
-
+exports.registerCustomer = registerCustomer;
 // ============================
 // LOGIN CUSTOMER
 // ============================
-export const loginCustomer = async (loginData: CustomerLogin) => {
-  const { email, password } = loginData;
-
-  const customer = await getCustomerByEmailWithPassword(email);
-  if (!customer || !customer.password_hash) {
-    throw new Error("Invalid email or password");
-  }
-
-  if (!customer.is_active) {
-    throw new Error("Account is deactivated");
-  }
-
-  const valid = await bcrypt.compare(password, customer.password_hash);
-  if (!valid) {
-    throw new Error("Invalid email or password");
-  }
-
-  await updateLastLogin(customer.id!);
-
-  const { password_hash, ...safeCustomer } = customer;
-  return safeCustomer as Customer;
+const loginCustomer = async (loginData) => {
+    const { email, password } = loginData;
+    const customer = await (0, exports.getCustomerByEmailWithPassword)(email);
+    if (!customer || !customer.password_hash) {
+        throw new Error("Invalid email or password");
+    }
+    if (!customer.is_active) {
+        throw new Error("Account is deactivated");
+    }
+    const valid = await bcryptjs_1.default.compare(password, customer.password_hash);
+    if (!valid) {
+        throw new Error("Invalid email or password");
+    }
+    await (0, exports.updateLastLogin)(customer.id);
+    const { password_hash, ...safeCustomer } = customer;
+    return safeCustomer;
 };
-
+exports.loginCustomer = loginCustomer;
 // ============================
 // UPDATE FULL CUSTOMER PROFILE
 // ============================
-export const updateCustomerProfile = async (
-  id: number,
-  profileData: CustomerProfileUpdate
-) => {
-  const { first_name, last_name, phone, address } = profileData;
-
-  const result = await sql`
+const updateCustomerProfile = async (id, profileData) => {
+    const { first_name, last_name, phone, address } = profileData;
+    const result = await (0, db_1.sql) `
     UPDATE customers
     SET
       first_name = COALESCE(${first_name}, first_name),
@@ -161,54 +136,52 @@ export const updateCustomerProfile = async (
     WHERE id = ${id}
     RETURNING id, email, first_name, last_name, phone, address, is_active, last_login, created_at, updated_at;
   `;
-
-  return result[0] as Customer | undefined;
+    return result[0];
 };
-
+exports.updateCustomerProfile = updateCustomerProfile;
 // ============================
 // GET CUSTOMER BY EMAIL (NO PASSWORD)
 // ============================
-export const getCustomerByEmail = async (email: string) => {
-  const result = await sql`
+const getCustomerByEmail = async (email) => {
+    const result = await (0, db_1.sql) `
     SELECT id, email, first_name, last_name, phone, address, is_active, last_login, created_at, updated_at
     FROM customers
     WHERE email = ${email};
   `;
-
-  return result[0] as Customer | undefined;
+    return result[0];
 };
-
+exports.getCustomerByEmail = getCustomerByEmail;
 // ============================
 // GET CUSTOMER WITH PASSWORD
 // ============================
-export const getCustomerByEmailWithPassword = async (email: string) => {
-  const result = await sql`
+const getCustomerByEmailWithPassword = async (email) => {
+    const result = await (0, db_1.sql) `
     SELECT id, email, first_name, last_name, password_hash, phone, address, is_active, last_login, created_at, updated_at
     FROM customers
     WHERE email = ${email};
   `;
-
-  return result[0] as Customer | undefined;
+    return result[0];
 };
-
+exports.getCustomerByEmailWithPassword = getCustomerByEmailWithPassword;
 // ============================
 // UPDATE LAST LOGIN
 // ============================
-export const updateLastLogin = async (id: number) => {
-  await sql`
+const updateLastLogin = async (id) => {
+    await (0, db_1.sql) `
     UPDATE customers
     SET last_login = CURRENT_TIMESTAMP
     WHERE id = ${id};
   `;
 };
-
+exports.updateLastLogin = updateLastLogin;
 // ============================
 // DEACTIVATE CUSTOMER
 // ============================
-export const deactivateCustomer = async (id: number) => {
-  await sql`
+const deactivateCustomer = async (id) => {
+    await (0, db_1.sql) `
     UPDATE customers
     SET is_active = false
     WHERE id = ${id};
   `;
 };
+exports.deactivateCustomer = deactivateCustomer;

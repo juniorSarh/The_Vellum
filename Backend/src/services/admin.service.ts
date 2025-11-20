@@ -1,5 +1,5 @@
+import { sql } from "../../src/config/db";
 import bcrypt from "bcryptjs";
-import { sql } from "../config/db";
 import {
   Admin,
   AdminLogin,
@@ -7,154 +7,6 @@ import {
   AdminProfileUpdate,
 } from "../models/admin.model";
 
-export const registerAdmin = async (adminData: AdminRegistration) => {
-  const { email, first_name, last_name, password, phone, address } = adminData;
-
-  // Check if admin already exists
-  const existingAdmin = await getAdminByEmail(email);
-  if (existingAdmin) {
-    throw new Error("Admin with this email already exists");
-  }
-
-  // Hash the password
-  const password_hash = await bcrypt.hash(password, 10);
-
-  const result = await sql`
-    INSERT INTO admins (email, first_name, last_name, password_hash, phone, address)
-    VALUES (${email}, ${first_name}, ${last_name}, ${password_hash}, ${phone}, ${address})
-    RETURNING id, email, first_name, last_name, phone, address, is_active, created_at, updated_at;
-  `;
-  return result[0] as Admin;
-};
-
-export const loginAdmin = async (loginData: AdminLogin) => {
-  const { email, password } = loginData;
-
-  // Get admin by email
-  const admin = await getAdminByEmailWithPassword(email);
-  if (!admin) {
-    throw new Error("Invalid email or password");
-  }
-
-  // Check if admin is active
-  if (!admin.is_active) {
-    throw new Error("Admin account is deactivated");
-  }
-
-  // Verify password
-  if (!admin.password_hash) {
-    throw new Error("Invalid email or password");
-  }
-
-  const isValidPassword = await bcrypt.compare(password, admin.password_hash);
-
-  if (!isValidPassword) {
-    throw new Error("Invalid email or password");
-  }
-
-  // Update last login timestamp
-  await updateLastLogin(admin.id!);
-
-  // Return admin without password hash
-  const { password_hash, ...adminWithoutPassword } = admin;
-  return adminWithoutPassword as Admin;
-};
-
-// ============================
-// GET ADMIN BY EMAIL
-// ============================
-export const getAdminByEmail = async (email: string) => {
-  const result = await sql`
-    SELECT id, email, first_name, last_name, phone, address, is_active, last_login, created_at, updated_at
-    FROM admins
-    WHERE email = ${email};
-  `;
-  return result[0] as Admin | undefined;
-};
-
-// ============================
-// GET ADMIN BY ID
-// ============================
-export const getAdminById = async (id: number) => {
-  const result = await sql`
-    SELECT id, email, first_name, last_name, phone, address, is_active, last_login, created_at, updated_at
-    FROM admins
-    WHERE id = ${id};
-  `;
-  return result[0] as Admin | undefined;
-};
-
-// ============================
-// GET ADMIN WITH PASSWORD BY EMAIL
-// ============================
-export const getAdminByEmailWithPassword = async (email: string) => {
-  const result = await sql`
-    SELECT *
-    FROM admins
-    WHERE email = ${email};
-  `;
-  return result[0] as Admin | undefined;
-};
-
-// ============================
-// GET ALL ADMINS
-// ============================
-export const getAdmins = async () => {
-  return (await sql`
-    SELECT id, email, first_name, last_name, is_active, last_login, created_at, updated_at
-    FROM admins
-    ORDER BY created_at DESC;
-  `) as Admin[];
-};
-
-// ============================
-// UPDATE ADMIN PROFILE
-// ============================
-export const updateAdminProfile = async (
-  id: number,
-  profileData: AdminProfileUpdate
-) => {
-  const { first_name, last_name, phone, address } = profileData;
-
-  const result = await sql`
-    UPDATE admins
-    SET 
-      first_name = COALESCE(${first_name}, first_name),
-      last_name = COALESCE(${last_name}, last_name),
-      phone = COALESCE(${phone}, phone),
-      address = COALESCE(${address}, address),
-      updated_at = CURRENT_TIMESTAMP
-    WHERE id = ${id}
-    RETURNING id, email, first_name, last_name, phone, address, is_active, last_login, created_at, updated_at;
-  `;
-  return result[0] as Admin | undefined;
-};
-
-// ============================
-// UPDATE LAST LOGIN
-// ============================
-export const updateLastLogin = async (id: number) => {
-  await sql`
-    UPDATE admins 
-    SET last_login = CURRENT_TIMESTAMP 
-    WHERE id = ${id};
-  `;
-};
-
-// ============================
-// DEACTIVATE ADMIN
-// ============================
-export const deactivateAdmin = async (id: number) => {
-  await sql`
-    UPDATE admins 
-    SET is_active = false 
-    WHERE id = ${id};
-  `;
-};
-
-// ============================
-// CREATE ADMIN TABLE
-// ===========================
 export const createAdminTable = async () => {
   await sql`
     CREATE TABLE IF NOT EXISTS admins (
@@ -170,5 +22,120 @@ export const createAdminTable = async () => {
       created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
+  `;
+};
+
+// Register a new admin
+export const registerAdmin = async (data: AdminRegistration) => {
+  const { email, first_name, last_name, password, phone, address } = data;
+
+  const existing = await getAdminByEmail(email);
+  if (existing) throw new Error("Admin with this email already exists");
+
+  const password_hash = await bcrypt.hash(password, 10);
+
+  const result = await sql`
+    INSERT INTO admins (email, first_name, last_name, password_hash, phone, address)
+    VALUES (${email}, ${first_name}, ${last_name}, ${password_hash}, ${phone}, ${address})
+    RETURNING id, email, first_name, last_name, phone, address, is_active, created_at, updated_at;
+  `;
+
+  return result[0] as Admin;
+};
+
+// Login admin
+export const loginAdmin = async (data: AdminLogin) => {
+  const { email, password } = data;
+
+  const admin = await getAdminByEmailWithPassword(email);
+
+  if (!admin || !admin.password_hash) {
+    throw new Error("Invalid email or password");
+  }
+
+  if (!admin.is_active) throw new Error("Account is deactivated");
+
+  const check = await bcrypt.compare(password, admin.password_hash);
+  if (!check) throw new Error("Invalid email or password");
+
+  await updateLastLogin(admin.id!);
+
+  const { password_hash, ...safeAdmin } = admin;
+  return safeAdmin;
+};
+
+// Get all admins
+export const getAdmins = async () => {
+  return await sql`
+    SELECT id, email, first_name, last_name, phone, address, is_active, created_at, updated_at
+    FROM admins
+    ORDER BY created_at DESC;
+  `;
+};
+
+// Get admin by ID
+export const getAdminById = async (id: number) => {
+  const result = await sql`
+    SELECT id, email, first_name, last_name, phone, address, is_active, last_login, created_at, updated_at
+    FROM admins
+    WHERE id = ${id};
+  `;
+  return result[0];
+};
+
+// Update admin profile
+export const updateAdminProfile = async (
+  id: number,
+  data: AdminProfileUpdate
+) => {
+  const { first_name, last_name, phone, address } = data;
+
+  const result = await sql`
+    UPDATE admins
+    SET
+      first_name = COALESCE(${first_name}, first_name),
+      last_name = COALESCE(${last_name}, last_name),
+      phone = COALESCE(${phone}, phone),
+      address = COALESCE(${address}, address),
+      updated_at = CURRENT_TIMESTAMP
+    WHERE id = ${id}
+    RETURNING id, email, first_name, last_name, phone, address, is_active, last_login, created_at, updated_at;
+  `;
+  return result[0];
+};
+
+// Deactivate admin
+export const deactivateAdmin = async (id: number) => {
+  await sql`
+    UPDATE admins
+    SET is_active = false
+    WHERE id = ${id};
+  `;
+};
+
+// Helpers
+export const getAdminByEmail = async (email: string) => {
+  const result = await sql`
+    SELECT id, email, first_name, last_name, phone, address, is_active, last_login, created_at, updated_at
+    FROM admins
+    WHERE email = ${email};
+  `;
+  return result[0];
+};
+
+export const getAdminByEmailWithPassword = async (email: string) => {
+  const result = await sql`
+    SELECT *
+    FROM admins
+    WHERE email = ${email};
+  `;
+  return result[0];
+};
+
+export const updateLastLogin = async (id: number) => {
+  await sql`
+    UPDATE admins
+    SET last_login = CURRENT_TIMESTAMP
+    WHERE id = ${id};
   `;
 };
