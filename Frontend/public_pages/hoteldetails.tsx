@@ -1,4 +1,5 @@
 import React from 'react'
+<<<<<<< HEAD
 
 export default function hoteldetails() {
   return (
@@ -7,4 +8,13 @@ export default function hoteldetails() {
     </div>
   )
 }
+=======
+>>>>>>> feat/addadmin
 
+export default function hoteldetails() {
+  return (
+    <div>
+      
+    </div>
+  )
+}
