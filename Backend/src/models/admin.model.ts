@@ -5,6 +5,7 @@ export interface Admin {
   last_name: string;
   phone?: string | null;
   address?: string | null;
+  image?: string | null
   is_active?: boolean;
   last_login?: Date | null;
   created_at?: Date;
@@ -18,6 +19,7 @@ export interface AdminRegistration {
   password: string;
   phone?: string;
   address?: string;
+  image?: string
 }
 
 export interface AdminLogin {
@@ -30,4 +32,5 @@ export interface AdminProfileUpdate {
   last_name?: string;
   phone?: string;
   address?: string;
+  image?: string
 }

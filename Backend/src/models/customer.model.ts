@@ -7,6 +7,7 @@ export interface Customer {
 
   phone?: string | null;
   address?: string | null;
+  image?: string | null;
 
   is_active: boolean;
   last_login?: string | null;
@@ -24,6 +25,7 @@ export interface CustomerRegistration {
   password: string;
   phone?: string | null;
   address?: string | null;
+  image?: string | null;
 }
 
 export interface CustomerLogin {
@@ -36,4 +38,5 @@ export interface CustomerProfileUpdate {
   last_name?: string;
   phone?: string | null;
   address?: string | null;
+  image?: string | null;
 }

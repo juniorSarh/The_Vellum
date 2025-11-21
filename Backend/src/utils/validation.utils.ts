@@ -78,6 +78,10 @@ export const validateCustomerRegistration = (
     errors.push("Address must be a string");
   }
 
+    if (data.image && typeof data.image !== "string") {
+      errors.push("image must be a string");
+    }
+
   return {
     isValid: errors.length === 0,
     errors,
@@ -131,6 +135,11 @@ export const validateCustomerProfile = (
   if (data.address && typeof data.address !== "string") {
     errors.push("Address must be a string");
   }
+
+   if (data.image && typeof data.image !== "string") {
+     errors.push("image must be a string");
+   }
+
 
   return {
     isValid: errors.length === 0,
