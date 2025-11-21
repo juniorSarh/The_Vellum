@@ -1,27 +1,26 @@
 import { useState } from "react";
+import { useAppSelector, useAppDispatch } from "../../src/storeSlices/hooks";
+import { logout } from "../../src/storeSlices/adminSlice";
 
 import Button from "../../src/components/Button";
 import ProfileModal from "../../src/components/profileModal";
 import "../../src/AdminProfile.css";
 import Footer from "../../src/components/Footer";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PrivatNav from "../../src/components/PrivatNav";
 
 export default function Adminprofile() {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  // Read admin from Redux store
+  const admin = useAppSelector((state) => state.admin.admin);
+
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Profile picture state
   const [profilePic, setProfilePic] = useState<string | null>(null);
-
-  // Fake user data
-  const user = {
-    first_Name: " ",
-    last_Name: "",
-    email: "",
-    password:"",
-    joined: "",
-  };
 
   // Upload handler
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,11 +31,15 @@ export default function Adminprofile() {
     }
   };
 
+  // Logout handler
+  const handleLogout = () => {
+    dispatch(logout()); // clear Redux + localStorage
+    navigate("/"); // redirect to login/home page
+  };
+
   return (
     <div>
-      <div>
-        <PrivatNav />
-      </div>
+      <PrivatNav />
 
       <div className="page-container">
         <div className="profile-wrapper">
@@ -62,19 +65,20 @@ export default function Adminprofile() {
 
             {/* User Information */}
             <div className="profile-info">
-              <p className="profile-label">First_Name</p>
-              <p className="profile-value">{user.first_Name}</p>
-              <p className="profile-label">Last_Name</p>
-              <p className="profile-value">{user.last_Name}</p>
+              <p className="profile-label">First Name</p>
+              <p className="profile-value">{admin?.first_name || "—"}</p>
+
+              <p className="profile-label">Last Name</p>
+              <p className="profile-value">{admin?.last_name || "—"}</p>
 
               <p className="profile-label">Email</p>
-              <p className="profile-value">{user.email}</p>
+              <p className="profile-value">{admin?.email || "—"}</p>
 
-              <p className="profile-label">Password</p>
-              <p className="profile-value">{user.password}</p>
+              <p className="profile-label">Phone</p>
+              <p className="profile-value">{admin?.phone || "—"}</p>
 
-              <p className="profile-label">Joined at:</p>
-              <p className="profile-value">{user.joined}</p>
+              <p className="profile-label">Address</p>
+              <p className="profile-value">{admin?.address || "—"}</p>
             </div>
 
             {/* Buttons */}
@@ -86,14 +90,14 @@ export default function Adminprofile() {
                 className="profile-btn"
                 onClick={() => setIsModalOpen(true)}
               />
-              <Link to="/" className="link-reset">
-                <Button
-                  name="Logout"
-                  backgroundColor="#846D29"
-                  color="white"
-                  className="profile-btn"
-                />
-              </Link>
+
+              <Button
+                name="Logout"
+                backgroundColor="#846D29"
+                color="white"
+                className="profile-btn"
+                onClick={handleLogout}
+              />
             </div>
           </div>
 
@@ -104,9 +108,7 @@ export default function Adminprofile() {
           />
         </div>
 
-        <div>
-          <Footer />
-        </div>
+        <Footer />
       </div>
     </div>
   );

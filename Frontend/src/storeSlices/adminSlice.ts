@@ -94,11 +94,14 @@ export const updateAdminProfile = createAsyncThunk<
   { rejectValue: string }
 >("admin/updateProfile", async ({ id, updates }, { rejectWithValue }) => {
   try {
-    const response = await fetch(`http://localhost:4040/api/admins/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updates),
-    });
+    const response = await fetch(
+      `http://localhost:4040/api/admins/${id}`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
+      }
+    );
 
     const result = await response.json();
     if (!result.success) return rejectWithValue(result.error);
@@ -108,6 +111,7 @@ export const updateAdminProfile = createAsyncThunk<
     return rejectWithValue("Admin profile update failed");
   }
 });
+
 
 // ==============================================================
 // SLICE
