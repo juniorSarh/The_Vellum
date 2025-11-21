@@ -7,9 +7,11 @@ import Footer from "../../src/components/Footer";
 import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
 import { logout } from "../../src/storeSlices/customerSlice";
 import PrivatNav from "../../src/components/PrivatNav";
+import { useNavigate } from "react-router-dom"; // 👈 Added
 
 const ProfilePage: React.FC = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate(); // 👈 Added
 
   // Get logged-in customer from Redux
   const { customer } = useAppSelector((state) => state.customer);
@@ -20,20 +22,18 @@ const ProfilePage: React.FC = () => {
   // Profile picture state
   const [profilePic, setProfilePic] = useState<string | null>(null);
 
-  // Load profile image (optional if stored in DB later)
-  // useEffect(() => {
-  //   if (customer?.profilePic) {
-  //     setProfilePic(customer.profilePic);
-  //   }
-  // }, [customer]);
-
   // Upload handler
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const imageURL = URL.createObjectURL(file);
-      setProfilePic(imageURL);
+      setProfilePic(URL.createObjectURL(file));
     }
+  };
+
+  // 👇 LOGOUT FIX
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/"); // redirect after logout
   };
 
   return (
@@ -41,7 +41,6 @@ const ProfilePage: React.FC = () => {
       <PrivatNav />
       <div className="page-container">
         <div className="profile-wrapper">
-          {/* Sidebar */}
           <aside className="profile-sidebar">
             <div className="sidebar-logo">
               <img src={logo} alt="" />
@@ -51,9 +50,7 @@ const ProfilePage: React.FC = () => {
             <button className="sidebar-option">My Bookings</button>
           </aside>
 
-          {/* Main Content */}
           <div className="profile-content">
-            {/* Profile Image */}
             <div className="profile-image-container">
               <label htmlFor="upload-photo" className="profile-image-circle">
                 {profilePic ? (
@@ -71,31 +68,23 @@ const ProfilePage: React.FC = () => {
               />
             </div>
 
-            {/* User Information */}
             <div className="profile-info">
-              <p className="profile-label">Full Name</p>
-              <p className="profile-value">
-                {customer?.first_name} {customer?.last_name}
-              </p>
+              <p className="profile-label">First Name</p>
+              <p className="profile-value">{customer?.first_name}</p>
+
+              <p className="profile-label">Last Name</p>
+              <p className="profile-value">{customer?.last_name}</p>
 
               <p className="profile-label">Email</p>
               <p className="profile-value">{customer?.email}</p>
 
-              <p className="profile-label">Phone Number</p>
+              <p className="profile-label">Phone</p>
               <p className="profile-value">{customer?.phone || "Not set"}</p>
 
               <p className="profile-label">Address</p>
               <p className="profile-value">{customer?.address || "Not set"}</p>
-
-              {/* <p className="profile-label">Joined at</p>
-            <p className="profile-value">
-              {customer?.created_at
-                ? new Date(customer.created_at).toDateString()
-                : "Unknown"}
-            </p> */}
             </div>
 
-            {/* Buttons */}
             <div className="profile-actions">
               <Button
                 name="Edit Profile"
@@ -105,20 +94,21 @@ const ProfilePage: React.FC = () => {
                 onClick={() => setIsModalOpen(true)}
               />
 
+              {/* 🔥 Updated Logout Button */}
               <Button
                 name="Logout"
                 backgroundColor="#846D29"
                 color="white"
                 className="profile-btn"
-                onClick={() => dispatch(logout())}
+                onClick={handleLogout}
               />
             </div>
           </div>
 
-          {/* Edit Modal */}
           <ProfileModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
+            customer={customer}
           />
         </div>
 

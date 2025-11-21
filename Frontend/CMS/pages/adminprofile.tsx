@@ -1,27 +1,27 @@
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import type { RootState } from "../../store";
+import { logout } from "../../src/storeSlices/adminSlice";
+import { useNavigate } from "react-router-dom";
 
 import Button from "../../src/components/Button";
 import ProfileModal from "../../src/components/profileModal";
 import "../../src/AdminProfile.css";
 import Footer from "../../src/components/Footer";
-import { Link } from "react-router-dom";
 import PrivatNav from "../../src/components/PrivatNav";
 
-export default function Adminprofile() {
-  // Modal state
+export default function AdminProfile() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // Redux logged-in admin
+  const admin = useSelector((state: RootState) => state.admin.admin);
+
+  // Edit modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Profile picture state
   const [profilePic, setProfilePic] = useState<string | null>(null);
-
-  // Fake user data
-  const user = {
-    first_Name: " ",
-    last_Name: "",
-    email: "",
-    password:"",
-    joined: "",
-  };
 
   // Upload handler
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,15 +32,18 @@ export default function Adminprofile() {
     }
   };
 
+  // 🔥 Logout handler
+  const handleLogout = () => {
+    dispatch(logout()); // clears redux + localStorage
+    navigate("/"); // redirect to login/landing
+  };
+
   return (
     <div>
-      <div>
-        <PrivatNav />
-      </div>
+      <PrivatNav />
 
       <div className="page-container">
         <div className="profile-wrapper">
-          {/* Main content */}
           <div className="profile-content">
             {/* Profile Image */}
             <div className="profile-image-container">
@@ -60,21 +63,19 @@ export default function Adminprofile() {
               />
             </div>
 
-            {/* User Information */}
+            {/* Admin Info */}
             <div className="profile-info">
-              <p className="profile-label">First_Name</p>
-              <p className="profile-value">{user.first_Name}</p>
-              <p className="profile-label">Last_Name</p>
-              <p className="profile-value">{user.last_Name}</p>
+              <p className="profile-label">First Name</p>
+              <p className="profile-value">{admin?.first_name || "-"}</p>
+
+              <p className="profile-label">Last Name</p>
+              <p className="profile-value">{admin?.last_name || "-"}</p>
 
               <p className="profile-label">Email</p>
-              <p className="profile-value">{user.email}</p>
+              <p className="profile-value">{admin?.email || "-"}</p>
 
-              <p className="profile-label">Password</p>
-              <p className="profile-value">{user.password}</p>
-
-              <p className="profile-label">Joined at:</p>
-              <p className="profile-value">{user.joined}</p>
+              <p className="profile-label">Phone</p>
+              <p className="profile-value">{admin?.phone || "-"}</p>
             </div>
 
             {/* Buttons */}
@@ -86,27 +87,27 @@ export default function Adminprofile() {
                 className="profile-btn"
                 onClick={() => setIsModalOpen(true)}
               />
-              <Link to="/" className="link-reset">
-                <Button
-                  name="Logout"
-                  backgroundColor="#846D29"
-                  color="white"
-                  className="profile-btn"
-                />
-              </Link>
+
+              {/* 🔥 FIXED LOGOUT BUTTON */}
+              <Button
+                name="Logout"
+                backgroundColor="#846D29"
+                color="white"
+                className="profile-btn"
+                onClick={handleLogout}
+              />
             </div>
           </div>
-
-          {/* Edit Modal */}
-          <ProfileModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-          />
         </div>
 
-        <div>
-          <Footer />
-        </div>
+        {/* Edit Modal */}
+        <ProfileModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          customer={admin}
+        />
+
+        <Footer />
       </div>
     </div>
   );
