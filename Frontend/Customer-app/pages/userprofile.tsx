@@ -108,7 +108,8 @@ const ProfilePage: React.FC = () => {
           <ProfileModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
-            customer={customer}
+            user={customer}
+            userType="customer"
           />
         </div>
 

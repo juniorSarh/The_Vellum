@@ -1,42 +1,22 @@
 import { useState } from "react";
-<<<<<<< HEAD
-import { useAppSelector, useAppDispatch } from "../../src/storeSlices/hooks";
-import { logout } from "../../src/storeSlices/adminSlice";
-=======
-import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../store";
 import { logout } from "../../src/storeSlices/adminSlice";
 import { useNavigate } from "react-router-dom";
->>>>>>> 3377c73867d1d95fe20b3e2aa81f8339cab8eb4b
-
 import Button from "../../src/components/Button";
 import ProfileModal from "../../src/components/profileModal";
 import "../../src/AdminProfile.css";
 import Footer from "../../src/components/Footer";
-<<<<<<< HEAD
-import { Link, useNavigate } from "react-router-dom";
 import PrivatNav from "../../src/components/PrivatNav";
+import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
 
-export default function Adminprofile() {
+export default function AdminProfile() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  // Read admin from Redux store
-  const admin = useAppSelector((state) => state.admin.admin);
-
-  // Modal state
-=======
-import PrivatNav from "../../src/components/PrivatNav";
-
-export default function AdminProfile() {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
   // Redux logged-in admin
-  const admin = useSelector((state: RootState) => state.admin.admin);
+  const admin = useAppSelector((state: RootState) => state.admin.admin);
 
   // Edit modal state
->>>>>>> 3377c73867d1d95fe20b3e2aa81f8339cab8eb4b
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Profile picture state
@@ -51,17 +31,10 @@ export default function AdminProfile() {
     }
   };
 
-<<<<<<< HEAD
-  // Logout handler
-  const handleLogout = () => {
-    dispatch(logout()); // clear Redux + localStorage
-    navigate("/"); // redirect to login/home page
-=======
   // 🔥 Logout handler
   const handleLogout = () => {
     dispatch(logout()); // clears redux + localStorage
     navigate("/"); // redirect to login/landing
->>>>>>> 3377c73867d1d95fe20b3e2aa81f8339cab8eb4b
   };
 
   return (
@@ -92,21 +65,6 @@ export default function AdminProfile() {
             {/* Admin Info */}
             <div className="profile-info">
               <p className="profile-label">First Name</p>
-<<<<<<< HEAD
-              <p className="profile-value">{admin?.first_name || "—"}</p>
-
-              <p className="profile-label">Last Name</p>
-              <p className="profile-value">{admin?.last_name || "—"}</p>
-
-              <p className="profile-label">Email</p>
-              <p className="profile-value">{admin?.email || "—"}</p>
-
-              <p className="profile-label">Phone</p>
-              <p className="profile-value">{admin?.phone || "—"}</p>
-
-              <p className="profile-label">Address</p>
-              <p className="profile-value">{admin?.address || "—"}</p>
-=======
               <p className="profile-value">{admin?.first_name || "-"}</p>
 
               <p className="profile-label">Last Name</p>
@@ -117,7 +75,9 @@ export default function AdminProfile() {
 
               <p className="profile-label">Phone</p>
               <p className="profile-value">{admin?.phone || "-"}</p>
->>>>>>> 3377c73867d1d95fe20b3e2aa81f8339cab8eb4b
+
+              <p className="profile-label">Address</p>
+              <p className="profile-value">{admin?.address|| "-"}</p>
             </div>
 
             {/* Buttons */}
@@ -130,10 +90,7 @@ export default function AdminProfile() {
                 onClick={() => setIsModalOpen(true)}
               />
 
-<<<<<<< HEAD
-=======
               {/* 🔥 FIXED LOGOUT BUTTON */}
->>>>>>> 3377c73867d1d95fe20b3e2aa81f8339cab8eb4b
               <Button
                 name="Logout"
                 backgroundColor="#846D29"
@@ -145,16 +102,14 @@ export default function AdminProfile() {
           </div>
         </div>
 
-<<<<<<< HEAD
-=======
         {/* Edit Modal */}
         <ProfileModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          customer={admin}
+          user={admin}
+          userType="admin"
         />
 
->>>>>>> 3377c73867d1d95fe20b3e2aa81f8339cab8eb4b
         <Footer />
       </div>
     </div>
