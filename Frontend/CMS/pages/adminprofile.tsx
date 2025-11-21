@@ -16,11 +16,11 @@ export default function Adminprofile() {
 
   // Fake user data
   const user = {
-    first_Name: "Zack ",
-    last_Name: "Snyder",
-    email: "zack@gmail.com",
-    password: 12345,
-    joined: "January 15, 2024",
+    first_Name: " ",
+    last_Name: "",
+    email: "",
+    password:"",
+    joined: "",
   };
 
   // Upload handler
