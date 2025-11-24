@@ -47,6 +47,7 @@ export default function Landing() {
               name="The Vellum"
               location="KwaZulu-Natal, South Africa"
               price={2000}
+              isLoggedIn={false}
               image="../src/assets/images.jpg"
               />
           ))}

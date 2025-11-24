@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 export default function Checkout() {
   return (
     <div className="checkout-container">
-        <PrivatNav />
+      <PrivatNav />
 
       <div className="checkout-content">
         {/* TOP SECTION: IMAGE + HOTEL DETAILS */}
@@ -37,39 +37,72 @@ export default function Checkout() {
           <form className="form">
             {/* COLUMN 1 */}
             <div className="form-column">
-              <Input type="name" placeholder="Enter your Name" label="Name" />
               <Input
-                type="surname"
-                placeholder="Enter your Surname"
-                label="Surname"
+                type="name"
+                placeholder="Enter your Name"
+                label="Name"
+                onChange={() => {}}
+                value=""
+              />
+              <Input
+                placeholder="Enter Name & Surname"
+                label="Name & Surname"
+                value=""
+                onChange={() => {}}
               />
               <Input
                 type="email"
                 placeholder="Please Provide Email"
                 label="Email"
+                value=""
+                onChange={() => {}}
               />
               <Input
                 label="Number of Rooms"
                 type="number"
-                placeholder="Number of Rooms"
+                value=""
+                onChange={() => {}}
               />
               <Input
                 label="Number of People"
                 type="number"
-                placeholder="Number of People"
+                value=""
+                onChange={() => {}}
               />
             </div>
 
             {/* ROW 1 */}
             <div className="form-row">
-              <Input label="ID Number" placeholder="Please Enter ID Number" />
-              <Input label="Check-in Time" type="time" placeholder="Time" />
+              <Input
+                label="ID Number"
+                placeholder="Please Enter ID Number"
+                value=""
+                onChange={() => {}}
+              />
+
+              <Input
+                placeholder="Check-in Time"
+                label=""
+                type="time"
+                value="12:00"
+                onChange={() => {}}
+              />
             </div>
 
             {/* ROW 2 */}
             <div className="form-row">
-              <Input label="Check-in Date" type="date" />
-              <Input label="Check-out Date" type="date" />
+              <Input
+                label="Check-in Date"
+                type="date"
+                value=""
+                onChange={() => {}}
+              />
+              <Input
+                label="Check-out Date"
+                type="date"
+                value=""
+                onChange={() => {}}
+              />
             </div>
           </form>
 
