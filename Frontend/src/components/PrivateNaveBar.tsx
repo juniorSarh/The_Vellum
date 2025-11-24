@@ -17,7 +17,7 @@ const NavBar = () => {
 
       {/* Right Section */}
       <div className="navbar-right">
-        <Link to="/register" className="link-reset">
+        <Link to="/login" className="link-reset">
           <Button
             name="Logout"
             color="black"
@@ -26,7 +26,7 @@ const NavBar = () => {
           />
         </Link>
 
-        <Link to="/login" className="link-reset">
+        <Link to="/user-profile" className="link-reset">
           <Button
             icon={<FaUserCircle />}
             color="black"
