@@ -4,22 +4,27 @@
   box-sizing: border-box;
 }
 html,
-body{
+body {
   width: 100%;
   height: 100%;
 }
-.resBody{
-   padding: 1.3rem;
-   min-height: 100vh;
- 
+
+.resBody {
+  padding: 1.3rem;
+  min-height: 100vh;
 }
 
-.SearchBar{
-padding-top: 0.8rem;
+.SearchBar {
+  padding-top: 0.8rem;
 }
-.Title{
-    padding-top: 0.8rem;
+
+.Title {
+  padding-top: 0.8rem;
 }
-.List{
-    padding-top: 0.8rem;
+
+.List {
+  display: flex;
+  flex-direction: column;
+  padding-top: 0.8rem;
+  gap: 10px;
 }

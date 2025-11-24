@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import SearchBar from "../../src/components/searchBar";
 import ReservationCard from "../../src/components/reservationCard";
