@@ -7,12 +7,12 @@ import "../../src/addAdminPage.css";
 import Footer from "../../src/components/Footer";
 import PrivatNav from "../../src/components/PrivatNav";
 import type { RootState, AppDispatch } from "../../store";
-import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Addadmin = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  // ---------------- STATE ----------------
   const [form, setForm] = useState({
     first_name: "",
     last_name: "",
@@ -20,21 +20,62 @@ const Addadmin = () => {
     password: "",
   });
 
-  const { loading, error } = useSelector((state: RootState) => state.admin);
+  const [localError, setLocalError] = useState<string | null>(null);
 
-  // ---------------- HANDLERS ----------------
+  const { loading } = useSelector((state: RootState) => state.admin);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    dispatch(registerAdmin(form));
+    const { first_name, last_name, email, password } = form;
+
+    if (!first_name || !last_name || !email || !password) {
+      setLocalError("Some fields are required");
+      toast.error("Some fields are required");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setLocalError("Please enter a valid email address");
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    if (password.length < 5) {
+      setLocalError("Password must have at least 5 characters");
+      toast.error("Password must have at least 5 characters");
+      return;
+    }
+
+    setLocalError(null);
+
+    const res = await dispatch(registerAdmin(form));
+
+    if (res.meta.requestStatus === "fulfilled") {
+      toast.success("Admin successfully added!");
+
+      setForm({
+        first_name: "",
+        last_name: "",
+        email: "",
+        password: "",
+      });
+    } else {
+      const backendError =
+        typeof res.payload === "string" ? res.payload : "Failed to add admin";
+      toast.error(backendError);
+    }
   };
 
   return (
     <div>
+      <ToastContainer position="top-center" />
+
       <PrivatNav />
 
       <div className="addminContainer">
@@ -74,8 +115,6 @@ const Addadmin = () => {
             value={form.password}
             onChange={handleChange}
           />
-          
-          {error && <p className="error">{error}</p>}
 
           <Button
             name={loading ? "Adding..." : "Add"}
@@ -83,7 +122,6 @@ const Addadmin = () => {
             color="white"
             className="AdminBtn"
           />
-
         </form>
       </div>
 
