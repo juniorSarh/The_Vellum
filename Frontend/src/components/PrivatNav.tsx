@@ -55,9 +55,9 @@ const PrivatNav = () => {
         {/* If CUSTOMER logged in */}
         {customer && (
           <>
-            <Link to="/home">
+            <Link to="/User-profile">
               <Button
-                name="Home"
+                name="Profile"
                 backgroundColor="white"
                 color="black"
                 className="nav-btn"

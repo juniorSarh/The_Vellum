@@ -1,0 +1,71 @@
+.home-page {
+  font-family: 'Poppins', sans-serif;
+}
+
+.nav{
+width: 100%;
+height: 5vh;
+}
+
+
+/* Hero Section */
+.hero-section {
+  height: 85vh;
+  background-image: url(../src/assets/hotel-1749602_1280.jpg);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.hero-overlay {
+  background: rgba(0,0,0,0.45);
+  color: white;
+  text-align: center;
+  padding: 40px;
+  border-radius: 20px;
+}
+
+.hero-overlay h1 {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+.hero-overlay p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.hero-overlay .searchbar {
+  margin-top: 15px;
+}
+
+/* Featured Hotels Section */
+.featured-hotels {
+  padding: 50px 30px;
+  text-align: center;
+}
+
+.featured-hotels h2 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+}
+
+.hotel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 25px;
+  padding: 10px;
+}
+
+.hotel-grid > * {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.hotel-grid > *:hover {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.25);
+}

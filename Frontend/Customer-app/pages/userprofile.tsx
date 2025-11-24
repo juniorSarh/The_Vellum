@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
 import { logout } from "../../src/storeSlices/customerSlice";
 import PrivatNav from "../../src/components/PrivatNav";
 import { useNavigate } from "react-router-dom"; // 👈 Added
+import { Link } from "react-router-dom";
 
 const ProfilePage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -45,9 +46,13 @@ const ProfilePage: React.FC = () => {
             <div className="sidebar-logo">
               <img src={logo} alt="" />
             </div>
+            <Link to="/favourites">
+              <button className="sidebar-option">Favorites</button>
+            </Link>
 
-            <button className="sidebar-option">Favorites</button>
-            <button className="sidebar-option">My Bookings</button>
+            <Link to="/booking-history">
+              <button className="sidebar-option">My Bookings</button>
+            </Link>
           </aside>
 
           <div className="profile-content">

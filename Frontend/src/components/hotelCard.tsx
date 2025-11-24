@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { FaHeart, FaRegHeart } from "react-icons/fa"; // using react-icons
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 import "./hotelCard.css";
 
 interface HotelCardProps {
@@ -7,7 +6,10 @@ interface HotelCardProps {
   name: string;
   location: string;
   price: number;
-  isLoggedIn: boolean;
+  isLoggedIn?: boolean;
+  isFavorite?: boolean;
+  onFavorite?: () => void;
+  onRemove?: () => void; // 👈 NEW
   onClick?: () => void;
 }
 
@@ -16,22 +18,31 @@ const HotelCard: React.FC<HotelCardProps> = ({
   name,
   location,
   price,
-  isLoggedIn,
+  isLoggedIn = false,
+  isFavorite = false,
+  onFavorite,
+  onRemove, // 👈 NEW
   onClick,
 }) => {
-  const [isFavorite, setIsFavorite] = useState(false);
-
-  const toggleFavorite = (e: React.MouseEvent) => {
-    e.stopPropagation(); // prevent triggering card onClick
-    setIsFavorite(!isFavorite);
-  };
-
   return (
     <div className="hotel-card" onClick={onClick}>
       <div className="hotel-image-container">
         <img src={image} alt={name} className="hotel-image" />
-         {isLoggedIn && (
-          <div className="favorite-icon" onClick={toggleFavorite}>
+
+        {isLoggedIn && onFavorite && (
+          <div
+            className="favorite-icon"
+            onClick={(e) => {
+              e.stopPropagation();
+
+              // 👇 If card is already favorite and we're on favorites page → remove it
+              if (isFavorite && onRemove) {
+                onRemove();
+              } else {
+                onFavorite();
+              }
+            }}
+          >
             {isFavorite ? (
               <FaHeart color="#EAC248" />
             ) : (
