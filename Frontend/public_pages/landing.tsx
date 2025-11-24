@@ -4,9 +4,11 @@ import Footer from "../src/components/Footer";
 import HotelCard from "../src/components/hotelCard";
 import SearchBar from "../src/components/searchBar";
 import "../src/Landing.css";
+import { useNavigate } from "react-router-dom";
 
 export default function Landing() {
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate()
 
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
@@ -49,6 +51,9 @@ export default function Landing() {
               price={2000}
               isLoggedIn={false}
               image="../src/assets/images.jpg"
+              onClick={() => {
+                navigate("/hotel")
+              }}
               />
           ))}
 

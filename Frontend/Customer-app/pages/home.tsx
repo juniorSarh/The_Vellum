@@ -4,9 +4,11 @@ import HotelCard from "../../src/components/hotelCard";
 import SearchBar from "../../src/components/searchBar";
 import PrivateNavBar from "../../src/components/PrivateNaveBar";
 import "../../src/Landing.css";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate()
 
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
@@ -49,6 +51,9 @@ export default function Home() {
               price={2000}
               isLoggedIn={true}
               image="../src/assets/images.jpg"
+              onClick={() => {
+                navigate("/hotel")
+              }}
               />
           ))}
 
