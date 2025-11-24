@@ -3,23 +3,30 @@
   margin: 0;
   box-sizing: border-box;
 }
+
 html,
 body {
   width: 100%;
   height: 100%;
+  font-family: Arial, sans-serif;
 }
 
 .resBody {
   padding: 1.3rem;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .SearchBar {
   padding-top: 0.8rem;
+  width: 100%;
 }
 
 .Title {
   padding-top: 0.8rem;
+  font-size: 1.5rem;
+  text-align: center;
 }
 
 .List {
@@ -27,4 +34,38 @@ body {
   flex-direction: column;
   padding-top: 0.8rem;
   gap: 10px;
+}
+
+/* Make the layout more flexible on smaller screens */
+@media (max-width: 768px) {
+  .resBody {
+    padding: 1rem;
+  }
+
+  .Title {
+    font-size: 1.3rem;
+  }
+
+  .List {
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .resBody {
+    padding: 0.8rem;
+  }
+
+  .Title {
+    font-size: 1.1rem;
+  }
+
+  .List {
+    gap: 6px;
+  }
+
+  .SearchBar input {
+    width: 100%;
+    font-size: 0.9rem;
+  }
 }
