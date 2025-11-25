@@ -9,6 +9,7 @@ export interface Customer {
   last_name: string;
   phone?: string;
   address?: string;
+  image?: string
 }
 
 interface CustomerState {
