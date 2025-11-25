@@ -6,6 +6,7 @@ import { testConnection } from "./src/config/db";
 // Routers
 import customerRouter from "./src/routes/customer.routes";
 import adminRouter from "./src/routes/admin.routes";
+import bookingRoutes from "./src/routes/boooking.routes";
 
 // Services
 import { createCustomerTable } from "./src/services/customer.service";
@@ -22,6 +23,7 @@ app.use(express.json());
 // Routes
 app.use("/api/customers", customerRouter);
 app.use("/api/admins", adminRouter);
+app.use("/api/bookings", bookingRoutes);
 
 // Health check endpoint
 app.get("/", (req, res) => {
@@ -44,6 +46,13 @@ app.get("/", (req, res) => {
         getOne: "GET /api/admins/:id",
         update: "PATCH /api/admins/:id",
         deactivate: "PATCH /api/admins/:id/deactivate",
+      },
+      booking: {
+        create: "POST /api/bookings",
+        getAll: "GET /api/bookings",
+        getOne: "GET /api/bookings/:id",
+        update: "PUT /api/bookings/:id",
+        delete: "DELETE /api/bookings/:id",
       },
     },
   });
@@ -80,6 +89,13 @@ async function startServer() {
       console.log(`➡ GET     /api/admins/:id`);
       console.log(`➡ PATCH   /api/admins/:id`);
       console.log(`➡ PATCH   /api/admins/:id/deactivate\n`);
+
+      console.log("📌 Booking Endpoints:");
+      console.log(`➡ POST    /api/bookings`);
+      console.log(`➡ GET     /api/bookings`);
+      console.log(`➡ GET     /api/bookings/:id`);
+      console.log(`➡ PUT     /api/bookings/:id`);
+      console.log(`➡ DELETE  /api/bookings/:id`);
     });
   } catch (error) {
     console.error("❌ Failed to start server:", error);
