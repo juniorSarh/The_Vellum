@@ -6,11 +6,13 @@ import { testConnection } from "./src/config/db";
 // Routers
 import customerRouter from "./src/routes/customer.routes";
 import adminRouter from "./src/routes/admin.routes";
-import bookingRoutes from "./src/routes/boooking.routes";
+import hotelRouter from "./src/routes/hotel.routes";
+import bookingRouter from "./src/routes/boooking.routes";
 
 // Services
 import { createCustomerTable } from "./src/services/customer.service";
 import { createAdminTable } from "./src/services/admin.service";
+import { createHotelTable } from "./src/services/hotel.services";
 
 // Initialize Express app
 const app = express();
@@ -23,7 +25,8 @@ app.use(express.json());
 // Routes
 app.use("/api/customers", customerRouter);
 app.use("/api/admins", adminRouter);
-app.use("/api/bookings", bookingRoutes);
+app.use("/api/hotels", hotelRouter);
+app.use("/api/bookings", bookingRouter);
 
 // Health check endpoint
 app.get("/", (req, res) => {
@@ -46,6 +49,14 @@ app.get("/", (req, res) => {
         getOne: "GET /api/admins/:id",
         update: "PATCH /api/admins/:id",
         deactivate: "PATCH /api/admins/:id/deactivate",
+      },
+      hotel: {
+        getAll: "GET /api/hotels",
+        getByAdmin: "GET /api/hotels?adminId={admin_id}",
+        getOne: "GET /api/hotels/:id",
+        create: "POST /api/hotels",
+        update: "PUT /api/hotels/:id",
+        delete: "DELETE /api/hotels/:id",
       },
       booking: {
         create: "POST /api/bookings",
@@ -70,10 +81,12 @@ async function startServer() {
     // Create required tables
     await createCustomerTable();
     await createAdminTable();
+    await createHotelTable();
 
     // Start the server
     app.listen(port, () => {
       console.log(`\n🚀 Server is running at: http://localhost:${port}\n`);
+
       console.log("📌 Customer Endpoints:");
       console.log(`➡ POST    /api/customers/register`);
       console.log(`➡ POST    /api/customers/login`);
@@ -90,12 +103,20 @@ async function startServer() {
       console.log(`➡ PATCH   /api/admins/:id`);
       console.log(`➡ PATCH   /api/admins/:id/deactivate\n`);
 
+      console.log("📌 Hotel Endpoints:");
+      console.log(`➡ GET     /api/hotels`);
+      console.log(`➡ GET     /api/hotels?adminId={admin_id}`);
+      console.log(`➡ GET     /api/hotels/:id`);
+      console.log(`➡ POST    /api/hotels`);
+      console.log(`➡ PUT     /api/hotels/:id`);
+      console.log(`➡ DELETE  /api/hotels/:id\n`);
+
       console.log("📌 Booking Endpoints:");
       console.log(`➡ POST    /api/bookings`);
       console.log(`➡ GET     /api/bookings`);
       console.log(`➡ GET     /api/bookings/:id`);
       console.log(`➡ PUT     /api/bookings/:id`);
-      console.log(`➡ DELETE  /api/bookings/:id`);
+      console.log(`➡ DELETE  /api/bookings/:id\n`);
     });
   } catch (error) {
     console.error("❌ Failed to start server:", error);
