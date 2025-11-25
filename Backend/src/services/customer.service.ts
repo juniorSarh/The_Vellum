@@ -20,7 +20,7 @@ export const createCustomerTable = async () => {
       password_hash VARCHAR(255),
       phone VARCHAR(20),
       address TEXT,
-      image VARCHAR(500)
+      image VARCHAR(500),
       is_active BOOLEAN DEFAULT true,
       last_login TIMESTAMP WITH TIME ZONE,
       created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
