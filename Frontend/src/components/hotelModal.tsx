@@ -1,23 +1,36 @@
-// src/components/HotelForm.tsx
+// src/components/hotelModal.tsx
 import { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../storeSlices/hooks"; // 🔁 adjust path if needed
-import { addhotel } from "../storeSlices/hotelSlice";
+import { useAppDispatch, useAppSelector } from "../storeSlices/hooks";
+import { addhotel, updatehotel, type Hotel } from "../storeSlices/hotelSlice";
 import "../HotelForm.css";
 
 interface HotelFormProps {
-  adminId?: number; // e.g. logged-in admin's ID
-  onClose?: () => void; // optional callback to close modal on success
+  adminId?: number;
+  onClose?: () => void;
+  mode?: "add" | "edit";
+  initialHotel?: Hotel | null;
 }
 
-function HotelForm({ adminId, onClose }: HotelFormProps) {
+function HotelForm({
+  adminId,
+  onClose,
+  mode = "add",
+  initialHotel = null,
+}: HotelFormProps) {
   const dispatch = useAppDispatch();
   const { loading, error } = useAppSelector((state) => state.hotel);
 
-  const [name, setName] = useState("");
-  const [location, setLocation] = useState("");
-  const [starRating, setStarRating] = useState<number | "">("");
-  const [description, setDescription] = useState("");
-  const [imagesInput, setImagesInput] = useState(""); // comma-separated string
+  const [name, setName] = useState(initialHotel?.name ?? "");
+  const [location, setLocation] = useState(initialHotel?.location ?? "");
+  const [starRating, setStarRating] = useState<number | "">(
+    initialHotel?.star_rating ?? ""
+  );
+  const [description, setDescription] = useState(
+    initialHotel?.description ?? ""
+  );
+  const [imagesInput, setImagesInput] = useState(
+    initialHotel?.images?.join(", ") ?? ""
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,27 +41,45 @@ function HotelForm({ adminId, onClose }: HotelFormProps) {
         : [];
 
     try {
-      await dispatch(
-        addhotel({
-          admin_id: adminId ?? null,
-          name,
-          location,
-          star_rating: starRating === "" ? null : Number(starRating),
-          description,
-          images,
-        })
-      ).unwrap();
+      if (mode === "edit" && initialHotel?.hotel_id) {
+        // EDIT EXISTING HOTEL
+        await dispatch(
+          updatehotel({
+            id: initialHotel.hotel_id,
+            updates: {
+              admin_id: adminId ?? initialHotel.admin_id ?? null,
+              name,
+              location,
+              star_rating: starRating === "" ? null : Number(starRating),
+              description,
+              images,
+            },
+          })
+        ).unwrap();
+      } else {
+        // ADD NEW HOTEL
+        await dispatch(
+          addhotel({
+            admin_id: adminId ?? null,
+            name,
+            location,
+            star_rating: starRating === "" ? null : Number(starRating),
+            description,
+            images,
+          })
+        ).unwrap();
 
-      // Clear form on success
-      setName("");
-      setLocation("");
-      setStarRating("");
-      setDescription("");
-      setImagesInput("");
+        // Clear form on successful add
+        setName("");
+        setLocation("");
+        setStarRating("");
+        setDescription("");
+        setImagesInput("");
+      }
 
       if (onClose) onClose();
     } catch {
-      // error message is already stored in Redux (state.hotels.error)
+      // error already set in Redux
     }
   };
 
@@ -116,7 +147,13 @@ function HotelForm({ adminId, onClose }: HotelFormProps) {
 
       <div className="form-actions">
         <button type="submit" disabled={loading}>
-          {loading ? "Saving..." : "Add Hotel"}
+          {loading
+            ? mode === "edit"
+              ? "Saving..."
+              : "Saving..."
+            : mode === "edit"
+            ? "Save Changes"
+            : "Add Hotel"}
         </button>
         {onClose && (
           <button
