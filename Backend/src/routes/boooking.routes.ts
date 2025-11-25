@@ -7,12 +7,12 @@ import {
   deleteBookingController,
 } from "../controllers/booking.controller";
 
-const router = Router();
+const bookingrouter = Router();
 
-router.get("/", getAllBookingsController); // Get all bookings
-router.get("/:id", getBookingByIdController); // Get booking by ID
-router.post("/", createBookingController); // Create new booking
-router.put("/:id", updateBookingController); // Update booking
-router.delete("/:id", deleteBookingController); // Delete booking
+bookingrouter.get("/", getAllBookingsController); // Get all bookings
+bookingrouter.get("/:id", getBookingByIdController); // Get booking by ID
+bookingrouter.post("/", createBookingController); // Create new booking
+bookingrouter.put("/:id", updateBookingController); // Update booking
+bookingrouter.delete("/:id", deleteBookingController); // Delete booking
 
-export default router;
+export default bookingrouter;

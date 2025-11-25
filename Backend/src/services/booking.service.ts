@@ -8,7 +8,7 @@ export const createBookingsTable = async () => {
   await sql`
     CREATE TABLE IF NOT EXISTS bookings (
       booking_id SERIAL PRIMARY KEY,
-      user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+      customer_id INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
       room_id INTEGER NOT NULL REFERENCES rooms(room_id) ON DELETE CASCADE,
       check_in_date DATE NOT NULL,
       check_out_date DATE NOT NULL,
@@ -24,7 +24,7 @@ export const createBookingsTable = async () => {
 // ======================================================
 export const createBooking = async (data: BookingCreate) => {
   const {
-    user_id,
+    customer_id,
     room_id,
     check_in_date,
     check_out_date,
@@ -35,11 +35,11 @@ export const createBooking = async (data: BookingCreate) => {
 
   const result = await sql`
     INSERT INTO bookings (
-      user_id, room_id, check_in_date, check_out_date,
+      customer_id, room_id, check_in_date, check_out_date,
       status, additional_requests, total_cost
     )
     VALUES (
-      ${user_id}, ${room_id}, ${check_in_date}, ${check_out_date},
+      ${customer_id}, ${room_id}, ${check_in_date}, ${check_out_date},
       ${status}, ${additional_requests}, ${total_cost}
     )
     RETURNING *;
