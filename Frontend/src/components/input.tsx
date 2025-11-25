@@ -1,5 +1,5 @@
-// src/components/input.tsx
 import React, { type ChangeEvent } from "react";
+import "../input.css";
 
 interface InputProps {
   label: string;
@@ -26,7 +26,7 @@ const Input: React.FC<InputProps> = ({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        name={name} // ✅ Pass the name to the input element
+        name={name} 
       />
     </div>
   );

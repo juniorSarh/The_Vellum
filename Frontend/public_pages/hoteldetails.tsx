@@ -3,7 +3,7 @@ import NavBar from '../src/components/navBar'
 import Button from '../src/components/Button'
 import Footer from '../src/components/Footer'
 import { FaArrowLeft, FaRegHeart, FaShare, FaMapMarkerAlt } from 'react-icons/fa'
-//import '../../src/HotelDetails.css'
+import '../src/assets/css/hotelDetails.css'
 // import hotelImage from '../assets/hotel.jpg'
 
 
@@ -15,12 +15,13 @@ export default function HotelDetails() {
         <NavBar />
       </div>
 
-      <Button icon={<FaArrowLeft />} backgroundColor="white" color="black" />
+      
 
       {/* MAIN WRAPPER */}
       <div className="hotel-details-wrapper">
         {/* LEFT COLUMN */}
         <div className="hotel-left">
+          <Button icon={<FaArrowLeft />} backgroundColor="white" color="black" />
           <h1 className="hotel-title">Hotel Name</h1>
           <p className="hotel-location">Location Name</p>
 

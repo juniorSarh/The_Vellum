@@ -4,7 +4,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,6 +15,7 @@
   width: 90%;
   max-width: 380px;
   background: #fff;
+  color: black;
   border-radius: 12px;
   padding: 24px;
   animation: fadeIn 0.2s ease-in-out;
@@ -41,8 +42,71 @@
   cursor: pointer;
 }
 
-@keyframes fadeIn {
-  from { transform: scale(0.95); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+.price-select {
+  padding: 0.65rem 1rem;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease-in-out;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #fff;
 }
- 
+
+.price-select:focus {
+  border-color: #ccc;
+  box-shadow: 0 0 0 3px #ccc;
+}
+
+.price-select.error {
+  border-color: #ccc;
+  box-shadow: 0 0 0 3px #ccc;
+}
+
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.input-wrapper label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.input-wrapper select {
+  padding: 0.65rem 1rem;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease-in-out;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #fff;
+}
+
+.input-wrapper select:focus {
+  border-color: #ccc;
+  box-shadow: 0 0 0 3px #ccc;
+}
+
+.input-wrapper select.error {
+  border-color: #ccc;
+  box-shadow: 0 0 0 3px #ccc;
+}
+
+@keyframes fadeIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

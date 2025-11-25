@@ -1,6 +1,7 @@
 import React from "react";
 import Button from "./Button";
 import "../filerModal.css";
+import Input from "./input";
 
 interface FilterModalProps {
   isOpen: boolean;
@@ -53,22 +54,22 @@ const FilterModal = ({ isOpen, onClose, onApply }: FilterModalProps) => {
         <div className="input-wrapper">
           <label className="input-label">Value</label>
           {selectedFilterType === "date" && (
-            <input
-              type="date"
-              className="input-field"
-              value={filterValue}
-              onChange={(e) => setFilterValue(e.target.value)}
-            />
+            <Input
+                label="Check-in Date"
+                type="date"
+                value={filterValue}
+                onChange={() => {}}
+              />
           )}
 
           {selectedFilterType === "location" && (
-            <input
-              type="text"
-              className="input-field"
-              placeholder="Enter location"
-              value={filterValue}
-              onChange={(e) => setFilterValue(e.target.value)}
-            />
+            <Input
+                label="Location"
+                type="text"
+                placeholder="Enter location"
+                value={filterValue}
+                onChange={() => {}}
+              />
           )}
 
           {selectedFilterType === "price" && (
