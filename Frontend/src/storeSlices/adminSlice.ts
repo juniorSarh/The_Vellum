@@ -184,3 +184,198 @@ const adminSlice = createSlice({
 export const { logout } = adminSlice.actions;
 
 export default adminSlice.reducer;
+
+
+
+
+// import {
+//   createSlice,
+//   createAsyncThunk,
+//   type PayloadAction,
+// } from "@reduxjs/toolkit";
+
+// // -------------------- Types --------------------
+// export interface Admin {
+//   id?: number;
+//   email: string;
+//   first_name: string;
+//   last_name: string;
+//   phone?: string;
+//   address?: string;
+// }
+
+// interface AdminState {
+//   admin: Admin | null;
+//   loading: boolean;
+//   error: string | null;
+//   success: boolean; // ✅ New flag for action success
+// }
+
+// // Load admin from localStorage
+// const savedAdmin = localStorage.getItem("admin");
+
+// const initialState: AdminState = {
+//   admin: savedAdmin ? JSON.parse(savedAdmin) : null,
+//   loading: false,
+//   error: null,
+//   success: false, // initial
+// };
+
+// // ==============================================================
+// // 1️⃣ REGISTER ADMIN
+// // ==============================================================
+// export const registerAdmin = createAsyncThunk<
+//   Admin,
+//   { email: string; first_name: string; last_name: string; password: string },
+//   { rejectValue: string }
+// >("admin/register", async (data, { rejectWithValue }) => {
+//   try {
+//     const response = await fetch("http://localhost:4040/api/admins/register", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify(data),
+//     });
+
+//     const result = await response.json();
+//     if (!result.success) return rejectWithValue(result.error);
+
+//     return result.data as Admin;
+//   } catch {
+//     return rejectWithValue("Admin registration failed");
+//   }
+// });
+
+// // ==============================================================
+// // 2️⃣ LOGIN ADMIN
+// // ==============================================================
+// export const loginAdmin = createAsyncThunk<
+//   Admin,
+//   { email: string; password: string },
+//   { rejectValue: string }
+// >("admin/login", async (data, { rejectWithValue }) => {
+//   try {
+//     const response = await fetch("http://localhost:4040/api/admins/login", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify(data),
+//     });
+
+//     const result = await response.json();
+//     if (!result.success) return rejectWithValue(result.error);
+
+//     return result.data as Admin;
+//   } catch {
+//     return rejectWithValue("Admin login failed");
+//   }
+// });
+
+// // ==============================================================
+// // 3️⃣ UPDATE ADMIN PROFILE
+// // ==============================================================
+// export const updateAdminProfile = createAsyncThunk<
+//   Admin,
+//   { id: number; updates: Partial<Admin> },
+//   { rejectValue: string }
+// >("admin/updateProfile", async ({ id, updates }, { rejectWithValue }) => {
+//   try {
+//     const response = await fetch(`http://localhost:4040/api/admins/${id}`, {
+//       method: "PATCH",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify(updates),
+//     });
+
+//     const result = await response.json();
+//     if (!result.success) return rejectWithValue(result.error);
+
+//     return result.data as Admin;
+//   } catch {
+//     return rejectWithValue("Admin profile update failed");
+//   }
+// });
+
+// // ==============================================================
+// // SLICE
+// // ==============================================================
+// const adminSlice = createSlice({
+//   name: "admin",
+//   initialState,
+//   reducers: {
+//     logout(state) {
+//       state.admin = null;
+//       state.success = false;
+//       localStorage.removeItem("admin");
+//     },
+//     resetSuccess(state) {
+//       state.success = false; // ✅ Reset after showing toast
+//       state.error = null;
+//     },
+//   },
+//   extraReducers: (builder) => {
+//     // REGISTER
+//     builder.addCase(registerAdmin.pending, (state) => {
+//       state.loading = true;
+//       state.error = null;
+//       state.success = false;
+//     });
+//     builder.addCase(
+//       registerAdmin.fulfilled,
+//       (state, action: PayloadAction<Admin>) => {
+//         state.loading = false;
+//         state.admin = action.payload;
+//         state.success = true; // ✅ trigger toast
+//         localStorage.setItem("admin", JSON.stringify(action.payload));
+//       }
+//     );
+//     builder.addCase(registerAdmin.rejected, (state, action) => {
+//       state.loading = false;
+//       state.error = action.payload || "Admin registration error";
+//       state.success = false;
+//     });
+
+//     // LOGIN
+//     builder.addCase(loginAdmin.pending, (state) => {
+//       state.loading = true;
+//       state.error = null;
+//       state.success = false;
+//     });
+//     builder.addCase(
+//       loginAdmin.fulfilled,
+//       (state, action: PayloadAction<Admin>) => {
+//         state.loading = false;
+//         state.admin = action.payload;
+//         state.success = true; // ✅ trigger toast
+//         localStorage.setItem("admin", JSON.stringify(action.payload));
+//       }
+//     );
+//     builder.addCase(loginAdmin.rejected, (state, action) => {
+//       state.loading = false;
+//       state.error = action.payload || "Admin login error";
+//       state.success = false;
+//     });
+
+//     // UPDATE PROFILE
+//     builder.addCase(updateAdminProfile.pending, (state) => {
+//       state.loading = true;
+//       state.error = null;
+//       state.success = false;
+//     });
+//     builder.addCase(
+//       updateAdminProfile.fulfilled,
+//       (state, action: PayloadAction<Admin>) => {
+//         state.loading = false;
+//         state.admin = action.payload;
+//         state.success = true; // ✅ trigger toast
+//         localStorage.setItem("admin", JSON.stringify(action.payload));
+//       }
+//     );
+//     builder.addCase(updateAdminProfile.rejected, (state, action) => {
+//       state.loading = false;
+//       state.error = action.payload || "Admin update failed";
+//       state.success = false;
+//     });
+//   },
+// });
+
+// export const { logout, resetSuccess } = adminSlice.actions;
+
+// export default adminSlice.reducer;
