@@ -7,11 +7,13 @@ import { testConnection } from "./src/config/db";
 import customerRouter from "./src/routes/customer.routes";
 import adminRouter from "./src/routes/admin.routes";
 import hotelRouter from "./src/routes/hotel.routes";
+import roomRouter from "./src/routes/room.routes";
 
 // Services
 import { createCustomerTable } from "./src/services/customer.service";
 import { createAdminTable } from "./src/services/admin.service";
 import { createHotelTable } from "./src/services/hotel.services";
+import { createRoomTable } from "./src/services/room.service";
 
 // Initialize Express app
 const app = express();
@@ -25,6 +27,7 @@ app.use(express.json());
 app.use("/api/customers", customerRouter);
 app.use("/api/admins", adminRouter);
 app.use("/api/hotels", hotelRouter);
+app.use("/api/rooms", roomRouter);
 
 // Health check endpoint
 app.get("/", (req, res) => {
@@ -73,6 +76,7 @@ async function startServer() {
     await createCustomerTable();
     await createAdminTable();
     await createHotelTable();
+    await createRoomTable();
 
     // Start the server
     app.listen(port, () => {
@@ -101,6 +105,14 @@ async function startServer() {
       console.log(`➡ POST    /api/hotels`);
       console.log(`➡ PUT     /api/hotels/:id`);
       console.log(`➡ DELETE  /api/hotels/:id\n`);
+
+      console.log("📌 Room Endpoints:");
+      console.log(`➡ GET     /api/rooms`);
+      console.log(`➡ GET     /api/rooms?hotelId={hotel_id}`);
+      console.log(`➡ GET     /api/rooms/:id`);
+      console.log(`➡ POST    /api/rooms`);
+      console.log(`➡ PUT     /api/rooms/:id`);
+      console.log(`➡ DELETE  /api/rooms/:id\n`);
     });
   } catch (error) {
     console.error("❌ Failed to start server:", error);
