@@ -21,6 +21,7 @@ import AddHotel from "../CMS/pages/addhotel";
 import AddAdmin from "../CMS/pages/addadmin";
 import AdminProfile from "../CMS/pages/adminprofile";
 import Error404 from "../public_pages/error404";
+import PaymentDialog from "./components/paymentDialogue";
 
 // ---- ProtectedRoute wrapper ----
 type ProtectedRouteProps = {
@@ -40,34 +41,10 @@ function App() {
   const isAuthenticated = Boolean(user);
 
   return (
-    <Routes>
-      {/* ---------- Public routes ---------- */}
-      <Route path="/" element={<Landing />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/hotel" element={<HotelDetail />} />
+    <>
+        <PaymentDialog isOpen={true} onClose={() => {}} onSubmit={() => {}} />
 
-      {/* ---------- Protected routes ---------- */}
-      <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
-        <Route path="/home" element={<Home />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/payment" element={<Payment />} />
-        <Route path="/user-profile" element={<UserProfile />} />
-        <Route path="/favourites" element={<Favourites />} />
-        <Route path="/booking-history" element={<BookingHistory />} />
-
-        {/* Admin-style routes */}
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/reservations" element={<Reservations />} />
-        <Route path="/registered-users" element={<RegisteredUsers />} />
-        <Route path="/add-hotel" element={<AddHotel />} />
-        <Route path="/add-admin" element={<AddAdmin />} />
-        <Route path="/admin-profile" element={<AdminProfile />} />
-      </Route>
-
-      {/* Fallback */}
-      <Route path="*" element={<Error404 />} />
-    </Routes>
+    </>
   );
 }
 

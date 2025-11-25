@@ -1,0 +1,235 @@
+/* PaymentDialog.css
+   Moodboard / brand rules:
+   Primary: #000000 (black)
+   Accent:  #EAC248 (gold)
+   Secondary: #FFFFFF (white)
+   Optional: #4A90E2 (blue)
+   Cancel: #FF0000 (red)
+   Neutral: #6E6E6E (dark gray)
+   Fonts: Headings = Playfair Display / serif; Body = Inter / sans-serif
+*/
+
+/* Import Google fonts - include this in index.html or main css for app */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@400;600;700&display=swap');
+
+:root{
+  --primary: #000000;
+  --accent: #EAC248;
+  --secondary: #ffffff;
+  --optional: #4A90E2;
+  --cancel: #FF0000;
+  --neutral: #6E6E6E;
+
+  --radius: 10px;
+  --card-padding: 28px;
+  --gap: 18px;
+}
+
+/* Backdrop */
+.pv-backdrop{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: 24px;
+}
+
+/* Dialog card */
+.pv-dialog{
+  width: 100%;
+  max-width: 520px;
+  background: var(--secondary);
+  border-radius: 12px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.15);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: pv-appear 260ms ease;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+/* Header */
+.pv-header{
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 28px;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+  background: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.01));
+}
+
+.pv-logo{
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-family: 'Playfair Display', serif;
+  box-shadow: 0 4px 12px rgba(234,194,72,0.12);
+}
+
+.pv-title{
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  margin: 0;
+  color: var(--primary);
+  flex: 1;
+}
+
+/* Close button */
+.pv-close{
+  background: transparent;
+  border: none;
+  color: var(--neutral);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* Body / form */
+.pv-body{
+  padding: var(--card-padding);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Labels & inputs */
+.pv-label{
+  font-size: 13px;
+  color: var(--neutral);
+  font-family: 'Inter', sans-serif;
+  margin-bottom: 6px;
+}
+
+.pv-input{
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(0,0,0,0.12);
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: box-shadow .12s ease, border-color .12s ease;
+  background: #fff;
+  color: var(--primary);
+}
+
+.pv-input:focus{
+  border-color: rgba(234,194,72,0.8); /* gold highlight */
+  box-shadow: 0 6px 18px rgba(234,194,72,0.06);
+}
+
+/* Row layout for expiry + cvv */
+.pv-row{
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.pv-col{
+  flex: 1;
+}
+
+/* small column for cvv */
+.pv-col-small{
+  max-width: 160px;
+}
+
+/* Actions row */
+.pv-actions{
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Buttons */
+.pv-btn{
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  min-width: 140px;
+  transition: transform .08s ease, box-shadow .12s ease;
+}
+
+.pv-btn:disabled{
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pv-btn-primary{
+  background: var(--accent);
+  color: var(--secondary);
+}
+
+.pv-btn-primary:hover:not(:disabled){
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px rgba(0,0,0,0.12);
+}
+
+.pv-btn-cancel{
+  background: var(--cancel);
+  color: var(--secondary);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+/* Footer */
+.pv-footer{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: var(--secondary);
+  border-top: 1px solid rgba(0,0,0,0.04);
+  gap: 12px;
+}
+
+.pv-footer-left{
+  color: var(--primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+}
+
+.pv-footer-right{
+  display: flex;
+  gap: 8px;
+}
+
+.pv-icon-btn{
+  background: var(--primary);
+  color: var(--secondary);
+  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* small screens */
+@media (max-width: 540px){
+  .pv-dialog { max-width: 92%; }
+  .pv-title { font-size: 22px; }
+  .pv-row { flex-direction: column; }
+  .pv-col-small { max-width: 100%; }
+}
+
+/* Animation */
+@keyframes pv-appear {
+  from { opacity: 0; transform: translateY(8px) scale(.995); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
