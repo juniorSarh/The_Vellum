@@ -2,14 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import customerReducer from "./src/storeSlices/customerSlice";
 import adminReducer from "./src/storeSlices/adminSlice";
 import hotelReducer from "./src/storeSlices/hotelSlice";
-import bookingReducer from "./src/storeSlices/bookingSlice";
+import roomReducer from "./src/storeSlices/roomSlice";
 
 export const store = configureStore({
   reducer: {
     customer: customerReducer,
     admin : adminReducer,
     hotel: hotelReducer,
-    booking: bookingReducer,
+    room: roomReducer,
   },
 });
 

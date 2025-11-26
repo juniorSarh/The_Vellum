@@ -78,6 +78,18 @@ body {
   border: 1px solid #ddd;
 }
 
+/* Room Type select styling */
+.checkout-form .input-group select {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.checkout-form .input-group select option {
+  padding: 8px 12px;
+}
+
 /* FORM LAYOUT */
 .form-column {
   display: flex;

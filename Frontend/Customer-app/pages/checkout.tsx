@@ -85,16 +85,24 @@ export default function Checkout() {
         <div className="checkout-form">
           <form className="form" onSubmit={handleSubmit}>
             <div className="form-column">
+              <div className="input-group">
+                <label>Room Type</label>
+                <select name="room_type" defaultValue="">
+                  <option value="" disabled>
+                    Select Room Type
+                  </option>
+                  <option value="delux">delux</option>
+                  <option value="suite">suite</option>
+                  <option value="starndard">starndard</option>
+                </select>
+              </div>
+            </div>
+
+            {/* ROW 1 - removed unnecessary fields */}
+
+            {/* ROW 2: Keep only Check-in and Check-out dates */}
+            <div className="form-row">
               <Input
-                type="text"
-                placeholder="Additional Requests"
-                label="Additional Requests"
-                name="additional_requests"
-                value={formData.additional_requests}
-                onChange={handleChange}
-              />
-              <Input
-                placeholder="Check-in Date"
                 label="Check-in Date"
                 name="check_in_date"
                 type="date"
