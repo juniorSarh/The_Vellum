@@ -19,6 +19,7 @@ const createCustomerTable = async () => {
       password_hash VARCHAR(255),
       phone VARCHAR(20),
       address TEXT,
+      image VARCHAR(500),
       is_active BOOLEAN DEFAULT true,
       last_login TIMESTAMP WITH TIME ZONE,
       created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -31,10 +32,10 @@ exports.createCustomerTable = createCustomerTable;
 // CREATE CUSTOMER (NO PASSWORD)
 // ============================
 const createCustomer = async (customer) => {
-    const { email, first_name, last_name } = customer;
+    const { email, first_name, last_name, image } = customer;
     const result = await (0, db_1.sql) `
-    INSERT INTO customers (email, first_name, last_name)
-    VALUES (${email}, ${first_name}, ${last_name})
+    INSERT INTO customers (email, first_name, last_name, image)
+    VALUES (${email}, ${first_name}, ${last_name}, ${image})
     RETURNING id, email, first_name, last_name, created_at, updated_at;
   `;
     return result[0];
@@ -45,7 +46,7 @@ exports.createCustomer = createCustomer;
 // ============================
 const getCustomers = async () => {
     return (await (0, db_1.sql) `
-    SELECT id, email, first_name, last_name, phone, address, created_at, updated_at
+    SELECT id, email, first_name, last_name, phone, address, image, is_active, created_at, updated_at
     FROM customers
     ORDER BY created_at DESC;
   `);
@@ -56,7 +57,7 @@ exports.getCustomers = getCustomers;
 // ============================
 const getCustomerById = async (id) => {
     const result = await (0, db_1.sql) `
-    SELECT id, email, first_name, last_name, phone, address, is_active, last_login, created_at, updated_at
+    SELECT id, email, first_name, last_name, phone,  address, image, is_active, last_login, created_at, updated_at
     FROM customers
     WHERE id = ${id};
   `;
@@ -67,16 +68,17 @@ exports.getCustomerById = getCustomerById;
 // UPDATE BASIC CUSTOMER FIELDS
 // ============================
 const updateCustomer = async (id, customerData) => {
-    const { email, first_name, last_name } = customerData;
+    const { email, first_name, last_name, image } = customerData;
     const result = await (0, db_1.sql) `
     UPDATE customers
     SET
       email = COALESCE(${email}, email),
       first_name = COALESCE(${first_name}, first_name),
       last_name = COALESCE(${last_name}, last_name),
+      image = COALESCE(${image}, image),
       updated_at = CURRENT_TIMESTAMP
     WHERE id = ${id}
-    RETURNING id, email, first_name, last_name, created_at, updated_at;
+    RETURNING id, email, first_name, last_name, image, created_at, updated_at;
   `;
     return result[0];
 };
@@ -85,16 +87,16 @@ exports.updateCustomer = updateCustomer;
 // REGISTER CUSTOMER (WITH PASSWORD)
 // ============================
 const registerCustomer = async (customerData) => {
-    const { email, first_name, last_name, password, phone, address } = customerData;
+    const { email, first_name, last_name, password, phone, address, image } = customerData;
     const existing = await (0, exports.getCustomerByEmail)(email);
     if (existing) {
         throw new Error("Customer with this email already exists");
     }
     const password_hash = await bcryptjs_1.default.hash(password, 10);
     const result = await (0, db_1.sql) `
-    INSERT INTO customers (email, first_name, last_name, password_hash, phone, address)
-    VALUES (${email}, ${first_name}, ${last_name}, ${password_hash}, ${phone}, ${address})
-    RETURNING id, email, first_name, last_name, phone, address, is_active, created_at, updated_at;
+    INSERT INTO customers (email, first_name, last_name, password_hash, phone, address, image)
+    VALUES (${email}, ${first_name}, ${last_name}, ${password_hash}, ${phone}, ${address}, ${image})
+    RETURNING id, email, first_name, last_name, phone, address, image, is_active, created_at, updated_at;
   `;
     return result[0];
 };
@@ -124,7 +126,7 @@ exports.loginCustomer = loginCustomer;
 // UPDATE FULL CUSTOMER PROFILE
 // ============================
 const updateCustomerProfile = async (id, profileData) => {
-    const { first_name, last_name, phone, address } = profileData;
+    const { first_name, last_name, phone, address, image } = profileData;
     const result = await (0, db_1.sql) `
     UPDATE customers
     SET
@@ -132,9 +134,10 @@ const updateCustomerProfile = async (id, profileData) => {
       last_name = COALESCE(${last_name}, last_name),
       phone = COALESCE(${phone}, phone),
       address = COALESCE(${address}, address),
+      image = COALESCE(${image}, image),
       updated_at = CURRENT_TIMESTAMP
     WHERE id = ${id}
-    RETURNING id, email, first_name, last_name, phone, address, is_active, last_login, created_at, updated_at;
+    RETURNING id, email, first_name, last_name, phone, address, image, is_active, last_login, created_at, updated_at;
   `;
     return result[0];
 };
@@ -144,7 +147,7 @@ exports.updateCustomerProfile = updateCustomerProfile;
 // ============================
 const getCustomerByEmail = async (email) => {
     const result = await (0, db_1.sql) `
-    SELECT id, email, first_name, last_name, phone, address, is_active, last_login, created_at, updated_at
+    SELECT id, email, first_name, last_name, phone, address, image, is_active, last_login, created_at, updated_at
     FROM customers
     WHERE email = ${email};
   `;
@@ -156,7 +159,7 @@ exports.getCustomerByEmail = getCustomerByEmail;
 // ============================
 const getCustomerByEmailWithPassword = async (email) => {
     const result = await (0, db_1.sql) `
-    SELECT id, email, first_name, last_name, password_hash, phone, address, is_active, last_login, created_at, updated_at
+    SELECT id, email, first_name, last_name, password_hash, phone, address, image, is_active, last_login, created_at, updated_at
     FROM customers
     WHERE email = ${email};
   `;

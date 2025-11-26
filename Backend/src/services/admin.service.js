@@ -16,6 +16,7 @@ const createAdminTable = async () => {
       password_hash VARCHAR(255),
       phone VARCHAR(20),
       address TEXT,
+      image VARCHAR(500),
       is_active BOOLEAN DEFAULT true,
       last_login TIMESTAMP WITH TIME ZONE,
       created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -26,15 +27,15 @@ const createAdminTable = async () => {
 exports.createAdminTable = createAdminTable;
 // Register a new admin
 const registerAdmin = async (data) => {
-    const { email, first_name, last_name, password, phone, address } = data;
+    const { email, first_name, last_name, password, phone, address, image } = data;
     const existing = await (0, exports.getAdminByEmail)(email);
     if (existing)
         throw new Error("Admin with this email already exists");
     const password_hash = await bcryptjs_1.default.hash(password, 10);
     const result = await (0, db_1.sql) `
-    INSERT INTO admins (email, first_name, last_name, password_hash, phone, address)
-    VALUES (${email}, ${first_name}, ${last_name}, ${password_hash}, ${phone}, ${address})
-    RETURNING id, email, first_name, last_name, phone, address, is_active, created_at, updated_at;
+    INSERT INTO admins (email, first_name, last_name, password_hash, phone, address, image)
+    VALUES (${email}, ${first_name}, ${last_name}, ${password_hash}, ${phone}, ${address}, ${image})
+    RETURNING id, email, first_name, last_name, phone, address, image, is_active, created_at, updated_at;
   `;
     return result[0];
 };
@@ -59,7 +60,7 @@ exports.loginAdmin = loginAdmin;
 // Get all admins
 const getAdmins = async () => {
     return await (0, db_1.sql) `
-    SELECT id, email, first_name, last_name, phone, address, is_active, created_at, updated_at
+    SELECT id, email, first_name, last_name, phone, address, image, is_active, created_at, updated_at
     FROM admins
     ORDER BY created_at DESC;
   `;
@@ -68,7 +69,7 @@ exports.getAdmins = getAdmins;
 // Get admin by ID
 const getAdminById = async (id) => {
     const result = await (0, db_1.sql) `
-    SELECT id, email, first_name, last_name, phone, address, is_active, last_login, created_at, updated_at
+    SELECT id, email, first_name, last_name, phone, address, image, is_active, last_login, created_at, updated_at
     FROM admins
     WHERE id = ${id};
   `;
@@ -77,7 +78,7 @@ const getAdminById = async (id) => {
 exports.getAdminById = getAdminById;
 // Update admin profile
 const updateAdminProfile = async (id, data) => {
-    const { first_name, last_name, phone, address } = data;
+    const { first_name, last_name, phone, address, image } = data;
     const result = await (0, db_1.sql) `
     UPDATE admins
     SET
@@ -85,9 +86,10 @@ const updateAdminProfile = async (id, data) => {
       last_name = COALESCE(${last_name}, last_name),
       phone = COALESCE(${phone}, phone),
       address = COALESCE(${address}, address),
+      image = COALESCE(${image}, image),
       updated_at = CURRENT_TIMESTAMP
     WHERE id = ${id}
-    RETURNING id, email, first_name, last_name, phone, address, is_active, last_login, created_at, updated_at;
+    RETURNING id, email, first_name, last_name, phone, address, image, is_active, last_login, created_at, updated_at;
   `;
     return result[0];
 };
@@ -104,7 +106,7 @@ exports.deactivateAdmin = deactivateAdmin;
 // Helpers
 const getAdminByEmail = async (email) => {
     const result = await (0, db_1.sql) `
-    SELECT id, email, first_name, last_name, phone, address, is_active, last_login, created_at, updated_at
+    SELECT id, email, first_name, last_name, phone, address, image, is_active, last_login, created_at, updated_at
     FROM admins
     WHERE email = ${email};
   `;
