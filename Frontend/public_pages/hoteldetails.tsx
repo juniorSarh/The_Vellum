@@ -1,13 +1,70 @@
-import React from 'react'
-import NavBar from '../src/components/navBar'
-import Button from '../src/components/Button'
-import Footer from '../src/components/Footer'
-import { FaArrowLeft, FaRegHeart, FaShare, FaMapMarkerAlt } from 'react-icons/fa'
-import '../src/assets/css/hotelDetails.css'
-// import hotelImage from '../assets/hotel.jpg'
+import { useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
+import NavBar from "../src/components/navBar";
+import Button from "../src/components/Button";
+import Footer from "../src/components/Footer";
+import {
+  FaArrowLeft,
+  FaRegHeart,
+  FaShare,
+  FaMapMarkerAlt,
+} from "react-icons/fa";
+import "../src/assets/css/hotelDetails.css";
+
+import { useAppDispatch, useAppSelector } from "../src/storeSlices/hooks";
+import { setHotels, type Hotel } from "../src/storeSlices/hotelSlice";
 
 export default function HotelDetails() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const { hotels, loading, error } = useAppSelector((state) => state.hotel);
+
+  // Fetch hotels if we don't have them yet
+  useEffect(() => {
+    const fetchHotels = async () => {
+      try {
+        const res = await fetch("http://localhost:4040/api/hotels");
+        const data = await res.json();
+        dispatch(setHotels(data));
+      } catch (err) {
+        console.error("Failed to load hotels in HotelDetails:", err);
+      }
+    };
+
+    if (hotels.length === 0) {
+      fetchHotels();
+    }
+  }, [dispatch, hotels.length]);
+
+  const hotelId = id ? Number(id) : undefined;
+
+  const selectedHotel: Hotel | undefined = hotelId
+    ? hotels.find((h) => h.hotel_id === hotelId)
+    : undefined;
+
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  const handleBookNow = () => {
+    if (!selectedHotel?.hotel_id) return;
+    navigate("/checkout", {
+      state: {
+        hotelId: selectedHotel.hotel_id,
+        hotelName: selectedHotel.name,
+      },
+    });
+  };
+
+  const displayHotelName = selectedHotel?.name || "Hotel Name";
+  const displayHotelLocation = selectedHotel?.location || "Location";
+  const displayHotelDescription =
+    selectedHotel?.description ||
+    "No description available for this hotel yet.";
+
   return (
     <div className="hotel-details-page">
       {/* NAV */}
@@ -15,36 +72,37 @@ export default function HotelDetails() {
         <NavBar />
       </div>
 
-      
-
       {/* MAIN WRAPPER */}
       <div className="hotel-details-wrapper">
         {/* LEFT COLUMN */}
         <div className="hotel-left">
-          <Button icon={<FaArrowLeft />} backgroundColor="white" color="black" />
-          <h1 className="hotel-title">Hotel Name</h1>
-          <p className="hotel-location">Location Name</p>
+          <Button
+            icon={<FaArrowLeft />}
+            backgroundColor="white"
+            color="black"
+            onClick={handleBack}
+          />
+
+          <h1 className="hotel-title">{displayHotelName}</h1>
+          <p className="hotel-location">{displayHotelLocation}</p>
 
           <div className="image-container">
-            {/* <img src={hotelImage} alt="Hotel" /> */}
+            <img
+              src={
+                selectedHotel?.images && selectedHotel.images.length > 0
+                  ? selectedHotel.images[0]
+                  : "../src/assets/images.jpg"
+              }
+              alt={displayHotelName}
+            />
           </div>
 
           <h2 className="desc-title">Description:</h2>
 
-          <p className="hotel-description">
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dicta,
-            eligendi. Accusamus, assumenda voluptas saepe qui commodi laboriosam
-            error dicta at animi enim excepturi, tempora optio repellat impedit
-            nihil doloribus nostrum. <br />
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-            Necessitatibus, consequuntur dolore. Labore accusamus minus eaque
-            eum perspiciatis earum corporis autem molestias debitis voluptate,
-            cum qui est modi officiis nesciunt! Quo. <br />
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus
-            atque ad, asperiores in dolor veniam repudiandae necessitatibus
-            perspiciatis quaerat ipsum tenetur commodi animi quos, fugiat
-            explicabo perferendis quia et nemo?
-          </p>
+          <p className="hotel-description">{displayHotelDescription}</p>
+
+          {loading && <p className="status-text">Loading hotel details...</p>}
+          {error && <p className="status-text error-text">{error}</p>}
         </div>
 
         {/* RIGHT COLUMN */}
@@ -69,10 +127,11 @@ export default function HotelDetails() {
               backgroundColor="#000"
               color="white"
               className="book-btn"
+              onClick={handleBookNow}
             />
           </div>
 
-          {/* REVIEWS BOX */}
+          {/* REVIEWS BOX (dummy for now) */}
           <div className="review-panel">
             <p>
               <strong>Total Good reviews:</strong> 320

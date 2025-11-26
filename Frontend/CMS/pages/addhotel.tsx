@@ -196,7 +196,7 @@ export default function AddHotel() {
 
       setRoomLoading(false);
       closeRoomFormModal();
-    } catch (err: any) {
+    } catch (err) {
       setRoomLoading(false);
       setRoomError(typeof err === "string" ? err : "Failed to save room");
     }
