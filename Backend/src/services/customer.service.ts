@@ -51,7 +51,7 @@ export const createCustomer = async (
 // ============================
 export const getCustomers = async () => {
   return (await sql`
-    SELECT id, email, first_name, last_name, phone, address, image, created_at, updated_at
+    SELECT id, email, first_name, last_name, phone, address, image, is_active, created_at, updated_at
     FROM customers
     ORDER BY created_at DESC;
   `) as Customer[];

@@ -9,11 +9,13 @@ export interface Customer {
   last_name: string;
   phone?: string;
   address?: string;
-  image?: string
+  image?: string;
+  is_active?: boolean;
 }
 
 interface CustomerState {
   customer: Customer | null;
+  customers: Customer[];
   loading: boolean;
   error: string | null;
 }
@@ -23,6 +25,7 @@ const savedCustomer = localStorage.getItem("customer");
 
 const initialState: CustomerState = {
   customer: savedCustomer ? JSON.parse(savedCustomer) : null,
+  customers: [],
   loading: false,
   error: null,
 };
@@ -83,6 +86,28 @@ export const loginCustomer = createAsyncThunk<
   }
 });
 
+// Activate customer
+export const activateCustomer = createAsyncThunk<
+  number, // returns user ID
+  number,
+  { rejectValue: string }
+>("customer/activate", async (id, { rejectWithValue }) => {
+  try {
+    const response = await fetch(`http://localhost:4040/api/customers/${id}/activate`, {
+      method: "PATCH",
+    });
+
+    const result = await response.json();
+
+    if (!result.success) return rejectWithValue(result.error || "Failed to activate customer");
+
+    return id;
+  } catch (err) {
+    return rejectWithValue("Activate request failed");
+  }
+});
+
+
 // ==============================================================
 // 3️⃣ UPDATE CUSTOMER PROFILE
 // ==============================================================
@@ -106,6 +131,70 @@ export const updateCustomerProfile = createAsyncThunk<
     return rejectWithValue("Profile update failed");
   }
 });
+
+// 4️⃣ GET ALL CUSTOMERS
+export const fetchAllCustomers = createAsyncThunk<
+  Customer[],
+  void,
+  { rejectValue: string }
+>("customer/fetchAll", async (_, { rejectWithValue }) => {
+  try {
+    const response = await fetch("http://localhost:4040/api/customers");
+    const result = await response.json();
+
+    if (!result.success) return rejectWithValue(result.error);
+
+    return result.data as Customer[];
+  } catch {
+    return rejectWithValue("Failed to fetch customers");
+  }
+});
+
+// 5️⃣ DELETE CUSTOMER
+export const deleteCustomer = createAsyncThunk<
+  number, // returns deleted ID
+  number, // takes customer ID
+  { rejectValue: string }
+>("customer/delete", async (id, { rejectWithValue }) => {
+  try {
+    const response = await fetch(`http://localhost:4040/api/customers/${id}`, {
+      method: "DELETE",
+    });
+
+    const result = await response.json();
+    if (!result.success) return rejectWithValue(result.error);
+
+    return id;
+  } catch {
+    return rejectWithValue("Failed to delete user");
+  }
+});
+
+export const deactivateCustomer = createAsyncThunk<
+  number, // return the user ID
+  number, // received the user ID
+  { rejectValue: string }
+>("customer/deactivate", async (id, { rejectWithValue }) => {
+  try {
+    const response = await fetch(
+      `http://localhost:4040/api/customers/${id}/deactivate`,
+      {
+        method: "PATCH",
+      }
+    );
+
+    const result = await response.json();
+
+    if (!result.success) {
+      return rejectWithValue(result.error || "Failed to deactivate customer");
+    }
+
+    return id;
+  } catch (err) {
+    return rejectWithValue("Deactivate request failed");
+  }
+});
+
 
 // ==============================================================
 // SLICE
@@ -136,6 +225,33 @@ const customerSlice = createSlice({
       state.loading = false;
       state.error = action.payload || "Registration error";
     });
+
+    builder.addCase(fetchAllCustomers.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(fetchAllCustomers.fulfilled, (state, action) => {
+      state.loading = false;
+      state.customers = action.payload;
+    });
+    builder.addCase(fetchAllCustomers.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || "Fetch failed";
+    });
+
+    // activate customer
+   builder.addCase(deactivateCustomer.fulfilled, (state, action) => {
+     // Remove OR mark inactive in UI
+     if (state.customers) {
+       state.customers = state.customers.filter((c) => c.id !== action.payload);
+     }
+   });
+
+
+    builder.addCase(activateCustomer.fulfilled, (state, action) => {
+      const user = state.customers.find((c) => c.id === action.payload);
+      if (user) user.is_active = true;
+    });
+
 
     // LOGIN
     builder.addCase(loginCustomer.pending, (state) => {

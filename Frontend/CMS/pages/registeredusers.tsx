@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchBar from "../../src/components/searchBar";
 import RegUsers from "../../src/components/regUsers";
 import Footer from "../../src/components/Footer";
@@ -7,20 +7,45 @@ import { useNavigate } from "react-router-dom";
 import "../../src/reservationPage.css";
 import { FaArrowLeft } from "react-icons/fa";
 import PrivatNav from "../../src/components/PrivatNav";
+import { toast } from "react-toastify";
+
+// Redux
+import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
+import {
+  fetchAllCustomers,
+  deactivateCustomer,
+} from "../../src/storeSlices/customerSlice";
 
 const RegisteredUsers = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleSearchChange = (value: string) => {
-    setSearchTerm(value);
-    console.log("Searching for:", value);
-  };
+  const dispatch = useAppDispatch();
+  const { customers } = useAppSelector((state) => state.customer);
 
   const navigate = useNavigate();
 
-  const handleBack = () => {
-    navigate(-1);
-  };
+  // LOAD USERS ON PAGE LOAD
+  useEffect(() => {
+    dispatch(fetchAllCustomers());
+  }, [dispatch]);
+
+const handleDeactivate = async (id: number) => {
+  if (!window.confirm("Are you sure you want to deactivate this user?")) return;
+
+  const result = await dispatch(deactivateCustomer(id));
+
+  if (deactivateCustomer.fulfilled.match(result)) {
+    toast.success("User deactivated successfully!");
+  } else {
+    toast.error("Failed to deactivate user");
+  }
+};
+
+  const filteredUsers = customers.filter((c) =>
+    `${c.first_name} ${c.last_name}`
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="reservationPage">
@@ -33,9 +58,8 @@ const RegisteredUsers = () => {
           <Button
             name=""
             color="black"
-            // backgroundColor="#FFFFFF"
             icon={<FaArrowLeft style={{ marginRight: "8px" }} />}
-            onClick={handleBack}
+            onClick={() => navigate(-1)}
             className="back"
           />
         </div>
@@ -43,7 +67,7 @@ const RegisteredUsers = () => {
         <div className="SearchBar">
           <SearchBar
             value={searchTerm}
-            onChange={handleSearchChange}
+            onChange={setSearchTerm}
             placeholder="Search..."
           />
         </div>
@@ -51,11 +75,16 @@ const RegisteredUsers = () => {
         <h2 className="Title">Registered Users</h2>
 
         <div className="List">
-          <RegUsers name="Hello" onDelete={() => {}} />
-          <RegUsers name="gdfhy" onDelete={() => {}} />
+          {filteredUsers.map((user) => (
+            <RegUsers
+              key={user.id}
+              name={`${user.first_name} ${user.last_name}`}
+              onDelete={() => handleDeactivate(user.id!)}
+            />
+          ))}
         </div>
       </div>
-      <div className="footer"></div>
+
       <Footer />
     </div>
   );

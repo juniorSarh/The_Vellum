@@ -7,6 +7,7 @@ interface ButtonProps {
   className?: string;
   icon?: React.ReactNode;
   onClick?: MouseEventHandler<HTMLButtonElement>;
+  type?: "button" | "submit" | "reset";
 }
 
 export default function Button({

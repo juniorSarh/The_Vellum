@@ -1,11 +1,62 @@
+import React, { useState, useEffect } from "react";
 import Footer from "../../src/components/Footer";
 import Button from "../../src/components/Button";
 import Input from "../../src/components/input";
 import "../../src/assets/css/checkout.css";
 import PrivatNav from "../../src/components/PrivatNav";
-import { Link } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
+import {
+  createBooking,
+  clearBookingError,
+} from "../../src/storeSlices/bookingSlice";
 
 export default function Checkout() {
+  const dispatch = useAppDispatch();
+  const { loading, error } = useAppSelector((state) => state.booking);
+
+
+  // -------------------------
+  // Form state
+  // -------------------------
+  const [formData, setFormData] = useState({
+    customer_id: 1, 
+    room_id: 1, 
+    check_in_date: "",
+    check_out_date: "",
+    status: "pending",
+    additional_requests: "",
+    total_cost: 0,
+  });
+
+  const [success, setSuccess] = useState(false);
+
+  // -------------------------
+  // Handle input changes
+  // -------------------------
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "number" ? Number(value) : value,
+    }));
+  };
+
+  // -------------------------
+  // Handle form submit
+  // -------------------------
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSuccess(false);
+
+    try {
+      await dispatch(createBooking(formData)).unwrap(); // unwrap to catch errors
+      setSuccess(true);
+      dispatch(clearBookingError());
+    } catch (err) {
+      console.error("Booking failed:", err);
+    }
+  };
+
   return (
     <div className="checkout-container">
       <PrivatNav />
@@ -23,9 +74,7 @@ export default function Checkout() {
 
           <div className="checkout-info-box">
             <h2>Hotel name</h2>
-
             <h3>location</h3>
-
             <p>xxxxxxxxxx</p>
             <p>xxxxxxxxxx</p>
             <p>xxxxxxxxxx</p>
@@ -34,102 +83,68 @@ export default function Checkout() {
 
         {/* FORM SECTION */}
         <div className="checkout-form">
-          <form className="form">
-            {/* COLUMN 1 */}
+          <form className="form" onSubmit={handleSubmit}>
             <div className="form-column">
               <Input
-                type="name"
-                placeholder="Enter your Name"
-                label="Name"
-                onChange={() => {}}
-                value=""
+                type="text"
+                placeholder="Additional Requests"
+                label="Additional Requests"
+                name="additional_requests"
+                value={formData.additional_requests}
+                onChange={handleChange}
               />
               <Input
-                placeholder="Enter Name & Surname"
-                label="Name & Surname"
-                value=""
-                onChange={() => {}}
-              />
-              <Input
-                type="email"
-                placeholder="Please Provide Email"
-                label="Email"
-                value=""
-                onChange={() => {}}
-              />
-              <Input
-                label="Number of Rooms"
-                type="number"
-                value=""
-                onChange={() => {}}
-              />
-              <Input
-                label="Number of People"
-                type="number"
-                value=""
-                onChange={() => {}}
-              />
-            </div>
-
-            {/* ROW 1 */}
-            <div className="form-row">
-              <Input
-                label="ID Number"
-                placeholder="Please Enter ID Number"
-                value=""
-                onChange={() => {}}
-              />
-
-              <Input
-                placeholder="Check-in Time"
-                label=""
-                type="time"
-                value="12:00"
-                onChange={() => {}}
-              />
-            </div>
-
-            {/* ROW 2 */}
-            <div className="form-row">
-              <Input
+                placeholder="Check-in Date"
                 label="Check-in Date"
+                name="check_in_date"
                 type="date"
-                value=""
-                onChange={() => {}}
+                value={formData.check_in_date}
+                onChange={handleChange}
               />
               <Input
+                placeholder="Check-out Date"
                 label="Check-out Date"
+                name="check_out_date"
                 type="date"
-                value=""
-                onChange={() => {}}
+                value={formData.check_out_date}
+                onChange={handleChange}
+              />
+              <Input
+                label="Total Cost"
+                type="number"
+                name="total_cost"
+                value={formData.total_cost.toString()}
+                onChange={handleChange}
               />
             </div>
-          </form>
 
-          {/* BUTTONS */}
-          <div className="checkout-buttons">
-            <Link to="/payment">
+            <div className="checkout-buttons">
               <Button
-                name="Pay"
+                name={loading ? "Saving..." : "Pay"}
                 color="white"
                 backgroundColor="#846d29"
                 className="btn"
+                type="submit" // ✅ fixed type issue
               />
-            </Link>
 
-            <Link to="/hotel">
               <Button
                 name="Cancel"
                 color="white"
                 backgroundColor="red"
                 className="btn"
+                onClick={() => window.history.back()}
               />
-            </Link>
-          </div>
+            </div>
+
+            {/* Feedback messages */}
+            {success && (
+              <p className="success">Booking created successfully!</p>
+            )}
+            {error && <p className="error">{error}</p>}
+          </form>
         </div>
       </div>
 
-      {/* FOOTER */}
       <div className="footer">
         <Footer />
       </div>
