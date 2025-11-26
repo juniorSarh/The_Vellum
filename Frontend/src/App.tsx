@@ -45,7 +45,7 @@ function App() {
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/hotel" element={<HotelDetail />} />
+      <Route path="/hotel/:id" element={<HotelDetail />} />
 
       {/* ---------- Protected routes ---------- */}
       <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>

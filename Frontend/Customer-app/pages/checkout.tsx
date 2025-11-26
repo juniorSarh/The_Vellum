@@ -1,161 +1,87 @@
-import React, { useState, useEffect } from "react";
-import Footer from "../../src/components/Footer";
-import Button from "../../src/components/Button";
-import Input from "../../src/components/input";
-import "../../src/assets/css/checkout.css";
-import PrivatNav from "../../src/components/PrivatNav";
-import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
-import {
-  createBooking,
-  clearBookingError,
-} from "../../src/storeSlices/bookingSlice";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../src/storeSlices/hooks";
+import "../../src/assets/styles/checkout.css";
 
-export default function Checkout() {
-  const dispatch = useAppDispatch();
-  const { loading, error } = useAppSelector((state) => state.booking);
+const CheckoutPage = () => {
+  const navigate = useNavigate();
 
+  // GET BOOKING DETAILS FROM REDUX
+  const { selectedBooking } = useAppSelector((state) => state.booking);
 
-  // -------------------------
-  // Form state
-  // -------------------------
-  const [formData, setFormData] = useState({
-    customer_id: 1, 
-    room_id: 1, 
-    check_in_date: "",
-    check_out_date: "",
-    status: "pending",
-    additional_requests: "",
-    total_cost: 0,
-  });
+  if (!selectedBooking) {
+    return (
+      <div className="checkout-empty">
+        <p>No booking found.</p>
+        <button onClick={() => navigate("/hotels")}>Back to Hotels</button>
+      </div>
+    );
+  }
 
-  const [success, setSuccess] = useState(false);
-
-  // -------------------------
-  // Handle input changes
-  // -------------------------
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "number" ? Number(value) : value,
-    }));
-  };
-
-  // -------------------------
-  // Handle form submit
-  // -------------------------
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSuccess(false);
-
-    try {
-      await dispatch(createBooking(formData)).unwrap(); // unwrap to catch errors
-      setSuccess(true);
-      dispatch(clearBookingError());
-    } catch (err) {
-      console.error("Booking failed:", err);
-    }
-  };
+  const {
+    hotelName,
+    hotelLocation,
+    roomType,
+    checkIn,
+    checkOut,
+    price,
+    totalNights,
+    totalPrice,
+  } = selectedBooking;
 
   return (
-    <div className="checkout-container">
-      <PrivatNav />
+    <div className="checkout-wrapper">
+      <div className="checkout-slip">
+        <h2 className="slip-title">Reservation Summary</h2>
 
-      <div className="checkout-content">
-        {/* TOP SECTION: IMAGE + HOTEL DETAILS */}
-        <div className="checkout-top-section">
-          <div className="checkout-image-box">
-            <img
-              src="../src/assets/The-vellum-logo.png"
-              alt="picture of a hotel"
-              className="image"
-            />
-          </div>
-
-          <div className="checkout-info-box">
-            <h2>Hotel name</h2>
-            <h3>location</h3>
-            <p>xxxxxxxxxx</p>
-            <p>xxxxxxxxxx</p>
-            <p>xxxxxxxxxx</p>
-          </div>
+        <div className="slip-section">
+          <h3 className="slip-label">Hotel Details</h3>
+          <p>
+            <strong>Hotel:</strong> {hotelName}
+          </p>
+          <p>
+            <strong>Location:</strong> {hotelLocation}
+          </p>
         </div>
 
-        {/* FORM SECTION */}
-        <div className="checkout-form">
-          <form className="form" onSubmit={handleSubmit}>
-            <div className="form-column">
-              <div className="input-group">
-                <label>Room Type</label>
-                <select name="room_type" defaultValue="">
-                  <option value="" disabled>
-                    Select Room Type
-                  </option>
-                  <option value="delux">delux</option>
-                  <option value="suite">suite</option>
-                  <option value="starndard">starndard</option>
-                </select>
-              </div>
-            </div>
-
-            {/* ROW 1 - removed unnecessary fields */}
-
-            {/* ROW 2: Keep only Check-in and Check-out dates */}
-            <div className="form-row">
-              <Input
-                label="Check-in Date"
-                name="check_in_date"
-                type="date"
-                value={formData.check_in_date}
-                onChange={handleChange}
-              />
-              <Input
-                placeholder="Check-out Date"
-                label="Check-out Date"
-                name="check_out_date"
-                type="date"
-                value={formData.check_out_date}
-                onChange={handleChange}
-              />
-              <Input
-                label="Total Cost"
-                type="number"
-                name="total_cost"
-                value={formData.total_cost.toString()}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="checkout-buttons">
-              <Button
-                name={loading ? "Saving..." : "Pay"}
-                color="white"
-                backgroundColor="#846d29"
-                className="btn"
-                type="submit" // ✅ fixed type issue
-              />
-
-              <Button
-                name="Cancel"
-                color="white"
-                backgroundColor="red"
-                className="btn"
-                onClick={() => window.history.back()}
-              />
-            </div>
-
-            {/* Feedback messages */}
-            {success && (
-              <p className="success">Booking created successfully!</p>
-            )}
-            {error && <p className="error">{error}</p>}
-          </form>
+        <div className="slip-section">
+          <h3 className="slip-label">Stay Information</h3>
+          <p>
+            <strong>Check-In:</strong> {checkIn}
+          </p>
+          <p>
+            <strong>Check-Out:</strong> {checkOut}
+          </p>
+          <p>
+            <strong>Nights:</strong> {totalNights}
+          </p>
+          <p>
+            <strong>Room Type:</strong> {roomType}
+          </p>
         </div>
-      </div>
 
-      <div className="footer">
-        <Footer />
+        <div className="slip-section">
+          <h3 className="slip-label">Price Breakdown</h3>
+          <p>
+            <strong>Price per Night:</strong> R{price}
+          </p>
+          <p className="total-line">
+            <strong>Total:</strong> R{totalPrice}
+          </p>
+        </div>
+
+        <div className="checkout-actions">
+          <button className="cancel-btn" onClick={() => navigate("/hotel")}>
+            Cancel
+          </button>
+
+          <button className="pay-btn" onClick={() => navigate("/payment")}>
+            Pay Now
+          </button>
+        </div>
       </div>
     </div>
   );
-}
+};
+
+export default CheckoutPage;

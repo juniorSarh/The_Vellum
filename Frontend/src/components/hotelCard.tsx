@@ -6,7 +6,6 @@ interface HotelCardProps {
   image: string;
   name: string;
   location: string;
-  price: number;
   isLoggedIn: boolean;
   onClick?: () => void;
 }
@@ -15,7 +14,6 @@ const HotelCard: React.FC<HotelCardProps> = ({
   image,
   name,
   location,
-  price,
   isLoggedIn,
   onClick,
 }) => {
@@ -44,7 +42,6 @@ const HotelCard: React.FC<HotelCardProps> = ({
       <div className="hotel-content">
         <h3 className="hotel-name">{name}</h3>
         <p className="hotel-location">{location}</p>
-        <p className="hotel-price">{price} / night</p>
       </div>
     </div>
   );
