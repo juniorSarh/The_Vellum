@@ -6,7 +6,7 @@ import "../../src/Userprofile.css";
 import logo from "../../src/assets/The-vellum-logo.png";
 import Footer from "../../src/components/Footer";
 import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
-import { logout, setUser, updatePhoto } from "../../src/storeSlices/customerSlice";
+import { logout, setUser} from "../../src/storeSlices/customerSlice";
 import PrivatNav from "../../src/components/PrivatNav";
 import { useNavigate } from "react-router-dom";
 
