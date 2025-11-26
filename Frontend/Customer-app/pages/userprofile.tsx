@@ -64,7 +64,6 @@ const ProfilePage: React.FC = () => {
                 type="file"
                 style={{ display: "none" }}
                 accept="image/*"
-                value={customer.image}
                 onChange={handleImageUpload}
               />
             </div>
@@ -84,7 +83,6 @@ const ProfilePage: React.FC = () => {
 
               <p className="profile-label">Address</p>
               <p className="profile-value">{customer?.address || "Not set"}</p>
-
             </div>
 
             <div className="profile-actions">
@@ -110,7 +108,8 @@ const ProfilePage: React.FC = () => {
           <ProfileModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
-            customer={customer}
+            user={customer}
+            userType="customer"
           />
         </div>
 
