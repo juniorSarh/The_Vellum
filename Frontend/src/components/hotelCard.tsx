@@ -7,6 +7,7 @@ interface HotelCardProps {
   name: string;
   location: string;
   price: number;
+  isLoggedIn: boolean;
   onClick?: () => void;
 }
 
@@ -15,6 +16,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
   name,
   location,
   price,
+  isLoggedIn,
   onClick,
 }) => {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -28,13 +30,15 @@ const HotelCard: React.FC<HotelCardProps> = ({
     <div className="hotel-card" onClick={onClick}>
       <div className="hotel-image-container">
         <img src={image} alt={name} className="hotel-image" />
-        <div className="favorite-icon" onClick={toggleFavorite}>
-          {isFavorite ? (
-            <FaHeart color="#EAC248" />
-          ) : (
-            <FaRegHeart color="#fff" />
-          )}
-        </div>
+         {isLoggedIn && (
+          <div className="favorite-icon" onClick={toggleFavorite}>
+            {isFavorite ? (
+              <FaHeart color="#EAC248" />
+            ) : (
+              <FaRegHeart color="#fff" />
+            )}
+          </div>
+        )}
       </div>
 
       <div className="hotel-content">

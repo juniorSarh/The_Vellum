@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PrivateNavBar from "../../src/components/PrivateNaveBar";
 import Footer from "../../src/components/Footer";
 import HotelForm from "../../src/components/hotelModal";
@@ -7,11 +7,209 @@ import "../../src/assets/css/addHotel.css";
 import { FaEdit, FaTrash, FaArrowLeft } from "react-icons/fa";
 import Button from "../../src/components/Button";
 
-export default function AddHotel() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
+import {
+  setHotels,
+  deletehotel,
+  type Hotel,
+} from "../../src/storeSlices/hotelSlice";
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+import {
+  fetchRooms,
+  adroom,
+  updateroom,
+  deleteroom,
+  type Room,
+} from "../../src/storeSlices/roomSlice";
+
+export default function AddHotel() {
+  // Hotel modals
+  const [isHotelModalOpen, setIsHotelModalOpen] = useState(false);
+  const [editingHotel, setEditingHotel] = useState<Hotel | null>(null);
+
+  // Rooms list modal (View Rooms)
+  const [isRoomsListModalOpen, setIsRoomsListModalOpen] = useState(false);
+  const [hotelForRoomsList, setHotelForRoomsList] = useState<Hotel | null>(
+    null
+  );
+
+  // Room form modal (Add / Edit room)
+  const [isRoomFormModalOpen, setIsRoomFormModalOpen] = useState(false);
+  const [hotelForRoomForm, setHotelForRoomForm] = useState<Hotel | null>(null);
+  const [editingRoom, setEditingRoom] = useState<Room | null>(null);
+
+  const dispatch = useAppDispatch();
+  const { hotels, loading, error } = useAppSelector(
+    (state) => state.hotel // make sure reducer key is "hotels"
+  );
+  const { rooms } = useAppSelector((state) => state.room);
+
+  // Room form local state
+  const [roomType, setRoomType] = useState("");
+  const [roomPrice, setRoomPrice] = useState<number | "">("");
+  const [roomStatus, setRoomStatus] = useState("available");
+  const [roomError, setRoomError] = useState<string | null>(null);
+  const [roomLoading, setRoomLoading] = useState(false);
+
+  // -------- Hotel modal handlers --------
+  const openAddHotelModal = () => {
+    setEditingHotel(null);
+    setIsHotelModalOpen(true);
+  };
+
+  const openEditHotelModal = (hotel: Hotel) => {
+    setEditingHotel(hotel);
+    setIsHotelModalOpen(true);
+  };
+
+  const closeHotelModal = () => {
+    setIsHotelModalOpen(false);
+    setEditingHotel(null);
+  };
+
+  // -------- Rooms list modal (View Rooms) --------
+  const openRoomsListModal = (hotel: Hotel) => {
+    setHotelForRoomsList(hotel);
+    setIsRoomsListModalOpen(true);
+  };
+
+  const closeRoomsListModal = () => {
+    setIsRoomsListModalOpen(false);
+    setHotelForRoomsList(null);
+  };
+
+  // -------- Room form modal (Add / Edit room) --------
+  const openRoomFormForAdd = (hotel: Hotel) => {
+    setHotelForRoomForm(hotel);
+    setEditingRoom(null);
+    setRoomType("");
+    setRoomPrice("");
+    setRoomStatus("available");
+    setRoomError(null);
+    setIsRoomFormModalOpen(true);
+  };
+
+  const openRoomFormForEdit = (hotel: Hotel, room: Room) => {
+    setHotelForRoomForm(hotel);
+    setEditingRoom(room);
+    setRoomType(room.room_type);
+    setRoomPrice(room.price);
+    setRoomStatus(room.status);
+    setRoomError(null);
+    setIsRoomFormModalOpen(true);
+
+    // Optional: close the list modal while editing
+    setIsRoomsListModalOpen(false);
+  };
+
+  const closeRoomFormModal = () => {
+    setIsRoomFormModalOpen(false);
+    setHotelForRoomForm(null);
+    setEditingRoom(null);
+    setRoomType("");
+    setRoomPrice("");
+    setRoomStatus("available");
+    setRoomError(null);
+  };
+
+  // -------- Initial data fetch --------
+  useEffect(() => {
+    const fetchHotels = async () => {
+      try {
+        const res = await fetch("http://localhost:4040/api/hotels");
+        const data = await res.json();
+        dispatch(setHotels(data));
+      } catch (err) {
+        console.error("Failed to load hotels:", err);
+      }
+    };
+
+    fetchHotels();
+  }, [dispatch]);
+
+  useEffect(() => {
+    // Load all rooms once; we'll filter by hotel_id in the UI
+    dispatch(fetchRooms());
+  }, [dispatch]);
+
+  // -------- Handlers --------
+  const handleDeleteHotel = (hotel_id?: number) => {
+    if (!hotel_id) return;
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this hotel?"
+    );
+    if (!confirmDelete) return;
+
+    dispatch(deletehotel(hotel_id));
+  };
+
+  const handleDeleteRoom = (room_id?: number) => {
+    if (!room_id) return;
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this room?"
+    );
+    if (!confirmDelete) return;
+
+    dispatch(deleteroom(room_id));
+  };
+
+  const handleRoomFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!hotelForRoomForm?.hotel_id) {
+      setRoomError("No hotel selected for this room.");
+      return;
+    }
+    if (!roomType || roomPrice === "" || !roomStatus) {
+      setRoomError("All fields are required.");
+      return;
+    }
+
+    setRoomLoading(true);
+    setRoomError(null);
+
+    try {
+      if (editingRoom && editingRoom.room_id) {
+        // UPDATE
+        await dispatch(
+          updateroom({
+            id: editingRoom.room_id,
+            updates: {
+              hotel_id: hotelForRoomForm.hotel_id,
+              room_type: roomType,
+              price: Number(roomPrice),
+              status: roomStatus,
+            },
+          })
+        ).unwrap();
+      } else {
+        // ADD
+        await dispatch(
+          adroom({
+            hotel_id: hotelForRoomForm.hotel_id,
+            room_type: roomType,
+            price: Number(roomPrice),
+            status: roomStatus,
+          })
+        ).unwrap();
+      }
+
+      setRoomLoading(false);
+      closeRoomFormModal();
+    } catch (err: any) {
+      setRoomLoading(false);
+      setRoomError(typeof err === "string" ? err : "Failed to save room");
+    }
+  };
+
+  // Rooms count per hotel
+  const getRoomsForHotel = (hotelId?: number): Room[] => {
+    if (!hotelId) return [];
+    return rooms.filter((room) => room.hotel_id === hotelId);
+  };
+
+  const getRoomsAvailableForHotel = (hotelId?: number) =>
+    getRoomsForHotel(hotelId).length;
 
   return (
     <div className="hotels-page-container">
@@ -28,10 +226,14 @@ export default function AddHotel() {
         />
         <Button
           className="add-hotel-btn"
-          onClick={openModal}
+          onClick={openAddHotelModal}
           name="Add Hotel"
         />
       </div>
+
+      {/* LOADING / ERROR */}
+      {loading && <p className="status-text">Loading hotels...</p>}
+      {error && <p className="status-text error-text">{error}</p>}
 
       {/* TABLE */}
       <div className="hotels-table-wrapper">
@@ -41,29 +243,66 @@ export default function AddHotel() {
               <th>Hotel Name</th>
               <th>Location</th>
               <th>Rating</th>
+              <th>Description</th>
               <th>Rooms Available</th>
-              <th>Price Range</th>
+              <th>List of Rooms</th>
               <th>Actions</th>
             </tr>
           </thead>
 
           <tbody>
-            {[1, 2, 3, 4].map((item) => (
-              <tr key={item}>
-                <td>Grand Plaza Hotel</td>
-                <td>New York, USA</td>
-                <td>4.6</td>
-                <td>45</td>
-                <td>$200–$800</td>
-                <td className="action-icons">
-                  <Button icon={<FaEdit />} className="icon-button edit" />
-                  <Button
-                    icon={<FaTrash className="icon delete" />}
-                    className="icon-button delete"
-                  />
+            {hotels.length === 0 ? (
+              <tr>
+                <td colSpan={7} style={{ textAlign: "center" }}>
+                  No hotels found. Click "Add Hotel" to create one.
                 </td>
               </tr>
-            ))}
+            ) : (
+              hotels.map((hotel) => (
+                <tr key={hotel.hotel_id}>
+                  <td>{hotel.name}</td>
+                  <td>{hotel.location}</td>
+                  <td>{hotel.star_rating ?? "-"}</td>
+                  <td>{hotel.description ?? "-"}</td>
+
+                  {/* Rooms Available */}
+                  <td>{getRoomsAvailableForHotel(hotel.hotel_id)}</td>
+
+                  {/* Price Range column → View Rooms button */}
+                  <td>
+                    <Button
+                      className="view-rooms-btn"
+                      name="View Rooms"
+                      onClick={() => openRoomsListModal(hotel)}
+                    />
+                  </td>
+
+                  {/* Actions: Add Room / Edit Hotel / Delete Hotel */}
+                  <td className="action-icons">
+                    {/* Add Room */}
+                    <Button
+                      className="icon-button add-rooms"
+                      name="add-rooms"
+                      onClick={() => openRoomFormForAdd(hotel)}
+                    />
+
+                    {/* Edit hotel */}
+                    <Button
+                      icon={<FaEdit />}
+                      className="icon-button edit"
+                      onClick={() => openEditHotelModal(hotel)}
+                    />
+
+                    {/* Delete hotel */}
+                    <Button
+                      icon={<FaTrash className="icon delete" />}
+                      className="icon-button delete"
+                      onClick={() => handleDeleteHotel(hotel.hotel_id)}
+                    />
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
@@ -73,20 +312,172 @@ export default function AddHotel() {
         <Footer />
       </div>
 
-      {/* MODAL */}
-      {isModalOpen && (
-        <div className="modal-overlay" onClick={closeModal}>
+      {/* HOTEL MODAL (Add/Edit) */}
+      {isHotelModalOpen && (
+        <div className="modal-overlay" onClick={closeHotelModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>Add Hotel</h2>
-            <HotelForm />
+            <h2>{editingHotel ? "Edit Hotel" : "Add Hotel"}</h2>
+
+            <HotelForm
+              key={editingHotel?.hotel_id ?? "new"}
+              onClose={closeHotelModal}
+              mode={editingHotel ? "edit" : "add"}
+              initialHotel={editingHotel}
+              adminId={editingHotel?.admin_id ?? undefined}
+            />
 
             <Button
               className="modal-close-btn"
-              onClick={closeModal}
+              onClick={closeHotelModal}
               name="close"
               color="white"
               backgroundColor="red"
             />
+          </div>
+        </div>
+      )}
+
+      {/* ROOMS LIST MODAL (View Rooms) */}
+      {isRoomsListModalOpen && hotelForRoomsList && (
+        <div className="modal-overlay" onClick={closeRoomsListModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>Rooms – {hotelForRoomsList.name}</h2>
+
+            <table className="rooms-table">
+              <thead>
+                <tr>
+                  <th>Room Type</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {getRoomsForHotel(hotelForRoomsList.hotel_id).length === 0 ? (
+                  <tr>
+                    <td colSpan={4} style={{ textAlign: "center" }}>
+                      No rooms yet for this hotel.
+                    </td>
+                  </tr>
+                ) : (
+                  getRoomsForHotel(hotelForRoomsList.hotel_id).map((room) => (
+                    <tr key={room.room_id}>
+                      <td>{room.room_type}</td>
+                      <td>{room.price}</td>
+                      <td>{room.status}</td>
+                      <td className="action-icons">
+                        {/* UPDATE ROOM */}
+                        <Button
+                          className="icon-button edit"
+                          icon={<FaEdit />}
+                          onClick={() =>
+                            openRoomFormForEdit(hotelForRoomsList, room)
+                          }
+                        />
+
+                        {/* DELETE ROOM */}
+                        <Button
+                          className="icon-button delete"
+                          icon={<FaTrash className="icon delete" />}
+                          onClick={() => handleDeleteRoom(room.room_id)}
+                        />
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+
+            <div className="rooms-list-actions">
+              {/* Optional: Add Room from inside list */}
+              <Button
+                className="add-room-btn"
+                name="Add Room"
+                onClick={() => openRoomFormForAdd(hotelForRoomsList)}
+              />
+              <Button
+                className="modal-close-btn"
+                onClick={closeRoomsListModal}
+                name="Close"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ROOM FORM MODAL (Add / Edit room) */}
+      {isRoomFormModalOpen && hotelForRoomForm && (
+        <div className="modal-overlay" onClick={closeRoomFormModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>
+              {editingRoom
+                ? `Edit Room – ${hotelForRoomForm.name}`
+                : `Add Room – ${hotelForRoomForm.name}`}
+            </h2>
+
+            <form className="hotel-form" onSubmit={handleRoomFormSubmit}>
+              <div className="form-group">
+                <label htmlFor="room-type">Room Type:</label>
+                <input
+                  id="room-type"
+                  type="text"
+                  value={roomType}
+                  onChange={(e) => setRoomType(e.target.value)}
+                  placeholder="e.g. Deluxe, Standard, Suite"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="room-price">Price:</label>
+                <input
+                  id="room-price"
+                  type="number"
+                  min={0}
+                  step={0.01}
+                  value={roomPrice}
+                  onChange={(e) =>
+                    setRoomPrice(
+                      e.target.value === "" ? "" : Number(e.target.value)
+                    )
+                  }
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="room-status">Status:</label>
+                <select
+                  id="room-status"
+                  value={roomStatus}
+                  onChange={(e) => setRoomStatus(e.target.value)}
+                >
+                  <option value="available">available</option>
+                  <option value="booked">booked</option>
+                  <option value="maintenance">maintenance</option>
+                </select>
+              </div>
+
+              {roomError && <p className="error-text">{roomError}</p>}
+
+              <div className="form-actions">
+                <button type="submit" disabled={roomLoading}>
+                  {roomLoading
+                    ? "Saving..."
+                    : editingRoom
+                    ? "Save Changes"
+                    : "Add Room"}
+                </button>
+                <button
+                  type="button"
+                  className="secondary-btn"
+                  onClick={closeRoomFormModal}
+                  disabled={roomLoading}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

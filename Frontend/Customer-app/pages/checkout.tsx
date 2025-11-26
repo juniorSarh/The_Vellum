@@ -1,16 +1,14 @@
-import PrivateNavBar from "../../src/components/PrivateNaveBar";
 import Footer from "../../src/components/Footer";
 import Button from "../../src/components/Button";
 import Input from "../../src/components/input";
 import "../../src/assets/css/checkout.css";
+import PrivatNav from "../../src/components/PrivatNav";
+import { Link } from "react-router-dom";
 
 export default function Checkout() {
   return (
     <div className="checkout-container">
-      {/* NAVBAR */}
-      <div className="nav">
-        <PrivateNavBar />
-      </div>
+      <PrivatNav />
 
       <div className="checkout-content">
         {/* TOP SECTION: IMAGE + HOTEL DETAILS */}
@@ -36,54 +34,60 @@ export default function Checkout() {
 
         {/* FORM SECTION */}
         <div className="checkout-form">
-          <div className="form">
+          <form className="form">
+            {/* COLUMN 1 */}
             <div className="form-column">
-              <Input
-                placeholder="Enter Name & Surname"
-                label="Name & Surname"
-              />
-              <Input
-                placeholder="Please Provide Email"
-                type="email"
-                label="Email"
-              />
-              <Input
-                label="Number of Rooms"
-                placeholder="Number of Rooms"
-                type="number"
-              />
-              <Input
-                label="Number of People"
-                placeholder="Number of People"
-                type="number"
-              />
+              <div className="input-group">
+                <label>Room Type</label>
+                <select name="room_type" defaultValue="">
+                  <option value="" disabled>
+                    Select Room Type
+                  </option>
+                  <option value="delux">delux</option>
+                  <option value="suite">suite</option>
+                  <option value="starndard">starndard</option>
+                </select>
+              </div>
             </div>
 
-            <div className="form-row">
-              <Input label="ID Number" placeholder="Please Enter ID Number" />
-              <Input placeholder="Check-in Time" type="time" />
-            </div>
+            {/* ROW 1 - removed unnecessary fields */}
 
+            {/* ROW 2: Keep only Check-in and Check-out dates */}
             <div className="form-row">
-              <Input label="Check-in Date" type="date" />
-              <Input label="Check-out Date" type="date" />
+              <Input
+                label="Check-in Date"
+                type="date"
+                value=""
+                onChange={() => {}}
+              />
+              <Input
+                label="Check-out Date"
+                type="date"
+                value=""
+                onChange={() => {}}
+              />
             </div>
-          </div>
+          </form>
 
           {/* BUTTONS */}
           <div className="checkout-buttons">
-            <Button
-              name="Pay"
-              color="white"
-              backgroundColor="#846d29"
-              className="btn"
-            />
-            <Button
-              name="Cancel"
-              color="white"
-              backgroundColor="Red"
-              className="btn"
-            />
+            <Link to="/payment">
+              <Button
+                name="Pay"
+                color="white"
+                backgroundColor="#846d29"
+                className="btn"
+              />
+            </Link>
+
+            <Link to="/hotel">
+              <Button
+                name="Cancel"
+                color="white"
+                backgroundColor="red"
+                className="btn"
+              />
+            </Link>
           </div>
         </div>
       </div>

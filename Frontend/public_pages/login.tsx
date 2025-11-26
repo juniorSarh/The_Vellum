@@ -11,6 +11,12 @@ export default function Login() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  // ---- CLEAR OLD SESSIONS WHEN LOGIN PAGE LOADS ----
+  useEffect(() => {
+    localStorage.removeItem("admin");
+    localStorage.removeItem("customer");
+  }, []);
+
   // ---- Grab both slices ----
   const {
     customer,
@@ -24,9 +30,10 @@ export default function Login() {
     error: adminError,
   } = useAppSelector((state) => state.admin);
 
-  // "customer" | "admin" toggle
+  // Toggle customer | admin
   const [loginAs, setLoginAs] = useState<"customer" | "admin">("customer");
 
+  // Form data
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -41,12 +48,12 @@ export default function Login() {
     }
   }, [admin, customer, navigate]);
 
-  // handle input change
+  // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // submit form
+  // Submit form
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -57,13 +64,14 @@ export default function Login() {
     }
   };
 
-  // derived UI state
+  // Derived UI state
   const loading = loginAs === "admin" ? adminLoading : customerLoading;
   const error = loginAs === "admin" ? adminError : customerError;
 
   return (
     <>
       <NavBar />
+
       <div className="loginPage">
         <div className="login-container">
           <form className="login-form" onSubmit={handleSubmit}>
@@ -87,6 +95,7 @@ export default function Login() {
                 />{" "}
                 Customer
               </label>
+
               <label>
                 <input
                   type="radio"
@@ -159,6 +168,7 @@ export default function Login() {
           </form>
         </div>
       </div>
+
       <Footer />
     </>
   );
