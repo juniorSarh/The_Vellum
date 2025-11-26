@@ -37,38 +37,6 @@ export default function Checkout() {
           <form className="form">
             {/* COLUMN 1 */}
             <div className="form-column">
-              <Input
-                type="name"
-                placeholder="Enter your Name"
-                label="Name"
-                onChange={() => {}}
-                value=""
-              />
-              <Input
-                placeholder="Enter Name & Surname"
-                label="Name & Surname"
-                value=""
-                onChange={() => {}}
-              />
-              <Input
-                type="email"
-                placeholder="Please Provide Email"
-                label="Email"
-                value=""
-                onChange={() => {}}
-              />
-              <Input
-                label="Number of Rooms"
-                type="number"
-                value=""
-                onChange={() => {}}
-              />
-              <Input
-                label="Number of People"
-                type="number"
-                value=""
-                onChange={() => {}}
-              />
               <div className="input-group">
                 <label>Room Type</label>
                 <select name="room_type" defaultValue="">
@@ -82,25 +50,9 @@ export default function Checkout() {
               </div>
             </div>
 
-            {/* ROW 1 */}
-            <div className="form-row">
-              <Input
-                label="ID Number"
-                placeholder="Please Enter ID Number"
-                value=""
-                onChange={() => {}}
-              />
+            {/* ROW 1 - removed unnecessary fields */}
 
-              <Input
-                placeholder="Check-in Time"
-                label=""
-                type="time"
-                value="12:00"
-                onChange={() => {}}
-              />
-            </div>
-
-            {/* ROW 2 */}
+            {/* ROW 2: Keep only Check-in and Check-out dates */}
             <div className="form-row">
               <Input
                 label="Check-in Date"
