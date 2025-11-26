@@ -118,6 +118,17 @@ const customerSlice = createSlice({
       state.customer = null;
       localStorage.removeItem("customer");
     },
+    setUser(state, action: PayloadAction<Customer>) {
+      state.customer = action.payload;
+      localStorage.setItem("customer", JSON.stringify(action.payload));
+    },
+
+    updatePhoto: (state, action: PayloadAction<string>) => {
+      if (state.customer) {
+        state.customer.image = action.payload;
+        localStorage.setItem("customer", JSON.stringify(state.customer));
+      }
+    },
   },
   extraReducers: (builder) => {
     // REGISTER
@@ -174,6 +185,6 @@ const customerSlice = createSlice({
 });
 
 // Export logout action
-export const { logout } = customerSlice.actions;
+export const { logout, updatePhoto, setUser } = customerSlice.actions;
 
 export default customerSlice.reducer;

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { RootState } from "../../store";
-import { logout } from "../../src/storeSlices/adminSlice";
+import { logout, setAdmin } from "../../src/storeSlices/adminSlice";
 import { useNavigate } from "react-router-dom";
 import Button from "../../src/components/Button";
 import ProfileModal from "../../src/components/profileModal";
@@ -13,28 +13,63 @@ export default function AdminProfile() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  // Redux logged-in admin
+  // Get logged-in admin from Redux
   const admin = useAppSelector((state: RootState) => state.admin.admin);
 
-  // Edit modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Profile picture state
+  // Local preview state
   const [profilePic, setProfilePic] = useState<string | null>(null);
 
-  // Upload handler
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // ===== IMAGE UPLOAD HANDLER =====
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const imageURL = URL.createObjectURL(file);
-      setProfilePic(imageURL);
+    const adminId = (admin as any)?.id;
+
+    if (!file || !adminId) return;
+
+    // 1️⃣ Instant preview
+    const previewURL = URL.createObjectURL(file);
+    setProfilePic(previewURL);
+
+    // 2️⃣ Send to backend
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const response = await fetch(
+        `http://localhost:4040/api/admins/upload/${adminId}/image`,
+        {
+          method: "PATCH",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        console.error("Upload failed with status:", response.status);
+        return;
+      }
+
+      const result = await response.json();
+      console.log("Upload result:", result);
+
+      if (result.image) {
+        // 3️⃣ Update Redux state with new image
+        const updatedAdmin = { ...admin, image: result.image } as any;
+        dispatch(setAdmin(updatedAdmin));
+
+        // 4️⃣ Update stored image URL
+        setProfilePic(`http://localhost:4040/uploads/${result.image}`);
+      }
+    } catch (err) {
+      console.error("Upload failed:", err);
     }
   };
 
-  // 🔥 Logout handler
+  // Logout Handler
   const handleLogout = () => {
-    dispatch(logout()); // clears redux + localStorage
-    navigate("/"); // redirect to login/landing
+    dispatch(logout());
+    navigate("/");
   };
 
   return (
@@ -44,15 +79,21 @@ export default function AdminProfile() {
       <div className="page-container">
         <div className="profile-wrapper">
           <div className="profile-content">
-            {/* Profile Image */}
+            {/* --- Profile Image --- */}
             <div className="profile-image-container">
               <label htmlFor="upload-photo" className="profile-image-circle">
-                {profilePic ? (
-                  <img src={profilePic} alt="Profile" className="profile-img" />
-                ) : (
-                  <span className="upload-text">Upload</span>
-                )}
+                <img
+                  src={
+                    profilePic || // instant preview before upload
+                    (admin?.image // saved image from DB/localStorage
+                      ? `http://localhost:4040/uploads/${admin.image}`
+                      : "/default-avatar.png") // fallback
+                  }
+                  alt="Profile"
+                  className="profile-img"
+                />
               </label>
+
               <input
                 id="upload-photo"
                 type="file"
@@ -62,7 +103,7 @@ export default function AdminProfile() {
               />
             </div>
 
-            {/* Admin Info */}
+            {/* --- Admin Information --- */}
             <div className="profile-info">
               <p className="profile-label">First Name</p>
               <p className="profile-value">{admin?.first_name || "-"}</p>
@@ -77,10 +118,10 @@ export default function AdminProfile() {
               <p className="profile-value">{admin?.phone || "-"}</p>
 
               <p className="profile-label">Address</p>
-              <p className="profile-value">{admin?.address|| "-"}</p>
+              <p className="profile-value">{admin?.address || "-"}</p>
             </div>
 
-            {/* Buttons */}
+            {/* --- Buttons --- */}
             <div className="profile-actions">
               <Button
                 name="Edit Profile"
@@ -90,7 +131,6 @@ export default function AdminProfile() {
                 onClick={() => setIsModalOpen(true)}
               />
 
-              {/* 🔥 FIXED LOGOUT BUTTON */}
               <Button
                 name="Logout"
                 backgroundColor="#846D29"
@@ -102,7 +142,7 @@ export default function AdminProfile() {
           </div>
         </div>
 
-        {/* Edit Modal */}
+        {/* Edit Profile Modal */}
         <ProfileModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}

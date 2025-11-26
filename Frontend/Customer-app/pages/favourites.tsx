@@ -33,7 +33,112 @@ export default function Favourites() {
         />
       </div>
 
+<<<<<<< HEAD
           <div className="footer">
+=======
+      <div className="cards">
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+      </div>
+
+      <div className="footer">
+>>>>>>> feat/AddImage
         <Footer />
       </div>
     </div>
