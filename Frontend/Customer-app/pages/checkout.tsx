@@ -69,6 +69,17 @@ export default function Checkout() {
                 value=""
                 onChange={() => {}}
               />
+              <div className="input-group">
+                <label>Room Type</label>
+                <select name="room_type" defaultValue="">
+                  <option value="" disabled>
+                    Select Room Type
+                  </option>
+                  <option value="delux">delux</option>
+                  <option value="suite">suite</option>
+                  <option value="starndard">starndard</option>
+                </select>
+              </div>
             </div>
 
             {/* ROW 1 */}
