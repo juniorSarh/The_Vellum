@@ -12,6 +12,7 @@ export interface Admin {
   last_name: string;
   phone?: string;
   address?: string;
+  image?: string;
 }
 
 interface AdminState {
@@ -121,6 +122,20 @@ const adminSlice = createSlice({
       state.admin = null;
       localStorage.removeItem("admin");
     },
+    updatePhoto: (state, action: PayloadAction<string>) => {
+      if (state.admin) {
+        state.admin.image = action.payload;
+        localStorage.setItem("admin", JSON.stringify(state.admin));
+      }
+    },
+
+    setAdmin: (state, action: PayloadAction<AdminState["admin"]>) => {
+      state.admin = action.payload;
+    },
+
+    clearError(state) {
+      state.error = null; 
+    },
   },
   extraReducers: (builder) => {
     // REGISTER
@@ -177,6 +192,6 @@ const adminSlice = createSlice({
 });
 
 // Export logout action
-export const { logout } = adminSlice.actions;
+export const { logout, updatePhoto, setAdmin } = adminSlice.actions;
 
 export default adminSlice.reducer;

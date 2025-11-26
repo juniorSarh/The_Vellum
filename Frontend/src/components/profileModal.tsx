@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from "react";
 import Button from "./Button";
 import "../ProfileModal.css";
+// Redux hooks
 import { useAppDispatch } from "../storeSlices/hooks";
+// Actions
 import { updateCustomerProfile } from "../storeSlices/customerSlice";
-
+import { updateAdminProfile } from "../storeSlices/adminSlice";
 interface ProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
-  customer: any;
+  user: any; // Works for admin OR customer
+  userType: "customer" | "admin"; // tells modal who is being edited
 }
-
 const ProfileModal: React.FC<ProfileModalProps> = ({
   isOpen,
   onClose,
-  customer,
+  user,
+  userType,
 }) => {
   const dispatch = useAppDispatch();
-
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -24,98 +26,76 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
     phone: "",
     address: "",
   });
-
   useEffect(() => {
-    if (customer) {
+    if (user) {
       setFormData({
-        first_name: customer.first_name || "",
-        last_name: customer.last_name || "",
-        email: customer.email || "",
-        phone: customer.phone || "",
-        address: customer.address || "",
+        first_name: user.first_name || "",
+        last_name: user.last_name || "",
+        email: user.email || "",
+        phone: user.phone || "",
+        address: user.address || "",
       });
     }
-  }, [customer]);
-
+  }, [user]);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
   const handleSave = () => {
-    if (!customer?.id) return;
-    dispatch(updateCustomerProfile({ id: customer.id, updates: formData }));
+    if (!user?.id) return;
+    if (userType === "customer") {
+      dispatch(updateCustomerProfile({ id: user.id, updates: formData }));
+    } else {
+      dispatch(updateAdminProfile({ id: user.id, updates: formData }));
+    }
     onClose();
   };
-
   if (!isOpen) return null;
-
   return (
     <div className="modal-overlay">
       <div className="modal-container">
         <h2 className="modal-title">Edit Profile</h2>
-
         <form className="modal-form">
-          <label >First Name</label>
+          <label>First Name</label>
           <input
-            className=""
             name="first_name"
             value={formData.first_name}
             onChange={handleChange}
           />
-
-          <label className="">Last Name</label>
+          <label>Last Name</label>
           <input
-            className=""
             name="last_name"
             value={formData.last_name}
             onChange={handleChange}
           />
-
-          <label className="">Email</label>
+          <label>Email</label>
+          <input name="email" value={formData.email} onChange={handleChange} />
+          <label>Phone Number</label>
+          <input name="phone" value={formData.phone} onChange={handleChange} />
+          <label>Address</label>
           <input
-            className=""
-            name="last_name"
-            value={formData.email}
-            onChange={handleChange}
-          />
-
-          <label className="">Phone Number</label>
-          <input
-            className=""
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-          />
-
-          <label className="">Address</label>
-          <input
-            className=""
             name="address"
             value={formData.address}
             onChange={handleChange}
           />
-      
-
-        <div className="modal-buttons">
-          <Button
-            name="Save Changes"
-            backgroundColor="#846D29"
-            color="white"
-            className="modal-btn"
-            onClick={handleSave}
-          />
-          <Button
-            name="Cancel"
-            backgroundColor="gray"
-            color="white"
-            className="modal-btn"
-            onClick={onClose}
-          />
-         </div>
-          </form>
+          <div className="modal-buttons">
+            <Button
+              name="Save Changes"
+              backgroundColor="#846D29"
+              color="white"
+              className="modal-btn"
+              onClick={handleSave}
+            />
+            <Button
+              name="Cancel"
+              backgroundColor="gray"
+              color="white"
+              className="modal-btn"
+              onClick={onClose}
+            />
+          </div>
+        </form>
       </div>
     </div>
   );
 };
-
 export default ProfileModal;
