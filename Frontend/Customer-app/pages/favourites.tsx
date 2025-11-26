@@ -35,20 +35,104 @@ export default function Favourites() {
       </div>
 
       <div className="cards">
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
-        <HotelCard name="The Vellum" location="pmb" price={2000} image={logo} />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
+        <HotelCard
+          name="The Vellum"
+          location="pmb"
+          price={2000}
+          image={logo}
+          isLoggedIn={true}
+        />
       </div>
 
       <div className="footer">
