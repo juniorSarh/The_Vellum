@@ -1,39 +1,77 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "../../src/components/Button";
 import ProfileModal from "../../src/components/profileModal";
+import type { RootState } from "../../store";
 import "../../src/Userprofile.css";
 import logo from "../../src/assets/The-vellum-logo.png";
 import Footer from "../../src/components/Footer";
 import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
-import { logout } from "../../src/storeSlices/customerSlice";
+import { logout, setUser} from "../../src/storeSlices/customerSlice";
 import PrivatNav from "../../src/components/PrivatNav";
-import { useNavigate } from "react-router-dom"; // 👈 Added
+import { useNavigate } from "react-router-dom";
 
 const ProfilePage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate(); // 👈 Added
+  const navigate = useNavigate();
 
-  // Get logged-in customer from Redux
-  const { customer } = useAppSelector((state) => state.customer);
+  // Logged-in customer
+  const customer = useAppSelector((state: RootState) => state.customer.customer);
 
-  // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Profile picture state
   const [profilePic, setProfilePic] = useState<string | null>(null);
 
-  // Upload handler
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Load image from Redux/localStorage on mount
+  useEffect(() => {
+    if (customer?.image) {
+      setProfilePic(`http://localhost:4040/uploads/${customer.image}`);
+    }
+  }, [customer]);
+
+  // Handle image upload
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setProfilePic(URL.createObjectURL(file));
+    if (!file || !customer?.id) return;
+
+    // Preview immediately
+    const previewURL = URL.createObjectURL(file);
+    setProfilePic(previewURL);
+
+    // Send to backend
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const response = await fetch(
+        `http://localhost:4040/api/customers/upload/${customer.id}/image`,
+        {
+          method: "PATCH",
+          body: formData, // multipart/form-data
+        }
+      );
+
+      if (!response.ok) {
+        console.error("Upload failed with status:", response.status);
+        return;
+      }
+
+      const result = await response.json();
+         console.log("Upload result:", result);
+
+      if (result.image) {
+        // Update Redux & localStorage
+         const updatedCustomer = { ...customer, image: result.image } as any;
+           dispatch(setUser(updatedCustomer));
+        
+        setProfilePic(`http://localhost:4040/uploads/${result.image}`);
+      }
+    } catch (err) {
+      console.error("Upload failed:", err);
     }
   };
 
-  // 👇 LOGOUT FIX
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/"); // redirect after logout
+    navigate("/");
   };
 
   return (
@@ -43,32 +81,37 @@ const ProfilePage: React.FC = () => {
         <div className="profile-wrapper">
           <aside className="profile-sidebar">
             <div className="sidebar-logo">
-              <img src={logo} alt="" />
+              <img src={logo} alt="Logo" />
             </div>
-
             <button className="sidebar-option">Favorites</button>
             <button className="sidebar-option">My Bookings</button>
           </aside>
 
           <div className="profile-content">
+            {/* Profile Image */}
             <div className="profile-image-container">
               <label htmlFor="upload-photo" className="profile-image-circle">
-                {profilePic ? (
-                  <img src={profilePic} alt="Profile" className="profile-img" />
-                ) : (
-                  <span className="upload-text">Upload</span>
-                )}
+                <img
+                  src={
+                    profilePic || // instant preview before upload
+                    (customer?.image // saved image from DB/localStorage
+                      ? `http://localhost:4040/uploads/${customer.image}`
+                      : "/default-avatar.png") // fallback
+                  }
+                  alt="Profile"
+                  className="profile-img"
+                />
               </label>
               <input
                 id="upload-photo"
                 type="file"
                 style={{ display: "none" }}
                 accept="image/*"
-                value={customer.image}
                 onChange={handleImageUpload}
               />
             </div>
 
+            {/* Customer Info */}
             <div className="profile-info">
               <p className="profile-label">First Name</p>
               <p className="profile-value">{customer?.first_name}</p>
@@ -84,9 +127,9 @@ const ProfilePage: React.FC = () => {
 
               <p className="profile-label">Address</p>
               <p className="profile-value">{customer?.address || "Not set"}</p>
-
             </div>
 
+            {/* Actions */}
             <div className="profile-actions">
               <Button
                 name="Edit Profile"
@@ -95,8 +138,6 @@ const ProfilePage: React.FC = () => {
                 className="profile-btn"
                 onClick={() => setIsModalOpen(true)}
               />
-
-              {/* 🔥 Updated Logout Button */}
               <Button
                 name="Logout"
                 backgroundColor="#846D29"
