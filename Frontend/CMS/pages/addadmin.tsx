@@ -21,6 +21,7 @@ const Addadmin = () => {
   });
 
   const [localError, setLocalError] = useState<string | null>(null);
+  console.log("Local error:", localError);
 
   const { loading } = useSelector((state: RootState) => state.admin);
 
