@@ -1,0 +1,116 @@
+.error-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #f8b500, #fceabb);
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  text-align: center;
+  padding: 20px;
+}
+
+.error-content {
+  z-index: 2;
+}
+
+.error-code {
+  font-size: 8rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+  margin: 0;
+}
+
+.error-message {
+  font-size: 2rem;
+  margin: 10px 0;
+  color: #fff;
+}
+
+.error-description {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+.error-btn {
+  background-color: #fff;
+  color: #f8b500;
+  border: none;
+  padding: 12px 25px;
+  font-size: 1rem;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.error-btn:hover {
+  background-color: #f8b500;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+/* Floating Ghost Animation */
+.error-animation {
+  position: relative;
+  margin-top: 40px;
+}
+
+.floating-ghost {
+  width: 80px;
+  height: 80px;
+  background: #fff;
+  border-radius: 50% 50% 0 0;
+  position: relative;
+  animation: float 2s ease-in-out infinite;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.floating-ghost::before {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  width: 80px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+}
+
+.ghost-eyes {
+  width: 15px;
+  height: 15px;
+  background: #333;
+  border-radius: 50%;
+  position: absolute;
+  top: 25px;
+  left: 20px;
+}
+
+.ghost-eyes::after {
+  content: '';
+  width: 15px;
+  height: 15px;
+  background: #333;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 40px;
+}
+
+.ghost-bottom {
+  width: 80%;
+  height: 15px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 0;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
