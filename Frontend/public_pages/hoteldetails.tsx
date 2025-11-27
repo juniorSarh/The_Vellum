@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-import NavBar from '../src/components/navBar'
-import Button from '../src/components/Button'
-import Footer from '../src/components/Footer'
-import { FaArrowLeft, FaRegHeart, FaShare, FaMapMarkerAlt } from 'react-icons/fa'
-import '../src/assets/css/hotelDetails.css'
-// import hotelImage from '../assets/hotel.jpg'
-=======
 import { useEffect, useState } from "react";
 import NavBar from "../src/components/navBar";
 import Button from "../src/components/Button";
@@ -22,8 +14,6 @@ import { useAppDispatch, useAppSelector } from "../src/storeSlices/hooks";
 import { getHotelById } from "../src/storeSlices/hotelSlice";
 import { fetchRooms } from "../src/storeSlices/roomSlice";
 import Input from "../src/components/input";
-import PrivatNav from "../src/components/PrivatNav";
->>>>>>> feat/details
 
 // ⚠️ Adjust this import & action name to match your actual favourites slice
 //import { addToFavourites } from "../src/storeSlices/favouritesSlice";
@@ -160,7 +150,7 @@ export default function HotelDetails() {
     <div className="hotel-details-page">
       {/* NAV */}
       <div className="nav-row">
-        <PrivatNav />
+        <NavBar />
       </div>
 
       {/* MAIN */}
@@ -247,6 +237,11 @@ export default function HotelDetails() {
                 value={reservation.people}
                 onChange={handleChange}
               />
+              <div className="nights-display">
+                <p>
+                  <strong>Nights:</strong> {nights}
+                </p>
+              </div>
 
               {/* TOTAL PRICE DISPLAY */}
               <div className="total-price-box">
@@ -257,7 +252,7 @@ export default function HotelDetails() {
 
               {/* RESERVE BUTTON */}
               <Button
-                name="Book now"
+                name="Reserve"
                 backgroundColor="#846d29"
                 color="white"
                 className="reserve-btn"
@@ -274,9 +269,25 @@ export default function HotelDetails() {
                     return;
                   }
 
-                  const pricePerNight = getPriceForRoomType(
-                    reservation.room_type
+                  // Find the room by type to get room_id + price
+                  const selectedRoom = rooms.find(
+                    (r) =>
+                      r.room_type.toLowerCase() ===
+                      reservation.room_type.toLowerCase()
                   );
+
+                  const pricePerNight = selectedRoom ? selectedRoom.price : 0;
+                  const roomId = selectedRoom ? selectedRoom.room_id : 1; // fallback
+
+                  const checkIn = new Date(reservation.check_in_date);
+                  const checkOut = new Date(reservation.check_out_date);
+                  const diffTime = checkOut.getTime() - checkIn.getTime();
+                  const nights =
+                    Math.ceil(diffTime / (1000 * 60 * 60 * 24)) > 0
+                      ? Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+                      : 0;
+
+                  const totalPrice = pricePerNight * nights;
 
                   navigate(`/checkout/${hotel.hotel_id}`, {
                     state: {
@@ -289,6 +300,7 @@ export default function HotelDetails() {
                       nights,
                       price_per_night: pricePerNight,
                       total_cost: totalPrice,
+                      room_id: roomId,
                     },
                   });
                 }}
@@ -306,7 +318,7 @@ export default function HotelDetails() {
               backgroundColor="white"
               color="black"
               className="icon-btn"
-             // onClick={handleAddToFavourites}
+              //onClick={handleAddToFavourites}
             />
 
             {/* SHARE */}

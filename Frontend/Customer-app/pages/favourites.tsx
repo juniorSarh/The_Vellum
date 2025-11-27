@@ -3,8 +3,7 @@ import PrivateNavBar from "../../src/components/PrivateNaveBar";
 import Footer from "../../src/components/Footer";
 import SearchBar from "../../src/components/searchBar";
 import Button from "../../src/components/Button";
-import logo from "../../src/assets/images.jpg";
-import HotelCard from "../../src/components/hotelCard";
+
 
 import "../../src/assets/css/favourites.css";
 import { FaArrowLeft } from "react-icons/fa";
@@ -34,106 +33,6 @@ export default function Favourites() {
         />
       </div>
 
-      <div className="cards">
-        <HotelCard
-          name="The Vellum"
-          location="pmb"
-          price={2000}
-          image={logo}
-          isLoggedIn={true}
-        />
-        <HotelCard
-          name="The Vellum"
-          location="pmb"
-          price={2000}
-          image={logo}
-          isLoggedIn={true}
-        />
-        <HotelCard
-          name="The Vellum"
-          location="pmb"
-          price={2000}
-          image={logo}
-          isLoggedIn={true}
-        />
-        <HotelCard
-          name="The Vellum"
-          location="pmb"
-          price={2000}
-          image={logo}
-          isLoggedIn={true}
-        />
-        <HotelCard
-          name="The Vellum"
-          location="pmb"
-          price={2000}
-          image={logo}
-          isLoggedIn={true}
-        />
-        <HotelCard
-          name="The Vellum"
-          location="pmb"
-          price={2000}
-          image={logo}
-          isLoggedIn={true}
-        />
-        <HotelCard
-          name="The Vellum"
-          location="pmb"
-          price={2000}
-          image={logo}
-          isLoggedIn={true}
-        />
-        <HotelCard
-          name="The Vellum"
-          location="pmb"
-          price={2000}
-          image={logo}
-          isLoggedIn={true}
-        />
-        <HotelCard
-          name="The Vellum"
-          location="pmb"
-          price={2000}
-          image={logo}
-          isLoggedIn={true}
-        />
-        <HotelCard
-          name="The Vellum"
-          location="pmb"
-          price={2000}
-          image={logo}
-          isLoggedIn={true}
-        />
-        <HotelCard
-          name="The Vellum"
-          location="pmb"
-          price={2000}
-          image={logo}
-          isLoggedIn={true}
-        />
-        <HotelCard
-          name="The Vellum"
-          location="pmb"
-          price={2000}
-          image={logo}
-          isLoggedIn={true}
-        />
-        <HotelCard
-          name="The Vellum"
-          location="pmb"
-          price={2000}
-          image={logo}
-          isLoggedIn={true}
-        />
-        <HotelCard
-          name="The Vellum"
-          location="pmb"
-          price={2000}
-          image={logo}
-          isLoggedIn={true}
-        />
-      </div>
 
       <div className="footer">
         <Footer />

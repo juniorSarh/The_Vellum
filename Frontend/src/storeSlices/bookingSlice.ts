@@ -21,12 +21,8 @@ export interface Booking {
 
 interface BookingState {
   bookings: Booking[];
-<<<<<<< HEAD
   booking: Booking | null;
-=======
-  booking?: Booking;
-  pendingBooking?: Booking; 
->>>>>>> feat/details
+  pendingBooking: Omit<Booking, "booking_id"> | null; // used for Paystack flow
   loading: boolean;
   error: string | null;
 }
@@ -34,21 +30,17 @@ interface BookingState {
 const initialState: BookingState = {
   bookings: [],
   booking: null,
+  pendingBooking: null,
   loading: false,
   error: null,
 };
 
+// Adjust to your backend
 const API_URL = "http://localhost:4040/api/bookings";
 
 // ----------------------------
-// API
+// Async Thunks (fetch-based)
 // ----------------------------
-const API_URL = "http://localhost:4000/api/bookings";
-
-// ----------------------------
-// Async Thunks
-// ----------------------------
-<<<<<<< HEAD
 
 // 1️⃣ Fetch all bookings
 export const fetchBookings = createAsyncThunk<
@@ -61,21 +53,13 @@ export const fetchBookings = createAsyncThunk<
     const result = await response.json();
 
     if (!response.ok) {
+      console.error("Fetch bookings failed:", response.status, result);
       return rejectWithValue(result.error || "Failed to fetch bookings");
-=======
-export const fetchBookings = createAsyncThunk(
-  "bookings/fetchAll",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(API_URL);
-      return response.data as Booking[];
-    } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || err.message);
->>>>>>> feat/details
     }
 
     return result as Booking[];
-  } catch {
+  } catch (err) {
+    console.error("Fetch bookings error:", err);
     return rejectWithValue("Failed to fetch bookings");
   }
 });
@@ -91,16 +75,18 @@ export const fetchBookingById = createAsyncThunk<
     const result = await response.json();
 
     if (!response.ok) {
+      console.error("Fetch booking by ID failed:", response.status, result);
       return rejectWithValue(result.error || "Failed to fetch booking");
     }
 
     return result as Booking;
-  } catch {
+  } catch (err) {
+    console.error("Fetch booking by ID error:", err);
     return rejectWithValue("Failed to fetch booking");
   }
 });
 
-// 3️⃣ Create booking
+// 3️⃣ Create booking (called AFTER Paystack success)
 export const createBooking = createAsyncThunk<
   Booking,
   Omit<Booking, "booking_id">,
@@ -113,14 +99,22 @@ export const createBooking = createAsyncThunk<
       body: JSON.stringify(bookingData),
     });
 
-    const result = await response.json();
+    let result: any = {};
+    try {
+      result = await response.json();
+    } catch {
+      result = {};
+    }
 
     if (!response.ok) {
+      console.error("Create booking failed:", response.status, result);
       return rejectWithValue(result.error || "Failed to create booking");
     }
 
+    console.log("Create booking success:", result);
     return result as Booking;
-  } catch {
+  } catch (err) {
+    console.error("Create booking network error:", err);
     return rejectWithValue("Failed to create booking");
   }
 });
@@ -141,11 +135,13 @@ export const updateBooking = createAsyncThunk<
     const result = await response.json();
 
     if (!response.ok) {
+      console.error("Update booking failed:", response.status, result);
       return rejectWithValue(result.error || "Failed to update booking");
     }
 
     return result as Booking;
-  } catch {
+  } catch (err) {
+    console.error("Update booking error:", err);
     return rejectWithValue("Failed to update booking");
   }
 });
@@ -163,11 +159,13 @@ export const deleteBooking = createAsyncThunk<
 
     if (!response.ok) {
       const result = await response.json().catch(() => ({}));
+      console.error("Delete booking failed:", response.status, result);
       return rejectWithValue(result.error || "Failed to delete booking");
     }
 
     return id;
-  } catch {
+  } catch (err) {
+    console.error("Delete booking error:", err);
     return rejectWithValue("Failed to delete booking");
   }
 });
@@ -189,17 +187,18 @@ const bookingSlice = createSlice({
       state.bookings = action.payload;
     },
 
-    // STORE CHECKOUT BOOKING DETAILS
-    setPendingBooking(state, action: PayloadAction<Booking>) {
+    // Store booking payload while user is on payment gateway
+    setPendingBooking(
+      state,
+      action: PayloadAction<Omit<Booking, "booking_id">>
+    ) {
       state.pendingBooking = action.payload;
     },
 
-    //  PENDING AFTER PAYMENT OR CANCEL
     clearPendingBooking(state) {
-      state.pendingBooking = undefined;
+      state.pendingBooking = null;
     },
   },
-
   extraReducers: (builder) => {
     // Fetch all
     builder.addCase(fetchBookings.pending, (state) => {
@@ -215,7 +214,7 @@ const bookingSlice = createSlice({
     );
     builder.addCase(fetchBookings.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.payload || "Failed to fetch bookings";
+      state.error = (action.payload as string) || "Failed to fetch bookings";
     });
 
     // Fetch by ID
@@ -232,7 +231,7 @@ const bookingSlice = createSlice({
     );
     builder.addCase(fetchBookingById.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.payload || "Failed to fetch booking";
+      state.error = (action.payload as string) || "Failed to fetch booking";
     });
 
     // Create
@@ -245,22 +244,12 @@ const bookingSlice = createSlice({
       (state, action: PayloadAction<Booking>) => {
         state.loading = false;
         state.bookings.unshift(action.payload);
-<<<<<<< HEAD
-=======
-        state.pendingBooking = undefined; // clear after payment
-      }
-    );
-    builder.addCase(
-      createBooking.rejected,
-      (state, action: PayloadAction<any>) => {
-        state.loading = false;
-        state.error = action.payload;
->>>>>>> feat/details
+        state.pendingBooking = null;
       }
     );
     builder.addCase(createBooking.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.payload || "Failed to create booking";
+      state.error = (action.payload as string) || "Failed to create booking";
     });
 
     // Update
@@ -285,7 +274,7 @@ const bookingSlice = createSlice({
     );
     builder.addCase(updateBooking.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.payload || "Failed to update booking";
+      state.error = (action.payload as string) || "Failed to update booking";
     });
 
     // Delete
@@ -307,21 +296,17 @@ const bookingSlice = createSlice({
     );
     builder.addCase(deleteBooking.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.payload || "Failed to delete booking";
+      state.error = (action.payload as string) || "Failed to delete booking";
     });
   },
 });
 
-<<<<<<< HEAD
-export const { clearBookingError, clearBooking, setBookings } =
-  bookingSlice.actions;
-=======
 export const {
   clearBookingError,
   clearBooking,
+  setBookings,
   setPendingBooking,
   clearPendingBooking,
 } = bookingSlice.actions;
->>>>>>> feat/details
 
 export default bookingSlice.reducer;

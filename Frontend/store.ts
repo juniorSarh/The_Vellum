@@ -3,12 +3,8 @@ import customerReducer from "./src/storeSlices/customerSlice";
 import adminReducer from "./src/storeSlices/adminSlice";
 import hotelReducer from "./src/storeSlices/hotelSlice";
 import roomReducer from "./src/storeSlices/roomSlice";
-<<<<<<< HEAD
-import bookingSLice from "./src/storeSlices/bookingSlice";
-import paymentSlice from "./src/storeSlices/paymentSlice";
-=======
 import bookingReducer from "./src/storeSlices/bookingSlice";
->>>>>>> feat/details
+import paymentSlice from "./src/storeSlices/paymentSlice";
 
 export const store = configureStore({
   reducer: {
@@ -17,11 +13,7 @@ export const store = configureStore({
     hotel: hotelReducer,
     payment: paymentSlice,
     room: roomReducer,
-<<<<<<< HEAD
-    Booking: bookingSLice,
-=======
     booking: bookingReducer,
->>>>>>> feat/details
   },
 });
 
