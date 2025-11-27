@@ -1,148 +1,128 @@
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Roboto:wght@300;400;500&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Roboto:wght@300;400;500&display=swap');
 
-/* NO SCROLLBAR */
-* {
-  scrollbar-width: none;
-}
-
-html,
-body {
+.checkout-wrapper {
   width: 100%;
-  height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-/* MAIN CONTAINER */
-.checkout-container {
-  display: flex;
-  flex-direction: column;
   min-height: 100vh;
-}
-
-.checkout-content {
-  flex: 1;
-  padding: 1%;
+  background: #f4f4f4;
   display: flex;
-  flex-direction: column;
-  gap: 30px;
-}
-
-/* TOP SECTION */
-.checkout-top-section {
-  display: flex;
-  width: 100%;
-  gap: 20px;
-}
-
-.checkout-image-box {
-  width: 40%;
-}
-
-.image {
-  width: 100%;
-  height: 350px;
-  object-fit: cover;
-  background: #e3e3e3;
-  border-radius: 8px;
-}
-
-.checkout-info-box {
-  width: 60%;
-  background: #555155;
-  font-family: "Roboto", sans-serif;
-  color: white;
-  padding: 20px;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-/* FORM SECTION */
-.checkout-form {
-  display: flex;
-  flex-direction: column;
   justify-content: center;
-  align-items: center;
-  background: #ffffff;
-  padding: 2%;
+  align-items: flex-start;
+  padding-top: 40px;
 }
 
-.form {
-  width: 100%;
-  max-width: 600px;
+.checkout-slip {
+  width: 480px;
   background: white;
-  padding: 28px;
+  padding: 25px;
   border-radius: 12px;
-  border: 1px solid #ddd;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
+  font-family: 'Roboto', sans-serif;
 }
 
-/* Room Type select styling */
-.checkout-form .input-group select {
-  padding: 10px 12px;
-  border: 1px solid #ddd;
+.slip-title {
+  font-family: "Cinzel", serif;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 26px;
+}
+
+.slip-section {
+  background: #fafafa;
+  padding: 15px;
   border-radius: 8px;
-  background: #fff;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
 }
 
-.checkout-form .input-group select option {
-  padding: 8px 12px;
+.slip-label {
+  font-size: 18px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
 }
 
-/* FORM LAYOUT */
-.form-column {
+.total-line {
+  margin-top: 8px;
+  font-size: 18px;
+  border-top: 1px solid #ddd;
+  padding-top: 8px;
+}
+
+.checkout-actions {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.form-row {
-  display: flex;
-  gap: 20px;
+  justify-content: space-between;
   margin-top: 20px;
 }
 
-/* Buttons */
-.checkout-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 40px;
-  margin-top: 25px;
-}
-
-.btn {
-  width: 180px;
-  padding: 12px;
-  border: none;
+.cancel-btn {
+  width: 48%;
+  padding: 10px;
   border-radius: 8px;
-  font-size: 16px;
+  background: #d9534f;
+  color: white;
+  border: none;
   cursor: pointer;
-  font-weight: bold;
+  font-size: 16px;
 }
 
-.btn:hover {
-  opacity: 0.85;
-  transform: translateY(-3px);
+.cancel-btn:hover {
+  background: #c9302c;
+  transform: translateY(-2px);
 }
 
-/* RESPONSIVE - MOBILE */
-@media (max-width: 768px) {
-  .checkout-top-section {
-    flex-direction: column;
+.pay-btn {
+  width: 48%;
+  padding: 10px;
+  border-radius: 8px;
+  background: #f0c14b;
+  color: #333;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.pay-btn:hover {
+  background: #ddb347;
+  transform: translateY(-2px);
+}
+
+/* EMPTY STATE */
+.checkout-empty {
+  text-align: center;
+  margin-top: 80px;
+}
+
+.checkout-empty button {
+  padding: 10px 18px;
+  border-radius: 6px;
+  background: #444;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.checkout-empty button:hover {
+  background: #222;
+}
+
+/* RESPONSIVE */
+@media (max-width: 520px) {
+  .checkout-slip {
+    width: 92%;
+    padding: 18px;
   }
 
-  .checkout-image-box,
-  .checkout-info-box {
+  .slip-title {
+    font-size: 22px;
+  }
+
+  .checkout-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cancel-btn,
+  .pay-btn {
     width: 100%;
-  }
-
-  .form-row {
-    flex-direction: column;
-  }
-
-  .checkout-buttons {
-    flex-direction: column;
-    gap: 15px;
   }
 }

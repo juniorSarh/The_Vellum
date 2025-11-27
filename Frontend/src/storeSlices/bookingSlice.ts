@@ -21,7 +21,12 @@ export interface Booking {
 
 interface BookingState {
   bookings: Booking[];
+<<<<<<< HEAD
   booking: Booking | null;
+=======
+  booking?: Booking;
+  pendingBooking?: Booking; 
+>>>>>>> feat/details
   loading: boolean;
   error: string | null;
 }
@@ -36,8 +41,14 @@ const initialState: BookingState = {
 const API_URL = "http://localhost:4040/api/bookings";
 
 // ----------------------------
+// API
+// ----------------------------
+const API_URL = "http://localhost:4000/api/bookings";
+
+// ----------------------------
 // Async Thunks
 // ----------------------------
+<<<<<<< HEAD
 
 // 1️⃣ Fetch all bookings
 export const fetchBookings = createAsyncThunk<
@@ -51,6 +62,16 @@ export const fetchBookings = createAsyncThunk<
 
     if (!response.ok) {
       return rejectWithValue(result.error || "Failed to fetch bookings");
+=======
+export const fetchBookings = createAsyncThunk(
+  "bookings/fetchAll",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(API_URL);
+      return response.data as Booking[];
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+>>>>>>> feat/details
     }
 
     return result as Booking[];
@@ -167,7 +188,18 @@ const bookingSlice = createSlice({
     setBookings(state, action: PayloadAction<Booking[]>) {
       state.bookings = action.payload;
     },
+
+    // STORE CHECKOUT BOOKING DETAILS
+    setPendingBooking(state, action: PayloadAction<Booking>) {
+      state.pendingBooking = action.payload;
+    },
+
+    //  PENDING AFTER PAYMENT OR CANCEL
+    clearPendingBooking(state) {
+      state.pendingBooking = undefined;
+    },
   },
+
   extraReducers: (builder) => {
     // Fetch all
     builder.addCase(fetchBookings.pending, (state) => {
@@ -213,6 +245,17 @@ const bookingSlice = createSlice({
       (state, action: PayloadAction<Booking>) => {
         state.loading = false;
         state.bookings.unshift(action.payload);
+<<<<<<< HEAD
+=======
+        state.pendingBooking = undefined; // clear after payment
+      }
+    );
+    builder.addCase(
+      createBooking.rejected,
+      (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload;
+>>>>>>> feat/details
       }
     );
     builder.addCase(createBooking.rejected, (state, action) => {
@@ -269,7 +312,16 @@ const bookingSlice = createSlice({
   },
 });
 
+<<<<<<< HEAD
 export const { clearBookingError, clearBooking, setBookings } =
   bookingSlice.actions;
+=======
+export const {
+  clearBookingError,
+  clearBooking,
+  setPendingBooking,
+  clearPendingBooking,
+} = bookingSlice.actions;
+>>>>>>> feat/details
 
 export default bookingSlice.reducer;

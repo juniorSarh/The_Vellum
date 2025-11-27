@@ -87,17 +87,13 @@ export default function Home() {
                 name={hotel.name}
                 location={hotel.location}
                 // Placeholder price (you can later compute from rooms, etc.)
-                price={hotel.star_rating ? hotel.star_rating * 1000 : 1000}
                 isLoggedIn={true}
                 image={
                   hotel.images && hotel.images.length > 0
                     ? hotel.images[0]
                     : "../src/assets/images.jpg"
                 }
-                onClick={() => {
-                  // You can later change this to /hotel/:id
-                  navigate("/hotel");
-                }}
+                onClick={() => navigate(`/hotel/${hotel.hotel_id}`)}
               />
             ))
           )}

@@ -3,17 +3,25 @@ import customerReducer from "./src/storeSlices/customerSlice";
 import adminReducer from "./src/storeSlices/adminSlice";
 import hotelReducer from "./src/storeSlices/hotelSlice";
 import roomReducer from "./src/storeSlices/roomSlice";
+<<<<<<< HEAD
 import bookingSLice from "./src/storeSlices/bookingSlice";
 import paymentSlice from "./src/storeSlices/paymentSlice";
+=======
+import bookingReducer from "./src/storeSlices/bookingSlice";
+>>>>>>> feat/details
 
 export const store = configureStore({
   reducer: {
     customer: customerReducer,
-    admin : adminReducer,
+    admin: adminReducer,
     hotel: hotelReducer,
     payment: paymentSlice,
     room: roomReducer,
+<<<<<<< HEAD
     Booking: bookingSLice,
+=======
+    booking: bookingReducer,
+>>>>>>> feat/details
   },
 });
 
