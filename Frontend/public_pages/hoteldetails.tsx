@@ -1,402 +1,3 @@
-// // import { useEffect } from "react";
-// // import NavBar from "../src/components/navBar";
-// // import Button from "../src/components/Button";
-// // import Footer from "../src/components/Footer";
-// // import {
-// //   FaArrowLeft,
-// //   FaRegHeart,
-// //   FaShare,
-// //   FaMapMarkerAlt,
-// // } from "react-icons/fa";
-// // import "../src/assets/css/hotelDetails.css";
-// // import { useParams, useNavigate } from "react-router-dom";
-// // import { useAppDispatch, useAppSelector } from "../src/storeSlices/hooks";
-// // import { getHotelById } from "../src/storeSlices/hotelSlice";
-// // import "../src/assets/css/hotelDetails.css";
-// // // import hotelImage from '../assets/hotel.jpg'
-
-// // export default function HotelDetails() {
-// //   const { id } = useParams(); // /hotel/:id
-// //   const navigate = useNavigate();
-// //   const dispatch = useAppDispatch();
-
-// //   const { hotels, loading, error } = useAppSelector((state) => state.hotel);
-
-// //   const hotel = hotels.length > 0 ? hotels[0] : null;
-
-// //   // Fetch selected hotel
-// //   useEffect(() => {
-// //     if (id) {
-// //       dispatch(getHotelById(Number(id)));
-// //     }
-// //   }, [dispatch, id]);
-
-// //   if (loading) return <p className="loading">Loading hotel...</p>;
-// //   if (error) return <p className="error">{error}</p>;
-// //   if (!hotel) return <p>No hotel found.</p>;
-
-// //   return (
-// //     <div className="hotel-details-page">
-// //       {/* NAV */}
-// //       <div className="nav-row">
-// //         <NavBar />
-// //       </div>
-
-// //       {/* MAIN WRAPPER */}
-// //       <div className="hotel-details-wrapper">
-// //         {/* LEFT COLUMN */}
-// //         <div className="hotel-left">
-// //           <Button
-// //             icon={<FaArrowLeft />}
-// //             backgroundColor="white"
-// //             color="black"
-// //             onClick={() => navigate(-1)}
-// //           />
-
-// //           <h1 className="hotel-title">{hotel.name}</h1>
-// //           <p className="hotel-location">{hotel.location}</p>
-
-// //           <div className="image-container">
-// //             {hotel.images && hotel.images.length > 0 ? (
-// //               <img
-// //                 src={
-// //                   hotel.images[0].startsWith("http")
-// //                     ? hotel.images[0]
-// //                     : `http://localhost:4040/${hotel.images[0]}`
-// //                 }
-// //                 alt={hotel.name}
-// //               />
-// //             ) : (
-// //               <p>No image available</p>
-// //             )}
-// //           </div>
-
-// //           <h2 className="desc-title">Description:</h2>
-
-// //           <p className="hotel-description">
-// //             {hotel.description || "No description available."}
-// //           </p>
-// //         </div>
-
-// //         {/* RIGHT COLUMN */}
-// //         <div className="hotel-right">
-// //           <div className="right-top-actions">
-// //             <Button
-// //               icon={<FaRegHeart />}
-// //               className="icon"
-// //               backgroundColor="white"
-// //               color="black"
-// //             />
-// //             <Button
-// //               icon={<FaShare />}
-// //               className="icon"
-// //               backgroundColor="white"
-// //               color="black"
-// //             />
-
-// //             <Button
-// //               name="Book Now"
-// //               backgroundColor="#000"
-// //               color="white"
-// //               className="book-btn"
-// //               onClick={() => navigate(`/checkout/${hotel.hotel_id}`)}
-// //             />
-// //           </div>
-
-// //           {/* REVIEWS (STATIC FOR NOW) */}
-// //           <div className="review-panel">
-// //             <p>
-// //               <strong>Total Good reviews:</strong> 320
-// //             </p>
-// //             <p>
-// //               <strong>Comments:</strong>
-// //             </p>
-
-// //             <div className="review-item">
-// //               • Amazing place, loved the environment.
-// //             </div>
-// //             <div className="review-item">• Very clean and peaceful stay.</div>
-// //             <div className="review-item">
-// //               • Staff were friendly and helpful.
-// //             </div>
-// //           </div>
-
-// //           {/* MAP BUTTON */}
-// //           <div className="map-button-box">
-// //             <Button
-// //               icon={<FaMapMarkerAlt />}
-// //               name="Show on Map"
-// //               backgroundColor="#e5e5e5"
-// //               color="black"
-// //             />
-// //           </div>
-// //         </div>
-// //       </div>
-
-// //       {/* FOOTER */}
-// //       <div className="footer">
-// //         <Footer />
-// //       </div>
-// //     </div>
-// //   );
-// // }
-
-// import { useEffect, useState } from "react";
-// import NavBar from "../src/components/navBar";
-// import Button from "../src/components/Button";
-// import Footer from "../src/components/Footer";
-// import {
-//   FaArrowLeft,
-//   FaRegHeart,
-//   FaShare,
-//   FaMapMarkerAlt,
-// } from "react-icons/fa";
-// import "../src/assets/css/hotelDetails.css";
-// import { useParams, useNavigate } from "react-router-dom";
-// import { useAppDispatch, useAppSelector } from "../src/storeSlices/hooks";
-// import { getHotelById } from "../src/storeSlices/hotelSlice";
-
-// // 🟢 ROOM SLICE
-// import { fetchRooms } from "../src/storeSlices/roomSlice";
-
-// // 🟢 INPUT COMPONENT
-// import Input from "../src/components/input";
-
-// export default function HotelDetails() {
-//   const { id } = useParams(); // /hotel/:id
-//   const navigate = useNavigate();
-//   const dispatch = useAppDispatch();
-
-//   const { hotels, loading, error } = useAppSelector((state) => state.hotel);
-//   const { rooms } = useAppSelector((state) => state.room);
-
-//   const hotel = hotels.length > 0 ? hotels[0] : null;
-
-//   // -------------------
-//   //   FORM STATE
-//   // -------------------
-//   const [reservation, setReservation] = useState({
-//     room_type: "",
-//     check_in_date: "",
-//     check_out_date: "",
-//     people: "",
-//   });
-
-//   // -------------------
-//   //   ROOM TYPE PRICES
-//   // -------------------
-//   const getPriceForRoomType = (type: string) => {
-//     const room = rooms.find(
-//       (r) => r.room_type.toLowerCase() === type.toLowerCase()
-//     );
-//     return room ? room.price : 0;
-//   };
-
-//   // -------------------
-//   //   HANDLER
-//   // -------------------
-//   const handleChange = (e: any) => {
-//     const { name, value } = e.target;
-//     setReservation((prev) => ({ ...prev, [name]: value }));
-//   };
-
-//   // -------------------------
-//   // FETCH hotel & rooms
-//   // -------------------------
-//   useEffect(() => {
-//     if (id) {
-//       dispatch(getHotelById(Number(id)));
-//       dispatch(fetchRooms({ hotelId: Number(id) }));
-//     }
-//   }, [dispatch, id]);
-
-//   if (loading) return <p className="loading">Loading hotel...</p>;
-//   if (error) return <p className="error">{error}</p>;
-//   if (!hotel) return <p>No hotel found.</p>;
-
-//   return (
-//     <div className="hotel-details-page">
-//       {/* NAV */}
-//       <div className="nav-row">
-//         <NavBar />
-//       </div>
-
-//       {/* MAIN WRAPPER */}
-//       <div className="hotel-details-wrapper">
-//         {/* LEFT COLUMN */}
-//         <div className="hotel-left">
-//           <Button
-//             icon={<FaArrowLeft />}
-//             backgroundColor="white"
-//             color="black"
-//             onClick={() => navigate(-1)}
-//           />
-
-//           <h1 className="hotel-title">{hotel.name}</h1>
-//           <p className="hotel-location">{hotel.location}</p>
-
-//           <div className="image-container">
-//             {hotel.images && hotel.images.length > 0 ? (
-//               <img
-//                 src={
-//                   hotel.images[0].startsWith("http")
-//                     ? hotel.images[0]
-//                     : `http://localhost:4040/${hotel.images[0]}`
-//                 }
-//                 alt={hotel.name}
-//               />
-//             ) : (
-//               <p>No image available</p>
-//             )}
-//           </div>
-
-//           <h2 className="desc-title">Description:</h2>
-
-//           <p className="hotel-description">
-//             {hotel.description || "No description available."}
-//           </p>
-//         </div>
-
-//         {/* RIGHT COLUMN */}
-//         <div className="hotel-right">
-//           <div className="right-top-actions">
-//             <Button
-//               icon={<FaRegHeart />}
-//               className="icon"
-//               backgroundColor="white"
-//               color="black"
-//             />
-//             <Button
-//               icon={<FaShare />}
-//               className="icon"
-//               backgroundColor="white"
-//               color="black"
-//             />
-
-//             <Button
-//               name="Book Now"
-//               backgroundColor="#000"
-//               color="white"
-//               className="book-btn"
-//               onClick={() => navigate(`/checkout/${hotel.hotel_id}`)}
-//             />
-//           </div>
-
-//           {/* REVIEWS */}
-//           <div className="review-panel">
-//             <p>
-//               <strong>Total Reviews:</strong> 320
-//             </p>
-//             <p>
-//               <strong>Comments:</strong>
-//             </p>
-
-//             <div className="review-item">
-//               • Amazing place, loved the environment.
-//             </div>
-//             <div className="review-item">• Very clean and peaceful stay.</div>
-//             <div className="review-item">
-//               • Staff were friendly and helpful.
-//             </div>
-//           </div>
-
-//           {/* MAP */}
-//           <div className="map-button-box">
-//             <Button
-//               icon={<FaMapMarkerAlt />}
-//               name="Show on Map"
-//               backgroundColor="#e5e5e5"
-//               color="black"
-//             />
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* RESERVATION FORM */}
-//       <div className="reservation-container">
-//         <h2>Make a Reservation</h2>
-
-//         <div className="reservation-form">
-//           {/* Room type */}
-//           <div className="form-group">
-//             <label>Room Type</label>
-//             <select
-//               name="room_type"
-//               value={reservation.room_type}
-//               onChange={handleChange}
-//             >
-//               <option value="">Select room type</option>
-//               <option value="Deluxe">
-//                 Deluxe - R{getPriceForRoomType("Deluxe")}
-//               </option>
-//               <option value="Standard">
-//                 Standard - R{getPriceForRoomType("Standard")}
-//               </option>
-//               <option value="Suite">
-//                 Suite - R{getPriceForRoomType("Suite")}
-//               </option>
-//             </select>
-//           </div>
-
-//           {/* Dates */}
-//           <Input
-//             label="Check-in Date"
-//             type="date"
-//             name="check_in_date"
-//             value={reservation.check_in_date}
-//             onChange={handleChange}
-//           />
-
-//           <Input
-//             label="Check-out Date"
-//             type="date"
-//             name="check_out_date"
-//             value={reservation.check_out_date}
-//             onChange={handleChange}
-//           />
-
-//           {/* People */}
-//           <Input
-//             label="Number of People"
-//             type="number"
-//             name="people"
-//             value={reservation.people}
-//             onChange={handleChange}
-//           />
-
-//           {/* BUTTON */}
-//           <Button
-//             name="Reserve"
-//             backgroundColor="#846d29"
-//             color="white"
-//             className="reserve-btn"
-//             onClick={() =>
-//               navigate(`/checkout/${hotel.hotel_id}`, {
-//                 state: reservation,
-//               })
-//             }
-//           />
-//         </div>
-//       </div>
-
-//       {/* FOOTER */}
-//       <div className="footer">
-//         <Footer />
-//       </div>
-//     </div>
-//   );
-// }
-
-
-
-
-
-
-
-
-
-
-
 import { useEffect, useState } from "react";
 import NavBar from "../src/components/navBar";
 import Button from "../src/components/Button";
@@ -411,12 +12,12 @@ import "../src/assets/css/hotelDetails.css";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../src/storeSlices/hooks";
 import { getHotelById } from "../src/storeSlices/hotelSlice";
-
-// Rooms slice
 import { fetchRooms } from "../src/storeSlices/roomSlice";
-
-// Input
 import Input from "../src/components/input";
+import PrivatNav from "../src/components/PrivatNav";
+
+// ⚠️ Adjust this import & action name to match your actual favourites slice
+//import { addToFavourites } from "../src/storeSlices/favouritesSlice";
 
 export default function HotelDetails() {
   const { id } = useParams();
@@ -427,7 +28,6 @@ export default function HotelDetails() {
   const { rooms } = useAppSelector((state) => state.room);
 
   const hotel = hotels.find((h) => h.hotel_id === Number(id)) || null;
-
 
   // FORM STATE
   const [reservation, setReservation] = useState({
@@ -476,6 +76,48 @@ export default function HotelDetails() {
     setReservation((prev) => ({ ...prev, [name]: value }));
   };
 
+  // SHARE HANDLER
+  const handleShare = async () => {
+    const shareData = {
+      title: hotel?.name || "Hotel",
+      text: `Check out ${hotel?.name} in ${hotel?.location}`,
+      url: window.location.href,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error("Share cancelled or failed:", err);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareData.url);
+        alert("Link copied to clipboard!");
+      } catch (err) {
+        console.error("Clipboard error:", err);
+        alert(
+          "Could not copy the link. Please copy it manually from the address bar."
+        );
+      }
+    }
+  };
+
+  // FAVOURITES HANDLER
+  // const handleAddToFavourites = () => {
+  //   if (!hotel) return;
+
+  //   dispatch(
+  //     addToFavourites({
+  //       hotel_id: hotel.hotel_id,
+  //       name: hotel.name,
+  //       location: hotel.location,
+  //       // add other fields you want saved in favourites:
+  //       // image: hotel.images?.[0] || null,
+  //     })
+  //   );
+  // };
+
   // FETCH ROOMS + HOTEL
   useEffect(() => {
     if (id) {
@@ -488,15 +130,33 @@ export default function HotelDetails() {
   if (error) return <p className="error">{error}</p>;
   if (!hotel) return <p>No hotel found.</p>;
 
+  // Nights for checkout
+  const checkIn = reservation.check_in_date
+    ? new Date(reservation.check_in_date)
+    : null;
+  const checkOut = reservation.check_out_date
+    ? new Date(reservation.check_out_date)
+    : null;
+  const nights =
+    checkIn && checkOut
+      ? Math.max(
+          0,
+          Math.ceil(
+            (checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24)
+          )
+        )
+      : 0;
+
   return (
     <div className="hotel-details-page">
       {/* NAV */}
       <div className="nav-row">
-        <NavBar />
+        <PrivatNav />
       </div>
 
       {/* MAIN */}
       <div className="hotel-details-wrapper">
+        {/* LEFT */}
         <div className="hotel-left">
           <Button
             icon={<FaArrowLeft />}
@@ -523,28 +183,130 @@ export default function HotelDetails() {
             )}
           </div>
 
-          <h2 className="desc-title">Description:</h2>
+          <h2 className="desc-title">Description</h2>
           <p className="hotel-description">
             {hotel.description || "No description available."}
           </p>
+
+          {/* RESERVATION SECTION NOW ON LEFT */}
+          <div className="reservation-section">
+            <h2>Make a Reservation</h2>
+
+            <div className="reservation-form">
+              {/* Room type */}
+              <div className="form-group">
+                <label>Room Type</label>
+                <select
+                  name="room_type"
+                  value={reservation.room_type}
+                  onChange={handleChange}
+                >
+                  <option value="">Select room type</option>
+                  <option value="Deluxe">
+                    Deluxe - R{getPriceForRoomType("Deluxe")}
+                  </option>
+                  <option value="Standard">
+                    Standard - R{getPriceForRoomType("Standard")}
+                  </option>
+                  <option value="Suite">
+                    Suite - R{getPriceForRoomType("Suite")}
+                  </option>
+                </select>
+              </div>
+
+              {/* Dates */}
+              <Input
+                label="Check-in Date"
+                type="date"
+                name="check_in_date"
+                value={reservation.check_in_date}
+                onChange={handleChange}
+              />
+              <Input
+                label="Check-out Date"
+                type="date"
+                name="check_out_date"
+                value={reservation.check_out_date}
+                onChange={handleChange}
+              />
+
+              {/* People */}
+              <Input
+                label="Number of People"
+                type="number"
+                name="people"
+                value={reservation.people}
+                onChange={handleChange}
+              />
+
+              {/* TOTAL PRICE DISPLAY */}
+              <div className="total-price-box">
+                <p>
+                  <strong>Total Price: </strong> R{totalPrice}
+                </p>
+              </div>
+
+              {/* RESERVE BUTTON */}
+              <Button
+                name="Book now"
+                backgroundColor="#846d29"
+                color="white"
+                className="reserve-btn"
+                onClick={() => {
+                  if (
+                    !reservation.room_type ||
+                    !reservation.check_in_date ||
+                    !reservation.check_out_date ||
+                    !reservation.people
+                  ) {
+                    alert(
+                      "Please fill in all reservation details before continuing."
+                    );
+                    return;
+                  }
+
+                  const pricePerNight = getPriceForRoomType(
+                    reservation.room_type
+                  );
+
+                  navigate(`/checkout/${hotel.hotel_id}`, {
+                    state: {
+                      hotelName: hotel.name,
+                      hotelLocation: hotel.location,
+                      roomType: reservation.room_type,
+                      check_in_date: reservation.check_in_date,
+                      check_out_date: reservation.check_out_date,
+                      people: reservation.people,
+                      nights,
+                      price_per_night: pricePerNight,
+                      total_cost: totalPrice,
+                    },
+                  });
+                }}
+              />
+            </div>
+          </div>
         </div>
 
         {/* RIGHT */}
         <div className="hotel-right">
           <div className="right-top-actions">
+            {/* LIKE → FAVOURITES */}
             <Button
               icon={<FaRegHeart />}
               backgroundColor="white"
               color="black"
+              className="icon-btn"
+             // onClick={handleAddToFavourites}
             />
-            <Button icon={<FaShare />} backgroundColor="white" color="black" />
 
+            {/* SHARE */}
             <Button
-              name="Book Now"
-              backgroundColor="#000"
-              color="white"
-              className="book-btn"
-              onClick={() => navigate(`/checkout/${hotel.hotel_id}`)}
+              icon={<FaShare />}
+              backgroundColor="white"
+              color="black"
+              className="icon-btn"
+              onClick={handleShare}
             />
           </div>
 
@@ -561,87 +323,23 @@ export default function HotelDetails() {
             </div>
           </div>
 
-          <div className="map-button-box">
-            <Button
-              icon={<FaMapMarkerAlt />}
-              name="Show on Map"
-              backgroundColor="#e5e5e5"
-              color="black"
-            />
+          {/* GOOGLE MAPS EMBED */}
+          <div className="map-box">
+            <div className="map-header">
+              <FaMapMarkerAlt className="map-icon" />
+              <span>Location</span>
+            </div>
+            <div className="map-embed">
+              <iframe
+                title="Hotel location map"
+                src={`https://www.google.com/maps?q=${encodeURIComponent(
+                  hotel.location
+                )}&output=embed`}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
+            </div>
           </div>
-        </div>
-      </div>
-
-      {/* RESERVATION FORM */}
-      <div className="reservation-container">
-        <h2>Make a Reservation</h2>
-
-        <div className="reservation-form">
-          {/* Room type */}
-          <div className="form-group">
-            <label>Room Type</label>
-            <select
-              name="room_type"
-              value={reservation.room_type}
-              onChange={handleChange}
-            >
-              <option value="">Select room type</option>
-              <option value="Deluxe">
-                Deluxe - R{getPriceForRoomType("Deluxe")}
-              </option>
-              <option value="Standard">
-                Standard - R{getPriceForRoomType("Standard")}
-              </option>
-              <option value="Suite">
-                Suite - R{getPriceForRoomType("Suite")}
-              </option>
-            </select>
-          </div>
-
-          {/* Dates */}
-          <Input
-            label="Check-in Date"
-            type="date"
-            name="check_in_date"
-            value={reservation.check_in_date}
-            onChange={handleChange}
-          />
-          <Input
-            label="Check-out Date"
-            type="date"
-            name="check_out_date"
-            value={reservation.check_out_date}
-            onChange={handleChange}
-          />
-
-          {/* People */}
-          <Input
-            label="Number of People"
-            type="number"
-            name="people"
-            value={reservation.people}
-            onChange={handleChange}
-          />
-
-          {/* TOTAL PRICE DISPLAY */}
-          <div className="total-price-box">
-            <p>
-              <strong>Total Price: </strong> R{totalPrice}
-            </p>
-          </div>
-
-          {/* BUTTON */}
-          <Button
-            name="Reserve"
-            backgroundColor="#846d29"
-            color="white"
-            className="reserve-btn"
-            onClick={() =>
-              navigate(`/checkout/${hotel.hotel_id}`, {
-                state: { ...reservation, totalPrice },
-              })
-            }
-          />
         </div>
       </div>
 
