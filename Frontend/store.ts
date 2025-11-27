@@ -4,12 +4,14 @@ import adminReducer from "./src/storeSlices/adminSlice";
 import hotelReducer from "./src/storeSlices/hotelSlice";
 import roomReducer from "./src/storeSlices/roomSlice";
 import bookingSLice from "./src/storeSlices/bookingSlice";
+import paymentSlice from "./src/storeSlices/paymentSlice";
 
 export const store = configureStore({
   reducer: {
     customer: customerReducer,
     admin : adminReducer,
     hotel: hotelReducer,
+    payment: paymentSlice,
     room: roomReducer,
     Booking: bookingSLice,
   },

@@ -25,6 +25,7 @@ import { createAdminTable } from "./src/services/admin.service";
 import { createHotelTable } from "./src/services/hotel.services";
 import { createRoomTable } from "./src/services/room.service";
 import { createBookingsTable } from "./src/services/booking.service";
+import paymentRouter from "./src/routes/payment.routes";
 
 dotenv.config();
 
@@ -47,6 +48,7 @@ app.use("/api/admins", adminRouter);
 
 app.use("/api/admins", imageRouter);
 app.use("/api/customers", userImageRouter);
+app.use("/api/initialize",paymentRouter)
 
 
 app.use("/api/hotels", hotelRouter);
