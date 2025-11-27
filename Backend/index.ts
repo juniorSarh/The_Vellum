@@ -112,6 +112,7 @@ async function startServer() {
     await createHotelTable();
     await createRoomTable();
     await createBookingsTable();
+    await createRoomTable()
 
     // Start the server
     app.listen(port, () => {
