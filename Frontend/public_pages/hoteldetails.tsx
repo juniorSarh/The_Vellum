@@ -426,7 +426,8 @@ export default function HotelDetails() {
   const { hotels, loading, error } = useAppSelector((state) => state.hotel);
   const { rooms } = useAppSelector((state) => state.room);
 
-  const hotel = hotels.length > 0 ? hotels[0] : null;
+  const hotel = hotels.find((h) => h.hotel_id === Number(id)) || null;
+
 
   // FORM STATE
   const [reservation, setReservation] = useState({

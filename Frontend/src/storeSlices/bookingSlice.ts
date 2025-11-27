@@ -19,6 +19,7 @@ export interface Booking {
 interface BookingState {
   bookings: Booking[];
   booking?: Booking;
+  pendingBooking?: Booking; 
   loading: boolean;
   error?: string | null;
 }
@@ -30,11 +31,13 @@ const initialState: BookingState = {
 };
 
 // ----------------------------
+// API
+// ----------------------------
+const API_URL = "http://localhost:4000/api/bookings";
+
+// ----------------------------
 // Async Thunks
 // ----------------------------
-
-const API_URL = "http://localhost:4000/api/bookings"; // change to your backend URL
-
 export const fetchBookings = createAsyncThunk(
   "bookings/fetchAll",
   async (_, { rejectWithValue }) => {
@@ -111,7 +114,18 @@ const bookingSlice = createSlice({
     clearBooking(state) {
       state.booking = undefined;
     },
+
+    // STORE CHECKOUT BOOKING DETAILS
+    setPendingBooking(state, action: PayloadAction<Booking>) {
+      state.pendingBooking = action.payload;
+    },
+
+    //  PENDING AFTER PAYMENT OR CANCEL
+    clearPendingBooking(state) {
+      state.pendingBooking = undefined;
+    },
   },
+
   extraReducers: (builder) => {
     // Fetch all bookings
     builder.addCase(fetchBookings.pending, (state) => {
@@ -162,7 +176,8 @@ const bookingSlice = createSlice({
       createBooking.fulfilled,
       (state, action: PayloadAction<Booking>) => {
         state.loading = false;
-        state.bookings.unshift(action.payload); // add new booking to the start
+        state.bookings.unshift(action.payload);
+        state.pendingBooking = undefined; // clear after payment
       }
     );
     builder.addCase(
@@ -219,5 +234,11 @@ const bookingSlice = createSlice({
   },
 });
 
-export const { clearBookingError, clearBooking } = bookingSlice.actions;
+export const {
+  clearBookingError,
+  clearBooking,
+  setPendingBooking,
+  clearPendingBooking,
+} = bookingSlice.actions;
+
 export default bookingSlice.reducer;
