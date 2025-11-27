@@ -87,7 +87,7 @@ const PaymentCard: React.FC = () => {
         try {
           await dispatch(createBooking(pendingBooking)).unwrap();
           dispatch(clearPendingBooking());
-          navigate("/payment-success", {
+          navigate("/home", {
             state: { reference: response.reference },
           });
         } catch (err) {
@@ -101,6 +101,7 @@ const PaymentCard: React.FC = () => {
 
     const handlePaystackClose = () => {
       alert("Payment window closed.");
+      navigate("/home")
     };
 
     // 4️⃣ Open Paystack popup with plain function callbacks
