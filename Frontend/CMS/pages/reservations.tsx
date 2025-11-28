@@ -24,8 +24,6 @@ const ReservationList = () => {
 
   const { bookings, loading, error } = useAppSelector((state) => state.booking);
 
-  const authUser = useAppSelector((state: any) => state.auth?.user);
-
   // Fetch bookings on mount
   useEffect(() => {
     dispatch(fetchBookings());
@@ -39,7 +37,6 @@ const ReservationList = () => {
     navigate(-1);
   };
 
-  // Cancel a booking by updating status
   const handleCancelBooking = (booking: Booking) => {
     if (!booking.booking_id) return;
     const confirmCancel = window.confirm(
@@ -55,7 +52,6 @@ const ReservationList = () => {
     );
   };
 
-  // Update – here we just navigate to a future edit screen
   const handleUpdateBooking = (booking: Booking) => {
     if (!booking.booking_id) return;
     navigate(`/reservations/${booking.booking_id}/edit`);
@@ -69,18 +65,17 @@ const ReservationList = () => {
     setSelectedBooking(null);
   };
 
-  // Filter bookings using the search bar
+  // Filter by search term (guest, hotel, status, dates)
   const normalizedSearch = searchTerm.toLowerCase();
   const filteredBookings = bookings.filter((b: Booking) => {
-    const combined = `${b.booking_id ?? ""} ${b.status} ${b.check_in_date} ${
-      b.check_out_date
+    const guestName = `${b.customer_first_name ?? ""} ${
+      b.customer_last_name ?? ""
     }`.toLowerCase();
+    const hotelName = (b.hotel_name ?? "").toLowerCase();
+    const combined =
+      `${guestName} ${hotelName} ${b.status} ${b.check_in_date} ${b.check_out_date}`.toLowerCase();
     return combined.includes(normalizedSearch);
   });
-
-  // Extract user info for modal
-  const userFirstName = authUser?.firstName || authUser?.name || "Guest";
-  const userLastName = authUser?.lastName || authUser?.surname || "";
 
   return (
     <div className="reservationPage">
@@ -117,74 +112,84 @@ const ReservationList = () => {
             <p className="res-empty">No reservations found.</p>
           )}
 
-          {filteredBookings.map((booking) => (
-            <div className="reservation-card" key={booking.booking_id}>
-              <div className="reservation-main">
-                <div>
-                  <p className="res-id">
-                    <strong>Booking #</strong>
-                    {booking.booking_id}
-                  </p>
-                  <p className="res-dates">
-                    <strong>Check-in:</strong> {booking.check_in_date}
-                  </p>
-                  <p className="res-dates">
-                    <strong>Check-out:</strong> {booking.check_out_date}
-                  </p>
-                  <p className="res-status">
-                    <strong>Status:</strong> {booking.status}
-                  </p>
-                  <p className="res-total">
-                    <strong>Total:</strong> R{booking.total_cost}
-                  </p>
+          {filteredBookings.map((booking) => {
+            const guestName =
+              `${booking.customer_first_name ?? ""} ${
+                booking.customer_last_name ?? ""
+              }`.trim() || `Customer #${booking.customer_id}`;
+
+            const hotelName = booking.hotel_name || `Room #${booking.room_id}`;
+
+            return (
+              <div className="reservation-card" key={booking.booking_id}>
+                <div className="reservation-main">
+                  <div>
+                    <p className="res-id">
+                      <strong>Booking #</strong>
+                      {booking.booking_id}
+                    </p>
+                    <p className="res-guest">
+                      <strong>Guest:</strong> {guestName}
+                    </p>
+                    <p className="res-hotel">
+                      <strong>Hotel:</strong> {hotelName}
+                    </p>
+                    <p className="res-dates">
+                      <strong>Check-in:</strong> {booking.check_in_date}
+                    </p>
+                    <p className="res-dates">
+                      <strong>Check-out:</strong> {booking.check_out_date}
+                    </p>
+                    <p className="res-status">
+                      <strong>Status:</strong> {booking.status}
+                    </p>
+                    <p className="res-total">
+                      <strong>Total:</strong> R{booking.total_cost}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="reservation-actions">
+                  <button
+                    className="res-btn update"
+                    onClick={() => handleUpdateBooking(booking)}
+                  >
+                    Update
+                  </button>
+                  <button
+                    className="res-btn cancel"
+                    onClick={() => handleCancelBooking(booking)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="res-btn view"
+                    onClick={() => handleViewBooking(booking)}
+                  >
+                    View
+                  </button>
                 </div>
               </div>
-
-              <div className="reservation-actions">
-                <button
-                  className="res-btn update"
-                  onClick={() => handleUpdateBooking(booking)}
-                >
-                  Update
-                </button>
-                <button
-                  className="res-btn cancel"
-                  onClick={() => handleCancelBooking(booking)}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="res-btn view"
-                  onClick={() => handleViewBooking(booking)}
-                >
-                  View
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
-      {/* Modal for View details */}
+      {/* View Details Modal */}
       {selectedBooking && (
         <div className="res-modal-overlay" onClick={closeModal}>
-          <div
-            className="res-modal"
-            onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
-          >
+          <div className="res-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Reservation Details</h3>
 
             <div className="res-modal-section">
               <h4>Hotel Information</h4>
               <p>
                 <strong>Name:</strong>{" "}
-                {/* these fields are optional – make sure your API returns them or adjust */}
-                {(selectedBooking as any).hotel_name || "N/A"}
+                {selectedBooking.hotel_name ||
+                  `Room #${selectedBooking.room_id}`}
               </p>
               <p>
-                <strong>Description:</strong>{" "}
-                {(selectedBooking as any).hotel_description ||
-                  "No description available."}
+                <strong>Room Type:</strong> {selectedBooking.room_type || "N/A"}
               </p>
             </div>
 
@@ -204,7 +209,10 @@ const ReservationList = () => {
             <div className="res-modal-section">
               <h4>User Information</h4>
               <p>
-                <strong>Name:</strong> {userFirstName} {userLastName}
+                <strong>Name:</strong>{" "}
+                {`${selectedBooking.customer_first_name ?? ""} ${
+                  selectedBooking.customer_last_name ?? ""
+                }`.trim() || `Customer #${selectedBooking.customer_id}`}
               </p>
             </div>
 
