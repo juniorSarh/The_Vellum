@@ -54,7 +54,7 @@ const CheckoutPage = () => {
     room_id,
   } = state;
 
-  const customerId: number = authUser?.customer_id ?? authUser?.id ?? 1; // TODO: replace fallback 1
+  const customerId: number = authUser?.customer_id ?? authUser?.id; // TODO: replace fallback 1
   const resolvedRoomId: number = room_id ?? 1; // TODO: replace fallback
 
   const buildBookingPayload = (): Omit<Booking, "booking_id"> => ({
@@ -62,17 +62,18 @@ const CheckoutPage = () => {
     room_id: resolvedRoomId,
     check_in_date,
     check_out_date,
-    status: "pending", // we’ll update to “confirmed” later if you want
+    status: "pending", 
     total_cost,
     additional_requests: "",
   });
 
   const handlePayNow = () => {
-    const payload = buildBookingPayload();
-    // 1️⃣ store it in Redux
-    dispatch(setPendingBooking(payload));
-    // 2️⃣ navigate to payment page
-    navigate("/payment");
+    console.log(authUser)
+    // const payload = buildBookingPayload();
+    // // 1️⃣ store it in Redux
+    // dispatch(setPendingBooking(payload));
+    // // 2️⃣ navigate to payment page
+    // navigate("/payment");
   };
 
   const handleCancel = () => {

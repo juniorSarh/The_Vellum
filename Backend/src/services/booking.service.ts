@@ -100,7 +100,6 @@ export const getBookings = async () => {
       b.check_out_date,
       b.status,
       b.additional_requests,
-      b.total_cost,
       c.first_name AS customer_first_name,
       c.last_name  AS customer_last_name,
       h.name       AS hotel_name,

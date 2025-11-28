@@ -33,8 +33,6 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-
-
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -49,7 +47,6 @@ app.use("/api/admins", adminRouter);
 app.use("/api/admins", imageRouter);
 app.use("/api/customers", userImageRouter);
 app.use("/api/initialize",paymentRouter)
-
 
 app.use("/api/hotels", hotelRouter);
 app.use("/api/rooms", roomRouter);
