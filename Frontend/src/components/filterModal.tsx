@@ -55,21 +55,21 @@ const FilterModal = ({ isOpen, onClose, onApply }: FilterModalProps) => {
           <label className="input-label">Value</label>
           {selectedFilterType === "date" && (
             <Input
-                label="Check-in Date"
-                type="date"
-                value={filterValue}
-                onChange={() => {}}
-              />
+              label="Check-in Date"
+              type="date"
+              value={filterValue}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilterValue(e.target.value)}
+            />
           )}
 
           {selectedFilterType === "location" && (
             <Input
-                label="Location"
-                type="text"
-                placeholder="Enter location"
-                value={filterValue}
-                onChange={() => {}}
-              />
+              label="Location"
+              type="text"
+              placeholder="Enter location"
+              value={filterValue}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilterValue(e.target.value)}
+            />
           )}
 
           {selectedFilterType === "price" && (
