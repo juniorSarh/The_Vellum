@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { FaHeart, FaRegHeart } from "react-icons/fa"; // using react-icons
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 import "./hotelCard.css";
 
 interface HotelCardProps {
-  image: string;
+  image?: string; // <- now optional
   name: string;
   location: string;
   isLoggedIn: boolean;
@@ -27,8 +27,15 @@ const HotelCard: React.FC<HotelCardProps> = ({
   return (
     <div className="hotel-card" onClick={onClick}>
       <div className="hotel-image-container">
-        <img src={image} alt={name} className="hotel-image" />
-         {isLoggedIn && (
+        {image ? (
+          <img src={image} alt={name} className="hotel-image" />
+        ) : (
+          <div className="hotel-image placeholder">
+            <span>{name.charAt(0).toUpperCase()}</span>
+          </div>
+        )}
+
+        {isLoggedIn && (
           <div className="favorite-icon" onClick={toggleFavorite}>
             {isFavorite ? (
               <FaHeart color="#EAC248" />
