@@ -1,0 +1,127 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* PAGE WRAPPER */
+.reservationPage {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f7f7f7;
+}
+
+
+/* NAVIGATION */
+.nav {
+  width: 100%;
+  background: white;
+  border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+/* MAIN CONTENT AREA */
+.resBody {
+  padding: 2rem;
+  width: 100%;
+  flex: 1;        /* ← Add this */
+}
+
+
+/* TOP SECTION (Back button + Search Bar) */
+.top-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.backButton .back {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* SEARCH BAR WRAPPER */
+.SearchBar {
+  width: 300px;
+  max-width: 100%;
+}
+
+/* PAGE CONTENT */
+.page-content {
+  margin-top: 1rem;
+}
+
+.Title {
+  font-size: 1.8rem;
+  margin-bottom: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* USERS LIST */
+.List {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* FOOTER */
+footer {
+  margin-top: auto;
+}
+
+/* ───────────────────────────────────────────── */
+/* 🔥 RESPONSIVE MEDIA QUERIES */
+/* ───────────────────────────────────────────── */
+
+/* TABLETS */
+@media (max-width: 992px) {
+  .resBody {
+    padding: 1.5rem;
+  }
+
+  .Title {
+    font-size: 1.6rem;
+  }
+}
+
+/* MOBILE PHONES */
+@media (max-width: 768px) {
+  .top-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .SearchBar {
+    width: 100%;
+  }
+
+  .resBody {
+    padding: 1rem;
+  }
+
+  .Title {
+    font-size: 1.5rem;
+  }
+}
+
+/* SMALL MOBILE */
+@media (max-width: 480px) {
+  .Title {
+    font-size: 1.3rem;
+  }
+
+  .List {
+    gap: 0.8rem;
+  }
+}
