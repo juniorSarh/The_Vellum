@@ -229,6 +229,21 @@ export default function AddHotel() {
   const getRoomsAvailableForHotel = (hotelId?: number) =>
     getRoomsForHotel(hotelId).length;
 
+  // status colors
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "available":
+        return { background: "green", color: "white" };
+      case "maintenance":
+        return { background: "goldenrod", color: "black" };
+      case "booked":
+        return { background: "red", color: "white" };
+      default:
+        return {};
+    }
+  };
+
+
   return (
     <div className="hotels-page-container">
       {/* NAVBAR */}
@@ -387,7 +402,20 @@ export default function AddHotel() {
                     <tr key={room.room_id}>
                       <td>{room.room_type}</td>
                       <td>{room.price}</td>
-                      <td>{room.status}</td>
+                      <td>
+                        <span
+                          style={{
+                            padding: "6px 12px",
+                            borderRadius: "6px",
+                            fontWeight: "600",
+                            textTransform: "capitalize",
+                            ...getStatusColor(room.status),
+                          }}
+                        >
+                          {room.status}
+                        </span>
+                      </td>
+
                       <td className="action-icons">
                         {/* UPDATE ROOM */}
                         <Button
