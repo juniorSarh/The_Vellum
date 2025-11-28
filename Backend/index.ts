@@ -5,20 +5,16 @@ import { testConnection } from "./src/config/db";
 import path from "path";
 import dotenv from "dotenv";
 
-
-
 // Routers
 import customerRouter from "./src/routes/customer.routes";
 import adminRouter from "./src/routes/admin.routes";
 import imageRouter from "./src/routes/image.route";
 import userImageRouter from "./src/routes/userImageRoutes";
 
-
 import hotelRouter from "./src/routes/hotel.routes";
 import roomRouter from "./src/routes/room.routes";
 import bookingrouter from "./src/routes/boooking.routes";
 import favouriteRouter from "./src/routes/favourites.routes";
-
 
 // Services
 import { createCustomerTable } from "./src/services/customer.service";
@@ -35,8 +31,6 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-
-
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -50,14 +44,12 @@ app.use("/api/admins", adminRouter);
 
 app.use("/api/admins", imageRouter);
 app.use("/api/customers", userImageRouter);
-app.use("/api/initialize",paymentRouter)
-
+app.use("/api/initialize", paymentRouter);
 
 app.use("/api/hotels", hotelRouter);
 app.use("/api/rooms", roomRouter);
 app.use("/api/bookings", bookingrouter);
 app.use("/api/favourites", favouriteRouter);
-
 
 // Health check endpoint
 app.get("/", (req, res) => {
@@ -96,14 +88,13 @@ app.get("/", (req, res) => {
         update: "PUT /api/bookings/:id",
         delete: "DELETE /api/bookings/:id",
       },
-      favourite:{
-         add: "POST /api/favourites",
-          getUserFavourites: "GET /api/favourites/customers/:customer_id",
-          getAllFavourites: "GET /api/favourites",  
-          removeByCustomerAndHotel: "DELETE /api/favourites",
-          removeById: "DELETE /api/favourites/:favourite_id"
-
-      }
+      favourite: {
+        add: "POST /api/favourites",
+        getUserFavourites: "GET /api/favourites/customers/:customer_id",
+        getAllFavourites: "GET /api/favourites",
+        removeByCustomerAndHotel: "DELETE /api/favourites",
+        removeById: "DELETE /api/favourites/:favourite_id",
+      },
     },
   });
 });

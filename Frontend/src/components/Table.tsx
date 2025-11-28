@@ -15,6 +15,7 @@ interface TableProps {
 }
 
 export default function Table({ title, data }: TableProps) {
+  
   return (
     <div className="table-wrapper">
       {title && <h2 className="table-title">{title}</h2>}
@@ -32,7 +33,9 @@ export default function Table({ title, data }: TableProps) {
         </thead>
 
         <tbody>
-          {data.map((booking, index) => (
+          {data.map((booking, index) => {
+            console.log(booking);
+            return (
             <tr key={index}>
               <td>{booking.guest}</td>
               <td>{booking.hotel}</td>
@@ -48,7 +51,7 @@ export default function Table({ title, data }: TableProps) {
                 />
               </td>
             </tr>
-          ))}
+          )})}
         </tbody>
       </table>
     </div>

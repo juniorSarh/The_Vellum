@@ -15,8 +15,12 @@ import { getHotelById } from "../src/storeSlices/hotelSlice";
 import { fetchRooms } from "../src/storeSlices/roomSlice";
 import Input from "../src/components/input";
 
-//⚠️ Adjust this import & action name to match your actual favourites slice
-// import { addToFavourites } from "../src/storeSlices/favouritesSlice";
+
+import {
+  addToFavourites,
+  removeFavourite,
+} from "../src/storeSlices/favouritesSlice";
+import type { RootState } from "../store";
 
 export default function HotelDetails() {
   const { id } = useParams();
@@ -102,22 +106,33 @@ export default function HotelDetails() {
     }
   };
 
- // FAVOURITES HANDLER
-  // const handleAddToFavourites = () => {
-  //   if (!hotel) return;
+//  const dispatch = useAppDispatch();
 
-  //   dispatch(
-  //     addToFavourites({
-  //       hotel_id: hotel.hotel_id,
-  //       name: hotel.name,
-  //       location: hotel.location,
-  //       add other fields you want saved in favourites:
-  //       image: hotel.images?.[0] || null,
-  //     })
-  //   );
-  // };
 
-  // FETCH ROOMS + HOTEL
+// Inside your component:
+
+const customer_id = useAppSelector((state : RootState) => state.customer.customer?.id);
+const favourites = useAppSelector((state : RootState) => state.favourites.list);
+
+// Check if a hotel is in favourites
+const isFavourite = (hotel_id: number) => {
+  return favourites.some((f) => f.hotel_id === hotel_id);
+};
+
+// Toggle favourite (add or remove)
+const handleToggleFavourite = (hotel_id: number) => {
+  console.log(customer_id)
+  if (!customer_id) return;
+
+  if (isFavourite(hotel_id)) {
+    dispatch(removeFavourite({ customer_id, hotel_id }));
+  } else {
+    dispatch(addToFavourites({ customer_id, hotel_id }));
+  }
+};
+  
+
+// FETCH ROOMS + HOTEL
   useEffect(() => {
     if (id) {
       dispatch(getHotelById(Number(id)));
@@ -318,7 +333,7 @@ export default function HotelDetails() {
               backgroundColor="white"
               color="black"
               className="icon-btn"
-              //onClick={handleAddToFavourites}
+              onClick={() => handleToggleFavourite(hotel.hotel_id!!)} // Pass hotel_id here
             />
 
             {/* SHARE */}

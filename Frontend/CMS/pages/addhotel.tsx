@@ -39,9 +39,7 @@ export default function AddHotel() {
   const [editingRoom, setEditingRoom] = useState<Room | null>(null);
 
   const dispatch = useAppDispatch();
-  const { hotels, loading, error } = useAppSelector(
-    (state) => state.hotel // make sure reducer key is "hotels"
-  );
+  const { hotels, loading, error } = useAppSelector((state) => state.hotel);
   const { rooms } = useAppSelector((state) => state.room);
 
   // Room form local state
@@ -268,7 +266,7 @@ export default function AddHotel() {
                   {/* Rooms Available */}
                   <td>{getRoomsAvailableForHotel(hotel.hotel_id)}</td>
 
-                  {/* Price Range column → View Rooms button */}
+                  {/* View Rooms */}
                   <td>
                     <Button
                       className="view-rooms-btn"
@@ -312,26 +310,16 @@ export default function AddHotel() {
         <Footer />
       </div>
 
-      {/* HOTEL MODAL (Add/Edit) */}
+      {/* HOTEL MODAL (Add/Edit) – only wrapper; form owns buttons/title */}
       {isHotelModalOpen && (
         <div className="modal-overlay" onClick={closeHotelModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>{editingHotel ? "Edit Hotel" : "Add Hotel"}</h2>
-
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <HotelForm
               key={editingHotel?.hotel_id ?? "new"}
               onClose={closeHotelModal}
               mode={editingHotel ? "edit" : "add"}
               initialHotel={editingHotel}
               adminId={editingHotel?.admin_id ?? undefined}
-            />
-
-            <Button
-              className="modal-close-btn"
-              onClick={closeHotelModal}
-              name="close"
-              color="white"
-              backgroundColor="red"
             />
           </div>
         </div>
@@ -389,7 +377,6 @@ export default function AddHotel() {
             </table>
 
             <div className="rooms-list-actions">
-              {/* Optional: Add Room from inside list */}
               <Button
                 className="add-room-btn"
                 name="Add Room"
@@ -408,16 +395,16 @@ export default function AddHotel() {
       {/* ROOM FORM MODAL (Add / Edit room) */}
       {isRoomFormModalOpen && hotelForRoomForm && (
         <div className="modal-overlay" onClick={closeRoomFormModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <h2 className="modal-title">
               {editingRoom
                 ? `Edit Room – ${hotelForRoomForm.name}`
                 : `Add Room – ${hotelForRoomForm.name}`}
             </h2>
 
-            <form className="hotel-form" onSubmit={handleRoomFormSubmit}>
+            <form className="modal-form" onSubmit={handleRoomFormSubmit}>
               <div className="form-group">
-                <label htmlFor="room-type">Room Type:</label>
+                <label htmlFor="room-type">Room Type</label>
                 <input
                   id="room-type"
                   type="text"
@@ -429,7 +416,7 @@ export default function AddHotel() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="room-price">Price:</label>
+                <label htmlFor="room-price">Price</label>
                 <input
                   id="room-price"
                   type="number"
@@ -446,7 +433,7 @@ export default function AddHotel() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="room-status">Status:</label>
+                <label htmlFor="room-status">Status</label>
                 <select
                   id="room-status"
                   value={roomStatus}
@@ -460,8 +447,12 @@ export default function AddHotel() {
 
               {roomError && <p className="error-text">{roomError}</p>}
 
-              <div className="form-actions">
-                <button type="submit" disabled={roomLoading}>
+              <div className="modal-actions">
+                <button
+                  type="submit"
+                  className="modal-btn modal-btn-primary"
+                  disabled={roomLoading}
+                >
                   {roomLoading
                     ? "Saving..."
                     : editingRoom
@@ -470,7 +461,7 @@ export default function AddHotel() {
                 </button>
                 <button
                   type="button"
-                  className="secondary-btn"
+                  className="modal-btn modal-btn-cancel"
                   onClick={closeRoomFormModal}
                   disabled={roomLoading}
                 >

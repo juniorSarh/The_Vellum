@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
 
 export interface Favourite {
   favourite_id: number;
@@ -9,10 +8,7 @@ export interface Favourite {
   created_at: string;
   hotel_name?: string;
   location?: string;
-  star_rating?: number;
-  description?: string;
   images?: string[];
-  customer_email?: string;
 }
 
 interface FavouritesState {
@@ -27,31 +23,45 @@ const initialState: FavouritesState = {
   error: null,
 };
 
-// Async Thunks
+// Fetch favourites for a customer
 export const fetchUserFavourites = createAsyncThunk(
   "favourites/fetchUserFavourites",
   async (customer_id: number, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`/api/favourites/customers/${customer_id}`);
-      return res.data as Favourite[];
+      const res = await fetch(`http://localhost:4040/api/favourites/customers/${customer_id}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to fetch favourites");
+      return data as Favourite[];
     } catch (err: any) {
-      return rejectWithValue(err.response?.data?.error || err.message);
+      return rejectWithValue(err.message);
     }
   }
 );
 
-export const fetchAllFavourites = createAsyncThunk(
-  "favourites/fetchAllFavourites",
-  async (_, { rejectWithValue }) => {
+// Add a favourite
+export const addToFavourites = createAsyncThunk(
+  "favourites/addToFavourites",
+  async (
+    { customer_id, hotel_id }: { customer_id: number; hotel_id: number },
+    { rejectWithValue }
+  ) => {
     try {
-      const res = await axios.get("/api/favourites");
-      return res.data as Favourite[];
+        console.log("Adding to favourites:", { customer_id, hotel_id });
+      const res = await fetch("http://localhost:4040/api/favourites", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ customer_id, hotel_id }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to add favourite");
+      return data as Favourite;
     } catch (err: any) {
-      return rejectWithValue(err.response?.data?.error || err.message);
+      return rejectWithValue(err.message);
     }
   }
 );
 
+// Remove a favourite
 export const removeFavourite = createAsyncThunk(
   "favourites/removeFavourite",
   async (
@@ -59,12 +69,17 @@ export const removeFavourite = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const res = await axios.delete("/api/favourites", {
-        data: { customer_id, hotel_id },
+        console.log("Removing from favourites:", { customer_id, hotel_id });
+      const res = await fetch("http://localhost:4040/api/favourites", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ customer_id, hotel_id }),
       });
-      return res.data;
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to remove favourite");
+      return data as Favourite;
     } catch (err: any) {
-      return rejectWithValue(err.response?.data?.error || err.message);
+      return rejectWithValue(err.message);
     }
   }
 );
@@ -72,16 +87,10 @@ export const removeFavourite = createAsyncThunk(
 const favouritesSlice = createSlice({
   name: "favourites",
   initialState,
-  reducers: {
-    clearFavourites: (state) => {
-      state.list = [];
-      state.error = null;
-      state.loading = false;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
-      // Fetch User
+      // fetch
       .addCase(fetchUserFavourites.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -97,35 +106,44 @@ const favouritesSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
-      // Fetch All
-      .addCase(fetchAllFavourites.pending, (state) => {
+
+      // add
+      .addCase(addToFavourites.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(
-        fetchAllFavourites.fulfilled,
-        (state, action: PayloadAction<Favourite[]>) => {
+        addToFavourites.fulfilled,
+        (state, action: PayloadAction<Favourite>) => {
           state.loading = false;
-          state.list = action.payload;
+          if (
+            !state.list.find(
+              (f) => f.favourite_id === action.payload.favourite_id
+            )
+          ) {
+            state.list.unshift(action.payload);
+          }
         }
       )
-      .addCase(fetchAllFavourites.rejected, (state, action) => {
+      .addCase(addToFavourites.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
-      // Remove Favourite
+
+      // remove
       .addCase(removeFavourite.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(removeFavourite.fulfilled, (state, action) => {
-        state.loading = false;
-        if ("favourite_id" in action.payload) {
+      .addCase(
+        removeFavourite.fulfilled,
+        (state, action: PayloadAction<Favourite>) => {
+          state.loading = false;
           state.list = state.list.filter(
             (f) => f.favourite_id !== action.payload.favourite_id
           );
         }
-      })
+      )
       .addCase(removeFavourite.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
@@ -133,5 +151,4 @@ const favouritesSlice = createSlice({
   },
 });
 
-export const { clearFavourites } = favouritesSlice.actions;
 export default favouritesSlice.reducer;
