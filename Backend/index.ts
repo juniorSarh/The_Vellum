@@ -106,13 +106,15 @@ async function startServer() {
       throw new Error("Failed to connect to database");
     }
 
+    
+
     // Create required tables
     await createCustomerTable();
     await createAdminTable();
     await createHotelTable();
     await createRoomTable();
     await createBookingsTable();
-
+    
     // Start the server
     app.listen(port, () => {
       console.log(`\n🚀 Server is running at: http://localhost:${port}\n`);

@@ -1,3 +1,4 @@
+// src/pages/DashboardPage.tsx
 import { useEffect, useMemo } from "react";
 import PrivatNav from "../../src/components/PrivatNav";
 import Footer from "../../src/components/Footer";
@@ -13,10 +14,7 @@ import {
   FaHotel,
 } from "react-icons/fa";
 
-import {
-  useAppDispatch,
-  useAppSelector,
-} from "../../src/storeSlices/hooks";
+import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
 import {
   fetchBookings,
   type Booking,
@@ -25,74 +23,13 @@ import {
 export default function DashboardPage() {
   const dispatch = useAppDispatch();
 
-  const { bookings, loading, error } = useAppSelector(
-    (state) => state.booking
-  );
+  const { bookings, loading, error } = useAppSelector((state) => state.booking);
 
-  // 🔹 Hotels slice (adjust path to your actual slice if different)
-  const hotels = useAppSelector(
-    (state: any) => state.hotel?.hotels || []
-  );
+  const hotels = useAppSelector((state: any) => state.hotel?.hotels || []);
 
-  // 🔹 Rooms slice (used to map room_id -> hotel_id)
-  const rooms = useAppSelector(
-    (state: any) => state.room?.rooms || []
-  );
-
-  // 🔹 Customers slice (for guest names)
-  const customers = useAppSelector(
-    (state: any) => state.customer?.customers || []
-  );
-
-  // Fetch bookings on mount
   useEffect(() => {
     dispatch(fetchBookings());
   }, [dispatch]);
-
-  // -----------------------------
-  // Helpers to join data
-  // -----------------------------
-
-  const getGuestName = (booking: Booking): string => {
-    const match = customers.find(
-      (c: any) => c.customer_id === booking.customer_id
-    );
-
-    if (match) {
-      const first = match.first_name || match.firstname || match.name || "";
-      const last = match.last_name || match.surname || "";
-      const full = `${first} ${last}`.trim();
-      if (full) return full;
-    }
-
-    return `Customer #${booking.customer_id}`;
-  };
-
-  const getHotelName = (booking: Booking): string => {
-    // 1️⃣ Find room by room_id
-    const room = rooms.find(
-      (r: any) => r.room_id === booking.room_id
-    );
-
-    if (room) {
-      // 2️⃣ Find hotel using room.hotel_id
-      const hotel = hotels.find(
-        (h: any) => h.hotel_id === room.hotel_id
-      );
-      if (hotel?.name) return hotel.name;
-
-      // Fallback if hotel not found
-      if (room.room_type) {
-        return `Room ${room.room_type} (#${room.room_id})`;
-      }
-    }
-
-    return `Room #${booking.room_id}`;
-  };
-
-  // -----------------------------
-  // Stats + Latest bookings (max 15)
-  // -----------------------------
 
   const {
     latestBookingsForTable,
@@ -129,24 +66,30 @@ export default function DashboardPage() {
     const occupancyRateNum =
       total > 0 ? Math.round((activeCount / total) * 100) : 0;
 
-    // Sort by check_in_date (newest first)
+    // Sort by check_in_date (latest first)
     const sorted = [...bookings].sort((a: Booking, b: Booking) => {
       const aDate = new Date(a.check_in_date).getTime();
       const bDate = new Date(b.check_in_date).getTime();
       return bDate - aDate;
     });
 
-    // Take max 15
     const top15 = sorted.slice(0, 15);
 
-    // Map to Table data shape
-    const dataForTable = top15.map((b) => ({
-      guest: getGuestName(b),
-      hotel: getHotelName(b),
-      checkin: b.check_in_date,
-      checkout: b.check_out_date,
-      status: b.status,
-    }));
+    const dataForTable = top15.map((b) => {
+      const guestName =
+        `${b.customer_first_name ?? ""} ${b.customer_last_name ?? ""}`.trim() ||
+        `Customer #${b.customer_id}`;
+
+      const hotelName = b.hotel_name || `Room #${b.room_id}`;
+
+      return {
+        guest: guestName,
+        hotel: hotelName,
+        checkin: b.check_in_date,
+        checkout: b.check_out_date,
+        status: b.status,
+      };
+    });
 
     return {
       latestBookingsForTable: dataForTable,
@@ -155,11 +98,7 @@ export default function DashboardPage() {
       occupancyRate: `${occupancyRateNum}%`,
       totalHotels: Array.isArray(hotels) ? hotels.length : 0,
     };
-  }, [bookings, hotels, rooms, customers]);
-
-  // -----------------------------
-  // Render
-  // -----------------------------
+  }, [bookings, hotels]);
 
   return (
     <div>
