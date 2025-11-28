@@ -9,21 +9,21 @@
 /* NAV */
 .nav {
   width: 100%;
-  box-shadow: 0px 1px 5px rgba(0,0,0,0.1);
+  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
   background: white;
   top: 0;
   z-index: 20;
 }
 
 .top-actions {
-    width: 100%;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 14px 25px;
   background: white;
   margin-top: 5px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .back-btn {
@@ -39,7 +39,7 @@
 }
 
 .add-hotel-btn {
- background: #847028;
+  background: #847028;
   color: white;
   padding: 10px 18px;
   border-radius: 8px;
@@ -48,8 +48,8 @@
 }
 
 .add-hotel-btn:hover {
-  opacity: 0.7;
-  transform: translateY(-4);
+  opacity: 0.9;
+  transform: translateY(-4px);
 }
 
 /* TABLE */
@@ -76,7 +76,7 @@
 }
 
 .action-icons {
-   display: flex;
+  display: flex;
   gap: 20px;
 }
 
@@ -89,34 +89,172 @@
 
 .icon-button:hover {
   opacity: 0.7;
-  transform: translateY(-4);
+  transform: translateY(-4px);
 }
 
-.icon-button.edit { color: #333; }
-.icon-button.delete { color: #b30000; }
+.icon-button.edit {
+  color: #333;
+}
+.icon-button.delete {
+  color: #b30000;
+}
 
-/* MODAL */
+/* VIEW ROOMS BUTTON */
+.view-rooms-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+/* ROOMS TABLE IN MODAL */
+.rooms-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.rooms-table th,
+.rooms-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.rooms-table th {
+  background: #f0f0f0;
+  font-weight: 600;
+}
+
+/* MODAL OVERLAY (shared) – NO dark background */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  background: transparent;       /* no backdrop */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 99;
 }
 
+/* GENERIC MODAL CONTENT (used for rooms list) */
 .modal-content {
   background: white;
-  padding: 25px;
+  padding: 24px;
   border-radius: 12px;
   width: 90%;
-  max-width: 450px;
+  max-width: 700px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
+/* CARD-STYLE MODAL (Add Hotel / Add Room) */
+.modal-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 32px 28px;
+  width:100%;
+  max-width: 560px;
+  box-shadow: none;              /* no card shadow */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: auto;
+}
+
+.modal-title {
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/* Form styling inside card modals */
+.modal-form,
+.hotel-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.modal-form .form-group,
+.hotel-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modal-form label,
+.hotel-form label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.modal-form input,
+.modal-form select,
+.hotel-form input,
+.hotel-form select,
+.hotel-form textarea {
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  padding: 10px 12px;
+  font-size: 14px;
+  outline: none;
+}
+
+.modal-form input:focus,
+.modal-form select:focus,
+.hotel-form input:focus,
+.hotel-form select:focus,
+.hotel-form textarea:focus {
+  border-color: #846d29;
+}
+
+/* Error text */
+.error-text {
+  color: #c62828;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* Button row in modals */
+.modal-actions {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Base modal button */
+.modal-btn {
+  width: 100%;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Gold primary (Add / Save) */
+.modal-btn-primary {
+  background-color: #846d29;
+  color: #ffffff;
+}
+
+/* Red cancel button */
+.modal-btn-cancel {
+  background-color: #d32f2f;
+  color: #ffffff;
+}
+
+/* Optional hover states */
+.modal-btn-primary:hover {
+  background-color: #6c571f;
+}
+
+.modal-btn-cancel:hover {
+  background-color: #b71c1c;
+}
+
+/* Close button used in rooms list modal */
 .modal-close-btn {
   width: 100%;
   padding: 10px;
@@ -129,12 +267,25 @@
 }
 
 .modal-close-btn:hover {
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
+.rooms-list-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.add-room-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+/* FOOTER */
 footer,
 .footer {
-  margin-top: auto;      /* <-- Forces footer to bottom */
+  margin-top: auto;
   width: 100%;
 }
 
@@ -148,5 +299,11 @@ footer,
 
   .action-icons .icon {
     font-size: 16px;
+  }
+
+  .modal-card,
+  .modal-content {
+    width: 90%;
+    padding: 20px 18px;
   }
 }

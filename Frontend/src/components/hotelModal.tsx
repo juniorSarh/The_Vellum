@@ -84,91 +84,102 @@ function HotelForm({
   };
 
   return (
-    <form className="hotel-form" onSubmit={handleSubmit}>
-      <div className="form-group">
-        <label htmlFor="hotel-name">Hotel Name:</label>
-        <input
-          id="hotel-name"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="e.g. Ocean View Hotel"
-          required
-        />
-      </div>
+    <div className="hotel-form-container">
+      <h2 className="modal-title">
+        {mode === "edit" ? "Edit Hotel" : "Add Hotel"}
+      </h2>
 
-      <div className="form-group">
-        <label htmlFor="hotel-location">Location:</label>
-        <input
-          id="hotel-location"
-          type="text"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          placeholder="City, Country"
-          required
-        />
-      </div>
+      <form className="hotel-form modal-form" onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="hotel-name">Hotel Name:</label>
+          <input
+            id="hotel-name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="e.g. Ocean View Hotel"
+            required
+          />
+        </div>
 
-      <div className="form-group">
-        <label htmlFor="hotel-star-rating">Star Rating (1–5):</label>
-        <input
-          id="hotel-star-rating"
-          type="number"
-          min={1}
-          max={5}
-          value={starRating}
-          onChange={(e) =>
-            setStarRating(e.target.value === "" ? "" : Number(e.target.value))
-          }
-        />
-      </div>
+        <div className="form-group">
+          <label htmlFor="hotel-location">Location:</label>
+          <input
+            id="hotel-location"
+            type="text"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            placeholder="City, Country"
+            required
+          />
+        </div>
 
-      <div className="form-group">
-        <label htmlFor="hotel-description">Description:</label>
-        <textarea
-          id="hotel-description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Short description of the hotel"
-          rows={3}
-        />
-      </div>
+        <div className="form-group">
+          <label htmlFor="hotel-star-rating">Star Rating (1–5):</label>
+          <input
+            id="hotel-star-rating"
+            type="number"
+            min={1}
+            max={5}
+            value={starRating}
+            onChange={(e) =>
+              setStarRating(e.target.value === "" ? "" : Number(e.target.value))
+            }
+          />
+        </div>
 
-      <div className="form-group">
-        <label htmlFor="hotel-images">Image URLs (comma separated):</label>
-        <input
-          id="hotel-images"
-          type="text"
-          value={imagesInput}
-          onChange={(e) => setImagesInput(e.target.value)}
-          placeholder="https://..., https://..."
-        />
-      </div>
+        <div className="form-group">
+          <label htmlFor="hotel-description">Description:</label>
+          <textarea
+            id="hotel-description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Short description of the hotel"
+            rows={3}
+          />
+        </div>
 
-      <div className="form-actions">
-        <button type="submit" disabled={loading}>
-          {loading
-            ? mode === "edit"
-              ? "Saving..."
-              : "Saving..."
-            : mode === "edit"
-            ? "Save Changes"
-            : "Add Hotel"}
-        </button>
-        {onClose && (
+        <div className="form-group">
+          <label htmlFor="hotel-images">Image URLs (comma separated):</label>
+          <input
+            id="hotel-images"
+            type="text"
+            value={imagesInput}
+            onChange={(e) => setImagesInput(e.target.value)}
+            placeholder="https://..., https://..."
+          />
+        </div>
+
+        <div className="modal-actions">
           <button
-            type="button"
-            className="secondary-btn"
-            onClick={onClose}
+            type="submit"
+            className="modal-btn modal-btn-primary"
             disabled={loading}
           >
-            Cancel
+            {loading
+              ? mode === "edit"
+                ? "Saving..."
+                : "Saving..."
+              : mode === "edit"
+              ? "Save Changes"
+              : "Add Hotel"}
           </button>
-        )}
-      </div>
 
-      {error && <p className="error-text">{error}</p>}
-    </form>
+          {onClose && (
+            <button
+              type="button"
+              className="modal-btn modal-btn-cancel"
+              onClick={onClose}
+              disabled={loading}
+            >
+              Cancel
+            </button>
+          )}
+        </div>
+
+        {error && <p className="error-text">{error}</p>}
+      </form>
+    </div>
   );
 }
 
