@@ -21,9 +21,10 @@ export default function Favourites() {
     <div className="landing">
       <div className="nav">
         <PrivateNavBar />
-
-        <Button icon={<FaArrowLeft />} />
       </div>
+
+      <div className="favourites-content">
+        <Button icon={<FaArrowLeft />} />  
 
       <div className="search-bar-container">
         <SearchBar
@@ -33,6 +34,9 @@ export default function Favourites() {
         />
       </div>
 
+
+
+      </div>
 
       <div className="footer">
         <Footer />

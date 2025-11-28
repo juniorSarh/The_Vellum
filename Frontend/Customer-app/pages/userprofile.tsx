@@ -8,7 +8,7 @@ import Footer from "../../src/components/Footer";
 import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
 import { logout, setUser} from "../../src/storeSlices/customerSlice";
 import PrivatNav from "../../src/components/PrivatNav";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const ProfilePage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -83,7 +83,9 @@ const ProfilePage: React.FC = () => {
             <div className="sidebar-logo">
               <img src={logo} alt="Logo" />
             </div>
-            <button className="sidebar-option">Favorites</button>
+            <Link to="/favourites">
+              <button className="sidebar-option">Favorites</button>
+            </Link>
             <button className="sidebar-option">My Bookings</button>
           </aside>
 

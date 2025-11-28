@@ -15,8 +15,8 @@ import { getHotelById } from "../src/storeSlices/hotelSlice";
 import { fetchRooms } from "../src/storeSlices/roomSlice";
 import Input from "../src/components/input";
 
-// ⚠️ Adjust this import & action name to match your actual favourites slice
-//import { addToFavourites } from "../src/storeSlices/favouritesSlice";
+//⚠️ Adjust this import & action name to match your actual favourites slice
+// import { addToFavourites } from "../src/storeSlices/favouritesSlice";
 
 export default function HotelDetails() {
   const { id } = useParams();
@@ -102,7 +102,7 @@ export default function HotelDetails() {
     }
   };
 
-  // FAVOURITES HANDLER
+ // FAVOURITES HANDLER
   // const handleAddToFavourites = () => {
   //   if (!hotel) return;
 
@@ -111,8 +111,8 @@ export default function HotelDetails() {
   //       hotel_id: hotel.hotel_id,
   //       name: hotel.name,
   //       location: hotel.location,
-  //       // add other fields you want saved in favourites:
-  //       // image: hotel.images?.[0] || null,
+  //       add other fields you want saved in favourites:
+  //       image: hotel.images?.[0] || null,
   //     })
   //   );
   // };

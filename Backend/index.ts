@@ -17,6 +17,7 @@ import userImageRouter from "./src/routes/userImageRoutes";
 import hotelRouter from "./src/routes/hotel.routes";
 import roomRouter from "./src/routes/room.routes";
 import bookingrouter from "./src/routes/boooking.routes";
+import favouriteRouter from "./src/routes/favourites.routes";
 
 
 // Services
@@ -25,6 +26,7 @@ import { createAdminTable } from "./src/services/admin.service";
 import { createHotelTable } from "./src/services/hotel.services";
 import { createRoomTable } from "./src/services/room.service";
 import { createBookingsTable } from "./src/services/booking.service";
+import { createFavouritesTable } from "./src/services/favourites.service";
 import paymentRouter from "./src/routes/payment.routes";
 
 dotenv.config();
@@ -54,6 +56,7 @@ app.use("/api/initialize",paymentRouter)
 app.use("/api/hotels", hotelRouter);
 app.use("/api/rooms", roomRouter);
 app.use("/api/bookings", bookingrouter);
+app.use("/api/favourites", favouriteRouter);
 
 
 // Health check endpoint
@@ -93,6 +96,14 @@ app.get("/", (req, res) => {
         update: "PUT /api/bookings/:id",
         delete: "DELETE /api/bookings/:id",
       },
+      favourite:{
+         add: "POST /api/favourites",
+          getUserFavourites: "GET /api/favourites/customers/:customer_id",
+          getAllFavourites: "GET /api/favourites",  
+          removeByCustomerAndHotel: "DELETE /api/favourites",
+          removeById: "DELETE /api/favourites/:favourite_id"
+
+      }
     },
   });
 });
@@ -112,6 +123,7 @@ async function startServer() {
     await createHotelTable();
     await createRoomTable();
     await createBookingsTable();
+    await createFavouritesTable();
 
     // Start the server
     app.listen(port, () => {
@@ -155,6 +167,13 @@ async function startServer() {
       console.log(`➡ GET     /api/bookings/:id`);
       console.log(`➡ PUT     /api/bookings/:id`);
       console.log(`➡ DELETE  /api/bookings/:id\n`);
+
+      console.log("📌 Favourite Endpoints:");
+      console.log(`➡ POST    /api/favourites`);
+      console.log(`➡ GET     /api/favourites/customers/:customer_id`);
+      console.log(`➡ GET     /api/favourites`);
+      console.log(`➡ DELETE  /api/favourites`);
+      console.log(`➡ DELETE  /api/favourites/:favourite_id\n`);
     });
   } catch (error) {
     console.error("❌ Failed to start server:", error);
