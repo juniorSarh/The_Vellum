@@ -33,6 +33,11 @@
   cursor: pointer;
 }
 
+.hero-search {
+  margin-top: 20px;
+  animation: fadeUp 1.2s ease;
+}
+
 .add-hotel-btn {
   background: #847028;
   color: white;

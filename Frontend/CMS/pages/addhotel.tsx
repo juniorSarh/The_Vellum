@@ -21,6 +21,7 @@ import {
   deleteroom,
   type Room,
 } from "../../src/storeSlices/roomSlice";
+import SearchBar from "../../src/components/searchBar";
 
 export default function AddHotel() {
   // Hotel modals
@@ -48,6 +49,23 @@ export default function AddHotel() {
   const [roomStatus, setRoomStatus] = useState("available");
   const [roomError, setRoomError] = useState<string | null>(null);
   const [roomLoading, setRoomLoading] = useState(false);
+
+  //search state
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Handle search input change
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+  };
+
+  // Filter hotels by search term (name or location)
+  const filteredHotels: Hotel[] = hotels.filter((hotel) => {
+    if (!searchTerm.trim()) return true;
+    const term = searchTerm.toLowerCase();
+    const nameMatch = hotel.name?.toLowerCase().includes(term);
+    const locationMatch = hotel.location?.toLowerCase().includes(term);
+    return nameMatch || locationMatch;
+  });
 
   // -------- Hotel modal handlers --------
   const openAddHotelModal = () => {
@@ -209,6 +227,21 @@ export default function AddHotel() {
   const getRoomsAvailableForHotel = (hotelId?: number) =>
     getRoomsForHotel(hotelId).length;
 
+  // status colors
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "available":
+        return { background: "green", color: "white" };
+      case "maintenance":
+        return { background: "goldenrod", color: "black" };
+      case "booked":
+        return { background: "red", color: "white" };
+      default:
+        return {};
+    }
+  };
+
+
   return (
     <div className="hotels-page-container">
       {/* NAVBAR */}
@@ -229,12 +262,20 @@ export default function AddHotel() {
         />
       </div>
 
-      {/* LOADING / ERROR */}
-      {loading && <p className="status-text">Loading hotels...</p>}
-      {error && <p className="status-text error-text">{error}</p>}
+      <div className="hero-search">
+        <SearchBar
+          value={searchTerm}
+          onChange={handleSearchChange}
+          placeholder="Find a hotel"
+        />
 
-      {/* TABLE */}
-      <div className="hotels-table-wrapper">
+        {/* LOADING / ERROR */}
+        {loading && <p className="status-text">Loading hotels...</p>}
+        {error && <p className="status-text error-text">{error}</p>}
+
+        {/* TABLE */}
+        <div className="hotels-table-wrapper"></div>
+
         <table className="hotels-table">
           <thead>
             <tr>
@@ -249,14 +290,14 @@ export default function AddHotel() {
           </thead>
 
           <tbody>
-            {hotels.length === 0 ? (
+            {filteredHotels.length === 0 ? (
               <tr>
                 <td colSpan={7} style={{ textAlign: "center" }}>
-                  No hotels found. Click "Add Hotel" to create one.
+                  No hotels match your search.
                 </td>
               </tr>
             ) : (
-              hotels.map((hotel) => (
+              filteredHotels.map((hotel) => (
                 <tr key={hotel.hotel_id}>
                   <td>{hotel.name}</td>
                   <td>{hotel.location}</td>
@@ -275,23 +316,20 @@ export default function AddHotel() {
                     />
                   </td>
 
-                  {/* Actions: Add Room / Edit Hotel / Delete Hotel */}
+                  {/* Actions */}
                   <td className="action-icons">
-                    {/* Add Room */}
                     <Button
                       className="icon-button add-rooms"
                       name="add-rooms"
                       onClick={() => openRoomFormForAdd(hotel)}
                     />
 
-                    {/* Edit hotel */}
                     <Button
                       icon={<FaEdit />}
                       className="icon-button edit"
                       onClick={() => openEditHotelModal(hotel)}
                     />
 
-                    {/* Delete hotel */}
                     <Button
                       icon={<FaTrash className="icon delete" />}
                       className="icon-button delete"
@@ -352,7 +390,20 @@ export default function AddHotel() {
                     <tr key={room.room_id}>
                       <td>{room.room_type}</td>
                       <td>{room.price}</td>
-                      <td>{room.status}</td>
+                      <td>
+                        <span
+                          style={{
+                            padding: "6px 12px",
+                            borderRadius: "6px",
+                            fontWeight: "600",
+                            textTransform: "capitalize",
+                            ...getStatusColor(room.status),
+                          }}
+                        >
+                          {room.status}
+                        </span>
+                      </td>
+
                       <td className="action-icons">
                         {/* UPDATE ROOM */}
                         <Button
