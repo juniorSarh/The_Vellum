@@ -19,16 +19,9 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
-<<<<<<< HEAD
     rules: {
       'react-refresh/only-export-components': 'warn',
       'react-refresh/sort-comp': 'warn',
     },
   },
-=======
-  "rules": {
-    "@typescript-eslint/no-explicit-any": "off"
-  }
-}
->>>>>>> 125d59c25ba85b117cb81e9c2e74445f248b9427
 ])
