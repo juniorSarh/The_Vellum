@@ -63,7 +63,7 @@ const CheckoutPage = () => {
     room_id: resolvedRoomId,
     check_in_date,
     check_out_date,
-    status: "pending", 
+    status: "Paid successfully", 
     total_cost,
     additional_requests: "",
   });
