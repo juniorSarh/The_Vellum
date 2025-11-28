@@ -21,6 +21,7 @@ import {
   deleteroom,
   type Room,
 } from "../../src/storeSlices/roomSlice";
+import SearchBar from "../../src/components/searchBar";
 
 export default function AddHotel() {
   // Hotel modals
@@ -50,6 +51,23 @@ export default function AddHotel() {
   const [roomStatus, setRoomStatus] = useState("available");
   const [roomError, setRoomError] = useState<string | null>(null);
   const [roomLoading, setRoomLoading] = useState(false);
+
+  //search state
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Handle search input change
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+  };
+
+  // Filter hotels by search term (name or location)
+  const filteredHotels: Hotel[] = hotels.filter((hotel) => {
+    if (!searchTerm.trim()) return true;
+    const term = searchTerm.toLowerCase();
+    const nameMatch = hotel.name?.toLowerCase().includes(term);
+    const locationMatch = hotel.location?.toLowerCase().includes(term);
+    return nameMatch || locationMatch;
+  });
 
   // -------- Hotel modal handlers --------
   const openAddHotelModal = () => {
@@ -231,12 +249,20 @@ export default function AddHotel() {
         />
       </div>
 
-      {/* LOADING / ERROR */}
-      {loading && <p className="status-text">Loading hotels...</p>}
-      {error && <p className="status-text error-text">{error}</p>}
+      <div className="hero-search">
+        <SearchBar
+          value={searchTerm}
+          onChange={handleSearchChange}
+          placeholder="Find a hotel"
+        />
 
-      {/* TABLE */}
-      <div className="hotels-table-wrapper">
+        {/* LOADING / ERROR */}
+        {loading && <p className="status-text">Loading hotels...</p>}
+        {error && <p className="status-text error-text">{error}</p>}
+
+        {/* TABLE */}
+        <div className="hotels-table-wrapper"></div>
+
         <table className="hotels-table">
           <thead>
             <tr>
@@ -251,14 +277,14 @@ export default function AddHotel() {
           </thead>
 
           <tbody>
-            {hotels.length === 0 ? (
+            {filteredHotels.length === 0 ? (
               <tr>
                 <td colSpan={7} style={{ textAlign: "center" }}>
-                  No hotels found. Click "Add Hotel" to create one.
+                  No hotels match your search.
                 </td>
               </tr>
             ) : (
-              hotels.map((hotel) => (
+              filteredHotels.map((hotel) => (
                 <tr key={hotel.hotel_id}>
                   <td>{hotel.name}</td>
                   <td>{hotel.location}</td>
@@ -268,7 +294,7 @@ export default function AddHotel() {
                   {/* Rooms Available */}
                   <td>{getRoomsAvailableForHotel(hotel.hotel_id)}</td>
 
-                  {/* Price Range column → View Rooms button */}
+                  {/* View Rooms */}
                   <td>
                     <Button
                       className="view-rooms-btn"
@@ -277,23 +303,20 @@ export default function AddHotel() {
                     />
                   </td>
 
-                  {/* Actions: Add Room / Edit Hotel / Delete Hotel */}
+                  {/* Actions */}
                   <td className="action-icons">
-                    {/* Add Room */}
                     <Button
                       className="icon-button add-rooms"
                       name="add-rooms"
                       onClick={() => openRoomFormForAdd(hotel)}
                     />
 
-                    {/* Edit hotel */}
                     <Button
                       icon={<FaEdit />}
                       className="icon-button edit"
                       onClick={() => openEditHotelModal(hotel)}
                     />
 
-                    {/* Delete hotel */}
                     <Button
                       icon={<FaTrash className="icon delete" />}
                       className="icon-button delete"
