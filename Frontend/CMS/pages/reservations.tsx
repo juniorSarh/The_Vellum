@@ -14,10 +14,25 @@ import {
   updateBooking,
   type Booking,
 } from "../../src/storeSlices/bookingSlice";
+import { fetchRooms } from "../../src/storeSlices/roomSlice";
 
 const ReservationList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+  const rooms = useAppSelector((state) => state.room.rooms);
+
+
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [editData, setEditData] = useState({
+    room_type: "",
+    check_in_date: "",
+    check_out_date: "",
+    people: 1,
+    total_cost: 0,
+    nights: 1,
+    room_id: 0,
+  });
+
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -28,6 +43,44 @@ const ReservationList = () => {
   useEffect(() => {
     dispatch(fetchBookings());
   }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchRooms());
+  }, [dispatch]);
+
+
+  useEffect(() => {
+    if (!editData.check_in_date || !editData.check_out_date) return;
+
+    const checkIn = new Date(editData.check_in_date);
+    const checkOut = new Date(editData.check_out_date);
+
+    const diff = checkOut.getTime() - checkIn.getTime();
+    const nights = Math.ceil(diff / (1000 * 60 * 60 * 24));
+
+    // Get price dynamically from store
+    const selectedRoom = rooms.find(
+      (r) => r.room_type.toLowerCase() === editData.room_type.toLowerCase()
+    );
+
+    const pricePerNight = selectedRoom?.price ?? 0;
+
+    const total = nights > 0 ? nights * pricePerNight : 0;
+
+    setEditData((prev) => ({
+      ...prev,
+      nights: nights > 0 ? nights : 0,
+      room_id: selectedRoom?.room_id ?? prev.room_id,
+      total_cost: total,
+    }));
+  }, [
+    editData.room_type,
+    editData.check_in_date,
+    editData.check_out_date,
+    rooms,
+  ]);
+
+
 
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
@@ -54,8 +107,42 @@ const ReservationList = () => {
 
   const handleUpdateBooking = (booking: Booking) => {
     if (!booking.booking_id) return;
-    navigate(`/reservations/${booking.booking_id}/edit`);
+
+    setEditData({
+      room_type: booking.room_type ?? "",
+      check_in_date: booking.check_in_date,
+      check_out_date: booking.check_out_date,
+      people: booking.additional_requests
+        ? Number(booking.additional_requests)
+        : 1,
+      total_cost: Number(booking.total_cost),
+      nights: 1, // recalculated inside modal
+      room_id: booking.room_id,
+    });
+
+    setSelectedBooking(booking);
+    setIsUpdateModalOpen(true);
   };
+
+  const handleSubmitBookingUpdate = (id: number) => {
+    dispatch(
+      updateBooking({
+        id,
+        updates: {
+          check_in_date: editData.check_in_date,
+          check_out_date: editData.check_out_date,
+          room_id: editData.room_id,
+          total_cost: editData.total_cost,
+          additional_requests: String(editData.people),
+          room_type: editData.room_type,
+        },
+      })
+    );
+
+    setIsUpdateModalOpen(false);
+  };
+
+
 
   const handleViewBooking = (booking: Booking) => {
     setSelectedBooking(booking);
@@ -76,7 +163,8 @@ const ReservationList = () => {
       `${guestName} ${hotelName} ${b.status} ${b.check_in_date} ${b.check_out_date}`.toLowerCase();
     return combined.includes(normalizedSearch);
   });
-
+  
+  
   return (
     <div className="reservationPage">
       <div className="nav">
@@ -219,6 +307,111 @@ const ReservationList = () => {
             <div className="res-modal-actions">
               <button className="res-btn close" onClick={closeModal}>
                 Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isUpdateModalOpen && selectedBooking && (
+        <div
+          className="res-modal-overlay"
+          onClick={() => setIsUpdateModalOpen(false)}
+        >
+          <div
+            className="res-modal update"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3>Update Booking</h3>
+
+            {/* Room type */}
+            <div className="form-group">
+              <label>Room Type</label>
+              <select
+                value={editData.room_type}
+                onChange={(e) =>
+                  setEditData((prev) => ({
+                    ...prev,
+                    room_type: e.target.value,
+                  }))
+                }
+              >
+                <option value="">Select room type</option>
+                <option value="Deluxe">Deluxe</option>
+                <option value="Standard">Standard</option>
+                <option value="Suite">Suite</option>
+              </select>
+            </div>
+
+            {/* Dates */}
+            <div className="form-group">
+              <label>Check-in Date</label>
+              <input
+                type="date"
+                value={editData.check_in_date}
+                onChange={(e) =>
+                  setEditData((prev) => ({
+                    ...prev,
+                    check_in_date: e.target.value,
+                  }))
+                }
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Check-out Date</label>
+              <input
+                type="date"
+                value={editData.check_out_date}
+                onChange={(e) =>
+                  setEditData((prev) => ({
+                    ...prev,
+                    check_out_date: e.target.value,
+                  }))
+                }
+              />
+            </div>
+
+            {/* People */}
+            <div className="form-group">
+              <label>Number of People</label>
+              <input
+                type="number"
+                value={editData.people}
+                onChange={(e) =>
+                  setEditData((prev) => ({
+                    ...prev,
+                    people: Number(e.target.value),
+                  }))
+                }
+              />
+            </div>
+
+            {/* Nights */}
+            <p>
+              <strong>Nights:</strong> {editData.nights}
+            </p>
+
+            {/* Total */}
+            <p>
+              <strong>Total Price:</strong> R{editData.total_cost}
+            </p>
+
+            <div className="res-modal-actions">
+              <button
+                className="res-btn close"
+                onClick={() => setIsUpdateModalOpen(false)}
+              >
+                Cancel
+              </button>
+
+              <button
+                className="res-btn update"
+                onClick={() =>
+                  handleSubmitBookingUpdate(selectedBooking.booking_id!)
+                }
+              >
+                Save Changes
               </button>
             </div>
           </div>
