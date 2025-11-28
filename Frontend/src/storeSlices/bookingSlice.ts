@@ -12,17 +12,37 @@ export interface Booking {
   booking_id?: number;
   customer_id: number;
   room_id: number;
-  check_in_date: string; // ISO string
-  check_out_date: string; // ISO string
-  status: string; // e.g. "pending", "confirmed", "cancelled"
-  additional_requests?: string;
-  total_cost: number;
+  hotel_id?: number; // from backend
+
+  check_in_date: string; // ISO strings from backend
+  check_out_date: string;
+
+  status: string;
+  additional_requests?: string | null;
+
+  // PG numeric usually comes back as a string; allow both
+  total_cost: number | string;
+
+  // Joined fields from backend (BookingWithDetails)
+  customer_first_name?: string;
+  customer_last_name?: string;
+  hotel_name?: string;
+  room_type?: string;
 }
 
 interface BookingState {
   bookings: Booking[];
   booking: Booking | null;
-  pendingBooking: Omit<Booking, "booking_id"> | null; // used for Paystack flow
+  // used for Paystack flow (data to create booking after successful payment)
+  pendingBooking: Omit<
+    Booking,
+    | "booking_id"
+    | "hotel_id"
+    | "customer_first_name"
+    | "customer_last_name"
+    | "hotel_name"
+    | "room_type"
+  > | null;
   loading: boolean;
   error: string | null;
 }
@@ -35,7 +55,6 @@ const initialState: BookingState = {
   error: null,
 };
 
-// Adjust to your backend
 const API_URL = "http://localhost:4040/api/bookings";
 
 // ----------------------------
@@ -89,7 +108,15 @@ export const fetchBookingById = createAsyncThunk<
 // 3️⃣ Create booking (called AFTER Paystack success)
 export const createBooking = createAsyncThunk<
   Booking,
-  Omit<Booking, "booking_id">,
+  Omit<
+    Booking,
+    | "booking_id"
+    | "hotel_id"
+    | "customer_first_name"
+    | "customer_last_name"
+    | "hotel_name"
+    | "room_type"
+  >,
   { rejectValue: string }
 >("bookings/create", async (bookingData, { rejectWithValue }) => {
   try {
@@ -148,8 +175,8 @@ export const updateBooking = createAsyncThunk<
 
 // 5️⃣ Delete booking
 export const deleteBooking = createAsyncThunk<
-  number, // return deleted booking_id
-  number, // argument: id
+  number,
+  number,
   { rejectValue: string }
 >("bookings/delete", async (id, { rejectWithValue }) => {
   try {
@@ -190,7 +217,17 @@ const bookingSlice = createSlice({
     // Store booking payload while user is on payment gateway
     setPendingBooking(
       state,
-      action: PayloadAction<Omit<Booking, "booking_id">>
+      action: PayloadAction<
+        Omit<
+          Booking,
+          | "booking_id"
+          | "hotel_id"
+          | "customer_first_name"
+          | "customer_last_name"
+          | "hotel_name"
+          | "room_type"
+        >
+      >
     ) {
       state.pendingBooking = action.payload;
     },
@@ -210,6 +247,7 @@ const bookingSlice = createSlice({
       (state, action: PayloadAction<Booking[]>) => {
         state.loading = false;
         state.bookings = action.payload;
+        console.log(action.payload);
       }
     );
     builder.addCase(fetchBookings.rejected, (state, action) => {
