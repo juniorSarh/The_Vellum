@@ -8,6 +8,7 @@ import {
   type Booking,
 } from "../../src/storeSlices/bookingSlice";
 import "../../src/assets/css/checkout.css";
+import type { RootState } from "../../store";
 
 type CheckoutLocationState = {
   hotelName: string;
@@ -30,7 +31,7 @@ const CheckoutPage = () => {
   const state = location.state as CheckoutLocationState | null;
 
   const { loading, error } = useAppSelector((s) => s.booking);
-  const authUser = useAppSelector((s: any) => s.auth?.user);
+  const authUserid = useAppSelector((s: RootState) => s.customer.customer?.id);
 
   if (!state) {
     return (
@@ -54,7 +55,7 @@ const CheckoutPage = () => {
     room_id,
   } = state;
 
-  const customerId: number = authUser?.customer_id ?? authUser?.id; // TODO: replace fallback 1
+  const customerId: number = authUserid!! // TODO: replace fallback 1
   const resolvedRoomId: number = room_id ?? 1; // TODO: replace fallback
 
   const buildBookingPayload = (): Omit<Booking, "booking_id"> => ({
@@ -68,12 +69,11 @@ const CheckoutPage = () => {
   });
 
   const handlePayNow = () => {
-    console.log(authUser)
-    // const payload = buildBookingPayload();
-    // // 1️⃣ store it in Redux
-    // dispatch(setPendingBooking(payload));
-    // // 2️⃣ navigate to payment page
-    // navigate("/payment");
+    const payload = buildBookingPayload();
+    // 1️⃣ store it in Redux
+    dispatch(setPendingBooking(payload));
+    // 2️⃣ navigate to payment page
+    navigate("/payment");
   };
 
   const handleCancel = () => {
