@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+// import React, { useState } from "react";
 import "./searchBar.css";
-import FilterModal from "./filterModal";
+// import FilterModal from "./filterModal";
 
 type SearchBarProps = {
   value?: string;
@@ -8,30 +8,30 @@ type SearchBarProps = {
   placeholder?: string;
 };
 
-type FilterData = {
-  type: "date" | "location" | "price";
-  value: string;
-};
+// type FilterData = {
+//   type: "date" | "location" | "price";
+//   value: string;
+// };
 
 const SearchBar: React.FC<SearchBarProps> = ({
   value,
   onChange,
   placeholder = "Search",
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleFilterClick = () => {
-    setIsModalOpen(true);
-  };
+  // const handleFilterClick = () => {
+  //   setIsModalOpen(true);
+  // };
 
-  const handleApplyFilters = (filters: FilterData) => {
-    console.log("Applied Filters:", filters);
+  // const handleApplyFilters = (filters: FilterData) => {
+  //   console.log("Applied Filters:", filters);
 
-    // Example: if you want filter text to reflect applied values in search input
-    // onChange(filters.location || "");
+  //   // Example: if you want filter text to reflect applied values in search input
+  //   // onChange(filters.location || "");
 
-    setIsModalOpen(false);
-  };
+  //   setIsModalOpen(false);
+  // };
 
   return (
     <>
@@ -49,21 +49,21 @@ const SearchBar: React.FC<SearchBarProps> = ({
         </div>
 
         {/* Filter button */}
-        <button
+        {/* <button
           type="button"
           className="searchbar-filter-button"
           onClick={handleFilterClick}
         >
           Filter ▾
-        </button>
+        </button> */}
       </div>
 
       {/* ⭐ Filter Modal (Showns only if open) */}
-      <FilterModal
+      {/* <FilterModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onApply={handleApplyFilters}
-      />
+      /> */}
     </>
   );
 };

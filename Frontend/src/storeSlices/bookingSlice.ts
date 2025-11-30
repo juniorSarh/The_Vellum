@@ -14,14 +14,21 @@ export interface Booking {
   room_id: number;
   check_in_date: string; // ISO string
   check_out_date: string; // ISO string
-  status: string; // e.g. "pending", "confirmed", "cancelled"
-  additional_requests?: string;
-  total_cost: number;
+  status: string; // "pending", "confirmed", "cancelled"
+  additional_requests?: string | null;
+  total_cost: number | string;
+
+  // Optional joined fields from backend (customer + hotel)
+  customer_first_name?: string;
+  customer_last_name?: string;
+  hotel_name?: string;
+  room_type?: string;
 }
 
 interface BookingState {
   bookings: Booking[];
-  booking: Booking | null;
+  booking?: Booking | null;
+  pendingBooking?: Booking;
   loading: boolean;
   error: string | null;
 }
@@ -39,7 +46,7 @@ const API_URL = "http://localhost:4040/api/bookings";
 // Async Thunks
 // ----------------------------
 
-// 1️⃣ Fetch all bookings
+// 1️⃣ Fetch ALL bookings (admin usage)
 export const fetchBookings = createAsyncThunk<
   Booking[],
   void,
@@ -59,7 +66,29 @@ export const fetchBookings = createAsyncThunk<
   }
 });
 
-// 2️⃣ Fetch booking by ID
+// 2️⃣ Fetch bookings by customer id (booking history)
+export const fetchBookingsByCustomer = createAsyncThunk<
+  Booking[],
+  number,
+  { rejectValue: string }
+>("bookings/fetchByCustomer", async (customerId, { rejectWithValue }) => {
+  try {
+    const response = await fetch(`${API_URL}/customer/${customerId}`);
+    const result = await response.json();
+
+    if (!response.ok) {
+      return rejectWithValue(
+        result.error || "Failed to fetch customer bookings"
+      );
+    }
+
+    return result as Booking[];
+  } catch {
+    return rejectWithValue("Failed to fetch customer bookings");
+  }
+});
+
+// 3️⃣ Fetch single booking by id
 export const fetchBookingById = createAsyncThunk<
   Booking,
   number,
@@ -79,7 +108,7 @@ export const fetchBookingById = createAsyncThunk<
   }
 });
 
-// 3️⃣ Create booking
+// 4️⃣ Create booking
 export const createBooking = createAsyncThunk<
   Booking,
   Omit<Booking, "booking_id">,
@@ -104,7 +133,7 @@ export const createBooking = createAsyncThunk<
   }
 });
 
-// 4️⃣ Update booking
+// 5️⃣ Update booking
 export const updateBooking = createAsyncThunk<
   Booking,
   { id: number; updates: Partial<Booking> },
@@ -129,10 +158,10 @@ export const updateBooking = createAsyncThunk<
   }
 });
 
-// 5️⃣ Delete booking
+// 6️⃣ Delete booking
 export const deleteBooking = createAsyncThunk<
-  number, // return deleted booking_id
-  number, // argument: id
+  number,
+  number,
   { rejectValue: string }
 >("bookings/delete", async (id, { rejectWithValue }) => {
   try {
@@ -167,6 +196,14 @@ const bookingSlice = createSlice({
     setBookings(state, action: PayloadAction<Booking[]>) {
       state.bookings = action.payload;
     },
+    // Store checkout booking details before payment
+    setPendingBooking(state, action: PayloadAction<Booking>) {
+      state.pendingBooking = action.payload;
+    },
+    // Clear pending booking (after payment / cancel)
+    clearPendingBooking(state) {
+      state.pendingBooking = undefined;
+    },
   },
   extraReducers: (builder) => {
     // Fetch all
@@ -184,6 +221,25 @@ const bookingSlice = createSlice({
     builder.addCase(fetchBookings.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload || "Failed to fetch bookings";
+    });
+
+    // Fetch by customer
+    builder.addCase(fetchBookingsByCustomer.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(
+      fetchBookingsByCustomer.fulfilled,
+      (state, action: PayloadAction<Booking[]>) => {
+        state.loading = false;
+        // 👇 this will now be ONLY that customer's bookings
+        state.bookings = action.payload;
+      }
+    );
+    builder.addCase(fetchBookingsByCustomer.rejected, (state, action) => {
+      state.loading = false;
+      state.error =
+        action.payload || "Failed to fetch customer booking history";
     });
 
     // Fetch by ID
@@ -212,7 +268,10 @@ const bookingSlice = createSlice({
       createBooking.fulfilled,
       (state, action: PayloadAction<Booking>) => {
         state.loading = false;
+        // Add new booking to the top
         state.bookings.unshift(action.payload);
+        // Clear pending booking after successful creation
+        state.pendingBooking = undefined;
       }
     );
     builder.addCase(createBooking.rejected, (state, action) => {
@@ -269,7 +328,12 @@ const bookingSlice = createSlice({
   },
 });
 
-export const { clearBookingError, clearBooking, setBookings } =
-  bookingSlice.actions;
+export const {
+  clearBookingError,
+  clearBooking,
+  setBookings,
+  setPendingBooking,
+  clearPendingBooking,
+} = bookingSlice.actions;
 
 export default bookingSlice.reducer;

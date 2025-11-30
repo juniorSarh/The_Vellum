@@ -21,6 +21,7 @@ import {
   deleteroom,
   type Room,
 } from "../../src/storeSlices/roomSlice";
+import SearchBar from "../../src/components/searchBar";
 
 export default function AddHotel() {
   // Hotel modals
@@ -39,9 +40,7 @@ export default function AddHotel() {
   const [editingRoom, setEditingRoom] = useState<Room | null>(null);
 
   const dispatch = useAppDispatch();
-  const { hotels, loading, error } = useAppSelector(
-    (state) => state.hotel // make sure reducer key is "hotels"
-  );
+  const { hotels, loading, error } = useAppSelector((state) => state.hotel);
   const { rooms } = useAppSelector((state) => state.room);
 
   // Room form local state
@@ -50,6 +49,23 @@ export default function AddHotel() {
   const [roomStatus, setRoomStatus] = useState("available");
   const [roomError, setRoomError] = useState<string | null>(null);
   const [roomLoading, setRoomLoading] = useState(false);
+
+  //search state
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Handle search input change
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+  };
+
+  // Filter hotels by search term (name or location)
+  const filteredHotels: Hotel[] = hotels.filter((hotel) => {
+    if (!searchTerm.trim()) return true;
+    const term = searchTerm.toLowerCase();
+    const nameMatch = hotel.name?.toLowerCase().includes(term);
+    const locationMatch = hotel.location?.toLowerCase().includes(term);
+    return nameMatch || locationMatch;
+  });
 
   // -------- Hotel modal handlers --------
   const openAddHotelModal = () => {
@@ -211,6 +227,21 @@ export default function AddHotel() {
   const getRoomsAvailableForHotel = (hotelId?: number) =>
     getRoomsForHotel(hotelId).length;
 
+  // status colors
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "available":
+        return { background: "green", color: "white" };
+      case "maintenance":
+        return { background: "goldenrod", color: "black" };
+      case "booked":
+        return { background: "red", color: "white" };
+      default:
+        return {};
+    }
+  };
+
+
   return (
     <div className="hotels-page-container">
       {/* NAVBAR */}
@@ -231,12 +262,20 @@ export default function AddHotel() {
         />
       </div>
 
-      {/* LOADING / ERROR */}
-      {loading && <p className="status-text">Loading hotels...</p>}
-      {error && <p className="status-text error-text">{error}</p>}
+      <div className="hero-search">
+        <SearchBar
+          value={searchTerm}
+          onChange={handleSearchChange}
+          placeholder="Find a hotel"
+        />
 
-      {/* TABLE */}
-      <div className="hotels-table-wrapper">
+        {/* LOADING / ERROR */}
+        {loading && <p className="status-text">Loading hotels...</p>}
+        {error && <p className="status-text error-text">{error}</p>}
+
+        {/* TABLE */}
+        <div className="hotels-table-wrapper"></div>
+
         <table className="hotels-table">
           <thead>
             <tr>
@@ -251,14 +290,14 @@ export default function AddHotel() {
           </thead>
 
           <tbody>
-            {hotels.length === 0 ? (
+            {filteredHotels.length === 0 ? (
               <tr>
                 <td colSpan={7} style={{ textAlign: "center" }}>
-                  No hotels found. Click "Add Hotel" to create one.
+                  No hotels match your search.
                 </td>
               </tr>
             ) : (
-              hotels.map((hotel) => (
+              filteredHotels.map((hotel) => (
                 <tr key={hotel.hotel_id}>
                   <td>{hotel.name}</td>
                   <td>{hotel.location}</td>
@@ -268,7 +307,7 @@ export default function AddHotel() {
                   {/* Rooms Available */}
                   <td>{getRoomsAvailableForHotel(hotel.hotel_id)}</td>
 
-                  {/* Price Range column → View Rooms button */}
+                  {/* View Rooms */}
                   <td>
                     <Button
                       className="view-rooms-btn"
@@ -277,23 +316,20 @@ export default function AddHotel() {
                     />
                   </td>
 
-                  {/* Actions: Add Room / Edit Hotel / Delete Hotel */}
+                  {/* Actions */}
                   <td className="action-icons">
-                    {/* Add Room */}
                     <Button
                       className="icon-button add-rooms"
                       name="add-rooms"
                       onClick={() => openRoomFormForAdd(hotel)}
                     />
 
-                    {/* Edit hotel */}
                     <Button
                       icon={<FaEdit />}
                       className="icon-button edit"
                       onClick={() => openEditHotelModal(hotel)}
                     />
 
-                    {/* Delete hotel */}
                     <Button
                       icon={<FaTrash className="icon delete" />}
                       className="icon-button delete"
@@ -312,26 +348,16 @@ export default function AddHotel() {
         <Footer />
       </div>
 
-      {/* HOTEL MODAL (Add/Edit) */}
+      {/* HOTEL MODAL (Add/Edit) – only wrapper; form owns buttons/title */}
       {isHotelModalOpen && (
         <div className="modal-overlay" onClick={closeHotelModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>{editingHotel ? "Edit Hotel" : "Add Hotel"}</h2>
-
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <HotelForm
               key={editingHotel?.hotel_id ?? "new"}
               onClose={closeHotelModal}
               mode={editingHotel ? "edit" : "add"}
               initialHotel={editingHotel}
               adminId={editingHotel?.admin_id ?? undefined}
-            />
-
-            <Button
-              className="modal-close-btn"
-              onClick={closeHotelModal}
-              name="close"
-              color="white"
-              backgroundColor="red"
             />
           </div>
         </div>
@@ -364,7 +390,20 @@ export default function AddHotel() {
                     <tr key={room.room_id}>
                       <td>{room.room_type}</td>
                       <td>{room.price}</td>
-                      <td>{room.status}</td>
+                      <td>
+                        <span
+                          style={{
+                            padding: "6px 12px",
+                            borderRadius: "6px",
+                            fontWeight: "600",
+                            textTransform: "capitalize",
+                            ...getStatusColor(room.status),
+                          }}
+                        >
+                          {room.status}
+                        </span>
+                      </td>
+
                       <td className="action-icons">
                         {/* UPDATE ROOM */}
                         <Button
@@ -389,7 +428,6 @@ export default function AddHotel() {
             </table>
 
             <div className="rooms-list-actions">
-              {/* Optional: Add Room from inside list */}
               <Button
                 className="add-room-btn"
                 name="Add Room"
@@ -408,16 +446,16 @@ export default function AddHotel() {
       {/* ROOM FORM MODAL (Add / Edit room) */}
       {isRoomFormModalOpen && hotelForRoomForm && (
         <div className="modal-overlay" onClick={closeRoomFormModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <h2 className="modal-title">
               {editingRoom
                 ? `Edit Room – ${hotelForRoomForm.name}`
                 : `Add Room – ${hotelForRoomForm.name}`}
             </h2>
 
-            <form className="hotel-form" onSubmit={handleRoomFormSubmit}>
+            <form className="modal-form" onSubmit={handleRoomFormSubmit}>
               <div className="form-group">
-                <label htmlFor="room-type">Room Type:</label>
+                <label htmlFor="room-type">Room Type</label>
                 <input
                   id="room-type"
                   type="text"
@@ -429,7 +467,7 @@ export default function AddHotel() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="room-price">Price:</label>
+                <label htmlFor="room-price">Price</label>
                 <input
                   id="room-price"
                   type="number"
@@ -446,7 +484,7 @@ export default function AddHotel() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="room-status">Status:</label>
+                <label htmlFor="room-status">Status</label>
                 <select
                   id="room-status"
                   value={roomStatus}
@@ -460,8 +498,12 @@ export default function AddHotel() {
 
               {roomError && <p className="error-text">{roomError}</p>}
 
-              <div className="form-actions">
-                <button type="submit" disabled={roomLoading}>
+              <div className="modal-actions">
+                <button
+                  type="submit"
+                  className="modal-btn modal-btn-primary"
+                  disabled={roomLoading}
+                >
                   {roomLoading
                     ? "Saving..."
                     : editingRoom
@@ -470,7 +512,7 @@ export default function AddHotel() {
                 </button>
                 <button
                   type="button"
-                  className="secondary-btn"
+                  className="modal-btn modal-btn-cancel"
                   onClick={closeRoomFormModal}
                   disabled={roomLoading}
                 >

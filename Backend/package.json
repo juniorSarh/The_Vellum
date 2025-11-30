@@ -1,11 +1,11 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "ts-node index.ts",
-    "dev": "nodemon --exec ts-node index.ts"
+    "start": "node dist/index.js",
+    "dev": "nodemon --watch \"src/**/*.ts\" --ext ts --exec \"ts-node index.ts\""
   },
   "keywords": [],
   "author": "",
@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
+    "@paystack/inline-js": "^2.22.7",
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.19",
     "@types/dotenv": "^6.1.1",
@@ -29,6 +30,7 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "google-auth-library": "^10.5.0",
     "multer": "^2.0.2",
     "pg": "^8.16.3"
   }

@@ -64,6 +64,29 @@ export const addhotel = createAsyncThunk<
 });
 
 // ==============================================================
+// 4️⃣ GET HOTEL BY ID (read one)
+// ==============================================================
+export const getHotelById = createAsyncThunk<
+  Hotel,
+  number,
+  { rejectValue: string }
+>("hotels/getHotelById", async (id, { rejectWithValue }) => {
+  try {
+    const response = await fetch(`${BASE_URL}/${id}`);
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      return rejectWithValue(result.error || "Failed to fetch hotel");
+    }
+
+    return result as Hotel; // backend returns hotel object
+  } catch {
+    return rejectWithValue("Failed to fetch hotel");
+  }
+});
+
+// ==============================================================
 // 2️⃣ UPDATE HOTEL  (updatehotel)
 // ==============================================================
 export const updatehotel = createAsyncThunk<
@@ -149,6 +172,23 @@ const hotelSlice = createSlice({
     builder.addCase(addhotel.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload || "Failed to add hotel";
+    });
+
+    // -------- GET HOTEL BY ID --------
+    builder.addCase(getHotelById.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(
+      getHotelById.fulfilled,
+      (state, action: PayloadAction<Hotel>) => {
+        state.loading = false;
+        state.hotels = [action.payload]; // store only selected hotel
+      }
+    );
+    builder.addCase(getHotelById.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || "Failed to fetch hotel";
     });
 
     // -------- UPDATE HOTEL --------

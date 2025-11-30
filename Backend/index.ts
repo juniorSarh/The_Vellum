@@ -25,14 +25,14 @@ import { createAdminTable } from "./src/services/admin.service";
 import { createHotelTable } from "./src/services/hotel.services";
 import { createRoomTable } from "./src/services/room.service";
 import { createBookingsTable } from "./src/services/booking.service";
+import paymentRouter from "./src/routes/payment.routes";
+import { get } from "http";
 
 dotenv.config();
 
 // Initialize Express app
 const app = express();
 const port = process.env.PORT || 3000;
-
-
 
 // Middleware
 app.use(cors());
@@ -47,7 +47,7 @@ app.use("/api/admins", adminRouter);
 
 app.use("/api/admins", imageRouter);
 app.use("/api/customers", userImageRouter);
-
+app.use("/api/initialize",paymentRouter)
 
 app.use("/api/hotels", hotelRouter);
 app.use("/api/rooms", roomRouter);
@@ -87,6 +87,7 @@ app.get("/", (req, res) => {
       booking: {
         create: "POST /api/bookings",
         getAll: "GET /api/bookings",
+        getByCustomer: "GET /api/bookings/customer/:customerId",
         getOne: "GET /api/bookings/:id",
         update: "PUT /api/bookings/:id",
         delete: "DELETE /api/bookings/:id",
@@ -104,13 +105,15 @@ async function startServer() {
       throw new Error("Failed to connect to database");
     }
 
+    
+
     // Create required tables
     await createCustomerTable();
     await createAdminTable();
     await createHotelTable();
     await createRoomTable();
     await createBookingsTable();
-
+    
     // Start the server
     app.listen(port, () => {
       console.log(`\n🚀 Server is running at: http://localhost:${port}\n`);
@@ -151,6 +154,7 @@ async function startServer() {
       console.log(`➡ POST    /api/bookings`);
       console.log(`➡ GET     /api/bookings`);
       console.log(`➡ GET     /api/bookings/:id`);
+      console.log(`➡ GET     /api/bookings/customer/:customerId`);
       console.log(`➡ PUT     /api/bookings/:id`);
       console.log(`➡ DELETE  /api/bookings/:id\n`);
     });

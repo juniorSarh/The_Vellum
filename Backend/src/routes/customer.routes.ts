@@ -6,6 +6,7 @@ export const customerRouter = Router();
 // Authentication endpoints
 customerRouter.post("/register", customerController.registerCustomer);
 customerRouter.post("/login", customerController.loginCustomer);
+customerRouter.post("/google", customerController.googleAuth); // Google OAuth
 
 // Profile management endpoints
 customerRouter.get("/", customerController.getCustomers);
