@@ -5,7 +5,7 @@ import { fetchBookingsByCustomer } from "../../src/storeSlices/bookingSlice";
 import PrivatNav from "../../src/components/PrivatNav";
 import Footer from "../../src/components/Footer";
 import type { RootState } from "../../store";
-import "../../src/bookingHistory.css";
+import "../../src/bookinghistory.css";
 
 const BookingHistory = () => {
   const dispatch = useAppDispatch();
