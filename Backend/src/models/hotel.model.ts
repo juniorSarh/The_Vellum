@@ -8,24 +8,30 @@ export interface Hotel {
   location: string;
   star_rating?: number | null;
   description?: string | null;
+
+  // ✅ NEW: main cover image URL
+  main_image?: string | null;
+
+  // ✅ Gallery images
   images?: string[] | null;
 }
 
 // Get all hotels
 export async function getAllHotels(): Promise<Hotel[]> {
   const rows = await sql`
-    SELECT * FROM hotels
+    SELECT *
+    FROM hotels
     ORDER BY hotel_id
   `;
 
-  // sql returns Record<string, any>[], so cast:
   return rows as unknown as Hotel[];
 }
 
 // Get hotel by ID
 export async function getHotelById(hotelId: number): Promise<Hotel | null> {
   const rows = await sql`
-    SELECT * FROM hotels
+    SELECT *
+    FROM hotels
     WHERE hotel_id = ${hotelId}
   `;
 
@@ -36,7 +42,8 @@ export async function getHotelById(hotelId: number): Promise<Hotel | null> {
 // Get hotels by admin
 export async function getHotelsByAdmin(adminId: number): Promise<Hotel[]> {
   const rows = await sql`
-    SELECT * FROM hotels
+    SELECT *
+    FROM hotels
     WHERE admin_id = ${adminId}
     ORDER BY hotel_id
   `;
@@ -52,12 +59,29 @@ export async function createHotel(hotel: Hotel): Promise<Hotel> {
     location,
     star_rating = null,
     description = null,
+    main_image = null,
     images = null,
   } = hotel;
 
   const rows = await sql`
-    INSERT INTO hotels (admin_id, name, location, star_rating, description, images)
-    VALUES (${admin_id}, ${name}, ${location}, ${star_rating}, ${description}, ${images})
+    INSERT INTO hotels (
+      admin_id,
+      name,
+      location,
+      star_rating,
+      description,
+      main_image,
+      images
+    )
+    VALUES (
+      ${admin_id},
+      ${name},
+      ${location},
+      ${star_rating},
+      ${description},
+      ${main_image},
+      ${images}
+    )
     RETURNING *
   `;
 
@@ -76,18 +100,21 @@ export async function updateHotel(
     location,
     star_rating = null,
     description = null,
+    main_image = null,
     images = null,
   } = hotel;
 
   const rows = await sql`
     UPDATE hotels
-    SET admin_id    = ${admin_id},
-        name        = ${name},
-        location    = ${location},
-        star_rating = ${star_rating},
-        description = ${description},
-        images      = ${images}
-    WHERE hotel_id  = ${hotelId}
+    SET
+      admin_id   = ${admin_id},
+      name       = ${name},
+      location   = ${location},
+      star_rating= ${star_rating},
+      description= ${description},
+      main_image = ${main_image},
+      images     = ${images}
+    WHERE hotel_id = ${hotelId}
     RETURNING *
   `;
 
