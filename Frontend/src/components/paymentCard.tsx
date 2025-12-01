@@ -8,6 +8,7 @@ import {
   type Booking,
 } from "../storeSlices/bookingSlice";
 import { useNavigate } from "react-router-dom";
+import type { RootState } from "../../store";
 
 declare global {
   interface Window {
@@ -25,11 +26,19 @@ const PaymentCard: React.FC = () => {
   const navigate = useNavigate();
 
   const pendingBooking = useAppSelector(
-    (state) => state.booking.pendingBooking
+    (state: RootState) => state.booking.pendingBooking
   );
-  const authUser = useAppSelector((state: any) => state.auth?.user);
-  const paymentLoading = useAppSelector((state) => state.payment.loading);
-  const paymentError = useAppSelector((state) => state.payment.error);
+  // ✅ Use customerSlice as “auth”
+  const customer = useAppSelector(
+    (state: RootState) => state.customer.customer
+  );
+
+  const paymentLoading = useAppSelector(
+    (state: RootState) => state.payment.loading
+  );
+  const paymentError = useAppSelector(
+    (state: RootState) => state.payment.error
+  );
 
   if (!pendingBooking) {
     return (
@@ -56,7 +65,6 @@ const PaymentCard: React.FC = () => {
   };
 
   const handlePayment = async () => {
-    // total_cost might be number or string; normalise
     const rawAmount = (pendingBooking as any).total_cost;
     const amount = Number(rawAmount);
 
@@ -65,13 +73,13 @@ const PaymentCard: React.FC = () => {
       return;
     }
 
-    const email = authUser?.email ?? "guest@example.com";
+    const email = customer?.email ?? "guest@example.com";
 
     // 1️⃣ Initialize payment via backend
     const result: any = await dispatch(
       initializePayment({
         email,
-        amount, // in Rands; backend will convert to smallest unit if needed
+        amount,
       })
     );
 
@@ -89,22 +97,21 @@ const PaymentCard: React.FC = () => {
       return;
     }
 
-    // 3️⃣ Plain functions for Paystack callbacks
+    // 3️⃣ Success / close callbacks
     const handlePaystackSuccess = (response: any) => {
       alert("Payment successful! Reference: " + response.reference);
 
-      // Build clean booking payload that matches backend expectations
+      // Build clean booking payload that matches backend
       const bookingPayload: Omit<Booking, "booking_id"> = {
-        customer_id: authUser?.id ?? pendingBooking.customer_id ?? 1, // fallback for now
+        customer_id: customer?.id ?? pendingBooking.customer_id ?? 1,
         room_id: pendingBooking.room_id,
         check_in_date: pendingBooking.check_in_date,
         check_out_date: pendingBooking.check_out_date,
-        status: "confirmed", // or keep pendingBooking.status if you prefer
+        status: "confirmed",
         additional_requests: (pendingBooking as any).additional_requests ?? "",
         total_cost: Number(pendingBooking.total_cost ?? amount),
       };
 
-      // Run async logic inside an IIFE
       (async () => {
         try {
           await dispatch(createBooking(bookingPayload)).unwrap();
@@ -128,9 +135,9 @@ const PaymentCard: React.FC = () => {
 
     // 4️⃣ Open Paystack popup
     window.PaystackPop.setup({
-      key: "pk_test_d86a1ffa2f5df37791d028a6da25da95d8524fe7", // TODO: env
+      key: "pk_test_d86a1ffa2f5df37791d028a6da25da95d8524fe7",
       email,
-      amount: amount * 100, // Paystack expects smallest currency unit
+      amount: amount * 100, // smallest currency unit
       currency: "ZAR",
       reference: payload.reference,
       callback: handlePaystackSuccess,

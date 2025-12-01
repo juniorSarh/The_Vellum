@@ -116,6 +116,32 @@ export const getBookings = async () => {
   return result as Booking[];
 };
 
+// get bookingby customer id
+export const getBookingsByCustomerId = async (customerId: number) => {
+  const result = await sql`
+    SELECT
+      b.booking_id,
+      b.customer_id,
+      b.room_id,
+      b.check_in_date,
+      b.check_out_date,
+      b.status,
+      b.additional_requests,
+      c.first_name AS customer_first_name,
+      c.last_name  AS customer_last_name,
+      h.name       AS hotel_name,
+      r.room_type  AS room_type
+    FROM bookings b
+    JOIN customers c ON c.id       = b.customer_id
+    JOIN rooms     r ON r.room_id  = b.room_id
+    JOIN hotels    h ON h.hotel_id = r.hotel_id
+    WHERE b.customer_id = ${customerId}
+    ORDER BY b.check_in_date DESC;
+  `;
+  return result as Booking[];
+};
+
+
 // ======================================================
 // GET BOOKING BY ID
 // ======================================================

@@ -1,113 +1,119 @@
+// src/pages/BookingHistory.tsx
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "../../store";
-import { fetchBookings } from "../../src/storeSlices/bookingSlice";
-import "../../src/bookinghistory.css";
-import { FaHeart, FaShareAlt } from "react-icons/fa";
+import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
+import { fetchBookingsByCustomer } from "../../src/storeSlices/bookingSlice";
 import PrivatNav from "../../src/components/PrivatNav";
 import Footer from "../../src/components/Footer";
+import type { RootState } from "../../store";
+import "../../src/bookingHistory.css";
 
-export default function BookingHistory() {
-  const dispatch = useDispatch<any>();
+const BookingHistory = () => {
+  const dispatch = useAppDispatch();
 
-  const { bookings, loading, error } = useSelector(
+  // Logged-in customer from customerSlice
+  const customer = useAppSelector(
+    (state: RootState) => state.customer.customer
+  );
+
+  // Bookings from bookingSlice
+  const { bookings, loading, error } = useAppSelector(
     (state: RootState) => state.booking
   );
 
+  // Fetch bookings for this specific customer
   useEffect(() => {
-    dispatch(fetchBookings());
-  }, [dispatch]);
-
-  const handleShare = async (booking: any) => {
-    try {
-      await navigator.share({
-        title: `Booking - ${booking.hotel_name}`,
-        text: `Booking ID: ${booking.booking_id}
-Hotel: ${booking.hotel_name}
-Location: ${booking.location}
-Room: ${booking.room_type}
-Check-in: ${booking.check_in_date}
-Check-out: ${booking.check_out_date}
-Total Cost: R${booking.total_cost}`,
-      });
-    } catch (err) {
-      console.log("Sharing cancelled or not supported.");
+    if (customer?.id) {
+      dispatch(fetchBookingsByCustomer(customer.id));
     }
-  };
+  }, [customer, dispatch]);
+
+  // If not logged in
+  if (!customer) {
+    return (
+      <>
+        <PrivatNav />
+        <div className="page-container">
+          <div className="bookings-wrapper">
+            <h2 className="section-title">Your Bookings</h2>
+            <p>Please log in to view your booking history.</p>
+          </div>
+          <Footer />
+        </div>
+      </>
+    );
+  }
 
   if (loading) return <p className="text-center text-gray-500">Loading...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
   return (
-    <div className="booking-history-container">
+    <>
       <PrivatNav />
-
-      <h2 className="booking-history-title">Your Booking History</h2>
-
-      {bookings.length === 0 && (
-        <p className="no-bookings">📭 No booking history found.</p>
-      )}
-
-      <div className="booking-grid">
-        {bookings.map((booking) => (
-          <div key={booking.booking_id} className="booking-card">
-         
-
-            <h3 className="hotel-name">{booking.hotel_name}</h3>
-         
-
-            <p>
-              <strong>Room:</strong> {booking.room_type}
-            </p>
-            <p>
-              <strong>Check-In:</strong> {booking.check_in_date}
-            </p>
-            <p>
-              <strong>Check-Out:</strong> {booking.check_out_date}
-            </p>
-            <p>
-              <strong>Status:</strong>{" "}
-              <span
-                className={`status-badge ${
-                  booking.status.toLowerCase() === "confirmed"
-                    ? "confirmed"
-                    : "pending"
-                }`}
-              >
-                {booking.status}
-              </span>
-            </p>
-            <p className="booking-price">💵 R{booking.total_cost}</p>
-
-            <div className="booking-actions">
-              <button className="action-btn heart">
-                <FaHeart className="action-icon heart" />
-              </button>
-              <button
-                onClick={() => handleShare(booking)}
-                className="action-btn share"
-              >
-                <FaShareAlt className="action-icon share" />
-              </button>
-            </div>
-
-            <div className="booking-comment">
-              <label htmlFor={`comment-${booking.booking_id}`}>
-                Leave a comment:
-              </label>
-              <input
-                type="text"
-                id={`comment-${booking.booking_id}`}
-                placeholder="Write your feedback..."
-                className="comment-input"
-              />
-              <button className="submit-comment-btn">Submit</button>
-            </div>
+      <div className="page-container">
+        <div className="bookings-wrapper">
+          <div className="bookings-header">
+            <h2 className="section-title">Your Booking History</h2>
           </div>
-        ))}
-      </div>
 
-      <Footer />
-    </div>
+          {loading && <p className="bh-loading">Loading your bookings...</p>}
+          {error && <p className="bh-error">{error}</p>}
+
+          {!loading && !error && bookings.length === 0 && (
+            <p className="empty-message">You have no bookings yet.</p>
+          )}
+
+          <div className="bookings-list">
+            {bookings.map((b) => (
+              <div key={b.booking_id} className="booking-card">
+                <div className="booking-header">
+                  <div>
+                    <p className="booking-hotel">{b.hotel_name ?? "Hotel"}</p>
+                    {b.room_type && (
+                      <p className="booking-room-type">
+                        Room type: {b.room_type}
+                      </p>
+                    )}
+                  </div>
+                  <span
+                    className={`booking-status ${
+                      b.status ? b.status.toLowerCase() : ""
+                    }`}
+                  >
+                    {b.status}
+                  </span>
+                </div>
+
+                <div className="booking-row">
+                  <span>Check-in:</span>
+                  <span>{new Date(b.check_in_date).toLocaleDateString()}</span>
+                </div>
+
+                <div className="booking-row">
+                  <span>Check-out:</span>
+                  <span>{new Date(b.check_out_date).toLocaleDateString()}</span>
+                </div>
+
+                {/* Safely display total_cost */}
+                {(() => {
+                  const raw = b.total_cost;
+                  const numeric =
+                    typeof raw === "string" ? parseFloat(raw) : Number(raw);
+
+                  const display = Number.isFinite(numeric)
+                    ? numeric.toFixed(2)
+                    : String(raw ?? "0.00");
+
+                  return <div className="booking-total">Total: R{display}</div>;
+                })()}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <Footer />
+      </div>
+    </>
   );
-}
+};
+
+export default BookingHistory;
