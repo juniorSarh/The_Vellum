@@ -30,9 +30,14 @@ const FavouritesPage: React.FC = () => {
   };
 
   // Filter favourites based on search term
-  const filteredFavourites = list.filter((fav) =>
-    fav.hotel_name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+ const filteredFavourites = list.filter((fav) => {
+   const term = searchTerm.toLowerCase();
+   return (
+     fav.hotel_name?.toLowerCase().includes(term) ||
+     fav.location?.toLowerCase().includes(term)
+   );
+ });
+
 
   return (
     <>
