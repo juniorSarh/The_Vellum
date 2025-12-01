@@ -28,17 +28,43 @@ function HotelForm({
   const [description, setDescription] = useState(
     initialHotel?.description ?? ""
   );
-  const [imagesInput, setImagesInput] = useState(
-    initialHotel?.images?.join(", ") ?? ""
+
+  // ✅ Main hotel image (single URL)
+  const [mainImage, setMainImage] = useState(initialHotel?.main_image ?? "");
+
+  // ✅ Gallery images as an array of fields (not comma separated)
+  const [imageUrls, setImageUrls] = useState<string[]>(
+    initialHotel?.images && initialHotel.images.length > 0
+      ? initialHotel.images
+      : [""]
   );
+
+  const handleImageChange = (index: number, value: string) => {
+    setImageUrls((prev) => {
+      const copy = [...prev];
+      copy[index] = value;
+      return copy;
+    });
+  };
+
+  const addImageField = () => {
+    setImageUrls((prev) => [...prev, ""]);
+  };
+
+  const removeImageField = (index: number) => {
+    setImageUrls((prev) => {
+      const copy = [...prev];
+      copy.splice(index, 1);
+      return copy.length ? copy : [""];
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const images =
-      imagesInput.trim().length > 0
-        ? imagesInput.split(",").map((img) => img.trim())
-        : [];
+    const cleanedImages = imageUrls
+      .map((url) => url.trim())
+      .filter((url) => url.length > 0);
 
     try {
       if (mode === "edit" && initialHotel?.hotel_id) {
@@ -52,7 +78,8 @@ function HotelForm({
               location,
               star_rating: starRating === "" ? null : Number(starRating),
               description,
-              images,
+              main_image: mainImage.trim() || null,
+              images: cleanedImages,
             },
           })
         ).unwrap();
@@ -65,7 +92,8 @@ function HotelForm({
             location,
             star_rating: starRating === "" ? null : Number(starRating),
             description,
-            images,
+            main_image: mainImage.trim() || null,
+            images: cleanedImages,
           })
         ).unwrap();
 
@@ -74,12 +102,13 @@ function HotelForm({
         setLocation("");
         setStarRating("");
         setDescription("");
-        setImagesInput("");
+        setMainImage("");
+        setImageUrls([""]);
       }
 
       if (onClose) onClose();
     } catch {
-      // error already set in Redux
+      // error already handled in Redux
     }
   };
 
@@ -139,15 +168,51 @@ function HotelForm({
           />
         </div>
 
+        {/* ✅ Main image field */}
         <div className="form-group">
-          <label htmlFor="hotel-images">Image URLs (comma separated):</label>
+          <label htmlFor="hotel-main-image">Main Image URL:</label>
           <input
-            id="hotel-images"
+            id="hotel-main-image"
             type="text"
-            value={imagesInput}
-            onChange={(e) => setImagesInput(e.target.value)}
-            placeholder="https://..., https://..."
+            value={mainImage}
+            onChange={(e) => setMainImage(e.target.value)}
+            placeholder="https://example.com/main-image.jpg"
           />
+          <p className="helper-text">
+            This will be used as the primary cover image of the hotel.
+          </p>
+        </div>
+
+        {/* ✅ Gallery images as dynamic list */}
+        <div className="form-group">
+          <label>Gallery Images (one URL per field):</label>
+          <p className="helper-text">
+            Click &quot;Add another image&quot; to include more gallery photos.
+          </p>
+
+          {imageUrls.map((url, index) => (
+            <div key={index} className="image-row">
+              <input
+                type="text"
+                value={url}
+                onChange={(e) => handleImageChange(index, e.target.value)}
+                placeholder={`Image URL #${index + 1}`}
+              />
+              {imageUrls.length > 1 && (
+                <button
+                  type="button"
+                  className="small-btn"
+                  onClick={() => removeImageField(index)}
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          ))}
+
+          <button type="button" className="small-btn" onClick={addImageField}>
+            + Add another image
+          </button>
         </div>
 
         <div className="modal-actions">
@@ -157,9 +222,7 @@ function HotelForm({
             disabled={loading}
           >
             {loading
-              ? mode === "edit"
-                ? "Saving..."
-                : "Saving..."
+              ? "Saving..."
               : mode === "edit"
               ? "Save Changes"
               : "Add Hotel"}
