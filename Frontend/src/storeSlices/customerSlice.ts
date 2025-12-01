@@ -229,6 +229,7 @@ const customerSlice = createSlice({
       (state, action: PayloadAction<Customer>) => {
         state.loading = false;
         state.customer = action.payload;
+        console.log("Registered customer:", action.payload);
         localStorage.setItem("customer", JSON.stringify(action.payload));
       }
     );
