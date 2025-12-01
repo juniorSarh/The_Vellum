@@ -13,6 +13,7 @@ export interface Hotel {
   location: string;
   star_rating?: number | null;
   description?: string | null;
+  main_image?: string | null;
   images?: string[] | null;
 }
 
