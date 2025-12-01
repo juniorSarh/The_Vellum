@@ -8,6 +8,9 @@ import {
   FaHeart,
   FaShare,
   FaMapMarkerAlt,
+  FaStar,
+  FaRegStar,
+  FaStarHalfAlt,
 } from "react-icons/fa";
 import "../src/assets/css/hotelDetails.css";
 import { useParams, useNavigate } from "react-router-dom";
@@ -21,6 +24,18 @@ import {
   fetchUserFavourites,
 } from "../src/storeSlices/favouritesSlice";
 import type { RootState } from "../store";
+
+// ---- REVIEW TYPE ----
+interface Review {
+  review_id: number;
+  hotel_id: number;
+  customer_id: number;
+  rating: number;
+  comment: string;
+  created_at: string;
+  customer_first_name?: string;
+  customer_last_name?: string;
+}
 
 export default function HotelDetails() {
   const { id } = useParams();
@@ -139,6 +154,9 @@ export default function HotelDetails() {
     setReservation((prev) => ({ ...prev, [name]: value }));
   };
 
+const [visibleCount, setVisibleCount] = useState(8);
+
+
   // --- SHARE HANDLER ---
   const handleShare = async () => {
     const shareData = {
@@ -180,6 +198,62 @@ export default function HotelDetails() {
       dispatch(fetchUserFavourites(customer_id));
     }
   }, [dispatch, customer_id]);
+
+  // --- REVIEWS STATE ---
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
+  const [reviewsError, setReviewsError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      if (!id) return;
+      setReviewsLoading(true);
+      setReviewsError(null);
+
+      try {
+        const res = await fetch(
+          `http://localhost:4040/api/reviews/hotel/${id}`
+        );
+        if (!res.ok) {
+          const msg = (await res.json().catch(() => null))?.message;
+          throw new Error(msg || "Failed to fetch reviews");
+        }
+        const data: Review[] = await res.json();
+        setReviews(data);
+      } catch (err: any) {
+        console.error("Error loading reviews:", err);
+        setReviewsError(err.message || "Failed to load reviews");
+      } finally {
+        setReviewsLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, [id]);
+
+  const reviewCount = reviews.length;
+  const averageRating =
+    reviewCount > 0
+      ? reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviewCount
+      : 0;
+
+  const renderStars = (rating: number) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalf = rating - fullStars >= 0.5;
+    const totalStars = 5;
+
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(<FaStar key={`full-${i}`} />);
+    }
+    if (hasHalf) {
+      stars.push(<FaStarHalfAlt key="half" />);
+    }
+    while (stars.length < totalStars) {
+      stars.push(<FaRegStar key={`empty-${stars.length}`} />);
+    }
+    return stars;
+  };
 
   if (loading) return <p className="loading">Loading hotel...</p>;
   if (error) return <p className="error">{error}</p>;
@@ -443,17 +517,71 @@ export default function HotelDetails() {
             />
           </div>
 
+          {/* REVIEWS PANEL */}
+          {/* REVIEWS PANEL */}
           <div className="review-panel">
-            <p>
-              <strong>Total Reviews:</strong> 320
-            </p>
-            <div className="review-item">
-              • Amazing place, loved the environment.
+            <div className="review-header">
+              <p className="review-title">Guest Reviews</p>
+              <div className="rating-summary">
+                <span className="rating-value">
+                  {averageRating > 0 ? averageRating.toFixed(1) : "0.0"}
+                </span>
+                <div className="rating-stars">{renderStars(averageRating)}</div>
+                <span className="rating-count">({reviewCount} reviews)</span>
+              </div>
             </div>
-            <div className="review-item">• Very clean and peaceful stay.</div>
-            <div className="review-item">
-              • Staff were friendly and helpful.
-            </div>
+
+            {reviewsLoading && (
+              <p className="review-loading">Loading reviews...</p>
+            )}
+            {reviewsError && <p className="review-error">{reviewsError}</p>}
+
+            {!reviewsLoading && !reviewsError && reviews.length === 0 && (
+              <p className="review-empty">
+                No reviews yet. Be the first to stay here.
+              </p>
+            )}
+
+            {/* Show limited reviews */}
+            {!reviewsLoading &&
+              !reviewsError &&
+              reviews.slice(0, visibleCount).map((rev) => (
+                <div key={rev.review_id} className="review-item">
+                  <div className="review-meta">
+                    <span className="review-name">
+                      {rev.customer_first_name || rev.customer_last_name
+                        ? `${rev.customer_first_name ?? ""} ${
+                            rev.customer_last_name ?? ""
+                          }`.trim()
+                        : "Guest"}
+                    </span>
+                    <span className="review-date">
+                      {new Date(rev.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+
+                  <div className="review-rating-row">
+                    <div className="review-stars">
+                      {renderStars(rev.rating || 0)}
+                    </div>
+                    <span className="review-rating-badge">{rev.rating}/5</span>
+                  </div>
+
+                  <p className="review-comment">{rev.comment}</p>
+                </div>
+              ))}
+
+            {/* VIEW MORE / LESS BUTTON */}
+            {reviews.length > 8 && (
+              <button
+                className="view-more-btn"
+                onClick={() =>
+                  setVisibleCount(visibleCount === 8 ? reviews.length : 8)
+                }
+              >
+                {visibleCount === 8 ? "View More Reviews" : "Show Less"}
+              </button>
+            )}
           </div>
 
           {/* GOOGLE MAPS EMBED */}
