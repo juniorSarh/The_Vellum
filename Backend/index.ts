@@ -24,6 +24,7 @@ import { createRoomTable } from "./src/services/room.service";
 import { createBookingsTable } from "./src/services/booking.service";
 import { createFavouritesTable } from "./src/services/favourites.service";
 import paymentRouter from "./src/routes/payment.routes";
+import { get } from "http";
 
 dotenv.config();
 
@@ -84,6 +85,7 @@ app.get("/", (req, res) => {
       booking: {
         create: "POST /api/bookings",
         getAll: "GET /api/bookings",
+        getByCustomer: "GET /api/bookings/customer/:customerId",
         getOne: "GET /api/bookings/:id",
         update: "PUT /api/bookings/:id",
         delete: "DELETE /api/bookings/:id",
@@ -156,6 +158,7 @@ async function startServer() {
       console.log(`➡ POST    /api/bookings`);
       console.log(`➡ GET     /api/bookings`);
       console.log(`➡ GET     /api/bookings/:id`);
+      console.log(`➡ GET     /api/bookings/customer/:customerId`);
       console.log(`➡ PUT     /api/bookings/:id`);
       console.log(`➡ DELETE  /api/bookings/:id\n`);
 

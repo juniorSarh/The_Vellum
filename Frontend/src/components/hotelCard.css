@@ -67,6 +67,17 @@
   font-weight: bold;
 }
 
+.hotel-image.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e0e0e0;
+  color: #555;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+
 /* 🔹 RESPONSIVE BREAKPOINTS */
 @media (max-width: 768px) {
   .hotel-card {

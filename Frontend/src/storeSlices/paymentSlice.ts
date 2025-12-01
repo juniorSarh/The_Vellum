@@ -24,19 +24,32 @@ const initialState: PaymentState = {
 // Async thunk to initialize payment
 export const initializePayment = createAsyncThunk<
   InitPaymentResponse,
-  { email: string; amount: number },
+  { email: string; amount: number | string }, // 👈 allow string or number
   { rejectValue: string }
->("payment/initializePayment", async ({ email, amount }, { rejectWithValue }) => {
-  try {
-    const res = await axios.post<InitPaymentResponse>(
-      "http://localhost:4040/api/initialize",
-      { email, amount }
-    );
-    return res.data;
-  } catch (err: any) {
-    return rejectWithValue(err.response?.data?.message || "Payment init failed");
+>(
+  "payment/initializePayment",
+  async ({ email, amount }, { rejectWithValue }) => {
+    try {
+      // Ensure we send a valid number to the backend
+      const numericAmount = Number(amount);
+
+      if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
+        return rejectWithValue("Invalid payment amount");
+      }
+
+      const res = await axios.post<InitPaymentResponse>(
+        "http://localhost:4040/api/initialize",
+        { email, amount: numericAmount }
+      );
+
+      return res.data;
+    } catch (err: any) {
+      return rejectWithValue(
+        err?.response?.data?.message || "Payment init failed"
+      );
+    }
   }
-});
+);
 
 export const paymentSlice = createSlice({
   name: "payment",
@@ -63,7 +76,7 @@ export const paymentSlice = createSlice({
       )
       .addCase(initializePayment.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = (action.payload as string) ?? "Payment init failed";
       });
   },
 });

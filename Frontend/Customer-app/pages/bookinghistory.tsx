@@ -1,64 +1,116 @@
-import React, { useState } from "react";
-import BookingCard from "../../src/components/bookingCard";
-import SearchBar from "../../src/components/searchBar";
+// src/pages/BookingHistory.tsx
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
+import { fetchBookingsByCustomer } from "../../src/storeSlices/bookingSlice";
+import PrivatNav from "../../src/components/PrivatNav";
 import Footer from "../../src/components/Footer";
-import { useNavigate } from "react-router-dom";
-import "../../src/bookinghistory.css"
+import type { RootState } from "../../store";
+import "../../src/bookingHistory.css";
 
+const BookingHistory = () => {
+  const dispatch = useAppDispatch();
 
-const BookingsPage: React.FC = () => {
-  const [search, setSearch] = useState("");
-  const navigate = useNavigate();
-
-  const [bookings] = useState([
-    "Booking Ref: 3920394434",
-    "Booking Ref: 9495499494",
-    "Booking Ref: 5848473853",
-  ]);
-
-  const filteredBookings = bookings.filter((b) =>
-    b.toLowerCase().includes(search.toLowerCase())
+  // Logged-in customer from customerSlice
+  const customer = useAppSelector(
+    (state: RootState) => state.customer.customer
   );
 
-  const handleFavorite = (item: string) => {
-    const stored = JSON.parse(localStorage.getItem("favourites") || "[]");
+  // Bookings from bookingSlice
+  const { bookings, loading, error } = useAppSelector(
+    (state: RootState) => state.booking
+  );
 
-    if (!stored.includes(item)) {
-      stored.push(item);
-      localStorage.setItem("favourites", JSON.stringify(stored));
+  // Fetch bookings for this specific customer
+  useEffect(() => {
+    if (customer?.id) {
+      dispatch(fetchBookingsByCustomer(customer.id));
     }
+  }, [customer, dispatch]);
 
-    navigate("/favourites");
-  };
+  // If not logged in
+  if (!customer) {
+    return (
+      <>
+        <PrivatNav />
+        <div className="page-container">
+          <div className="bookings-wrapper">
+            <h2 className="section-title">Your Bookings</h2>
+            <p>Please log in to view your booking history.</p>
+          </div>
+          <Footer />
+        </div>
+      </>
+    );
+  }
 
   return (
-    <div className="page-container">
-      <div className="bookings-wrapper">
-        <button className="back-btn">←</button>
+    <>
+      <PrivatNav />
+      <div className="page-container">
+        <div className="bookings-wrapper">
+          <div className="bookings-header">
+            <h2 className="section-title">Your Booking History</h2>
+          </div>
 
-        <SearchBar value={search} onChange={(val) => setSearch(val)} />
+          {loading && <p className="bh-loading">Loading your bookings...</p>}
+          {error && <p className="bh-error">{error}</p>}
 
-        <h3 className="section-title">Your Bookings</h3>
+          {!loading && !error && bookings.length === 0 && (
+            <p className="empty-message">You have no bookings yet.</p>
+          )}
 
-        {filteredBookings.length === 0 ? (
-          <p className="empty-message">
-            No bookings yet — start booking a stay!
-          </p>
-        ) : (
-          filteredBookings.map((item, index) => (
-            <BookingCard
-              key={index}
-              title={item}
-              onShare={() => alert(`Shared ${item}`)}
-              onFavorite={() => handleFavorite(item)}
-            />
-          ))
-        )}
+          <div className="bookings-list">
+            {bookings.map((b) => (
+              <div key={b.booking_id} className="booking-card">
+                <div className="booking-header">
+                  <div>
+                    <p className="booking-hotel">{b.hotel_name ?? "Hotel"}</p>
+                    {b.room_type && (
+                      <p className="booking-room-type">
+                        Room type: {b.room_type}
+                      </p>
+                    )}
+                  </div>
+                  <span
+                    className={`booking-status ${
+                      b.status ? b.status.toLowerCase() : ""
+                    }`}
+                  >
+                    {b.status}
+                  </span>
+                </div>
+
+                <div className="booking-row">
+                  <span>Check-in:</span>
+                  <span>{new Date(b.check_in_date).toLocaleDateString()}</span>
+                </div>
+
+                <div className="booking-row">
+                  <span>Check-out:</span>
+                  <span>{new Date(b.check_out_date).toLocaleDateString()}</span>
+                </div>
+
+                {/* Safely display total_cost */}
+                {(() => {
+                  const raw = b.total_cost;
+                  const numeric =
+                    typeof raw === "string" ? parseFloat(raw) : Number(raw);
+
+                  const display = Number.isFinite(numeric)
+                    ? numeric.toFixed(2)
+                    : String(raw ?? "0.00");
+
+                  return <div className="booking-total">Total: R{display}</div>;
+                })()}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <Footer />
       </div>
-
-      <Footer />
-    </div>
+    </>
   );
 };
 
-export default BookingsPage;
+export default BookingHistory;

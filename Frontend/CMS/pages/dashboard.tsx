@@ -1,5 +1,5 @@
 // src/pages/DashboardPage.tsx
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PrivatNav from "../../src/components/PrivatNav";
 import Footer from "../../src/components/Footer";
 import Button from "../../src/components/Button";
@@ -19,12 +19,17 @@ import {
   fetchBookings,
   type Booking,
 } from "../../src/storeSlices/bookingSlice";
+import SearchBar from "../../src/components/searchBar";
 
 export default function DashboardPage() {
   const dispatch = useAppDispatch();
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+  };
 
   const { bookings, loading, error } = useAppSelector((state) => state.booking);
-
   const hotels = useAppSelector((state: any) => state.hotel?.hotels || []);
 
   useEffect(() => {
@@ -66,7 +71,6 @@ export default function DashboardPage() {
     const occupancyRateNum =
       total > 0 ? Math.round((activeCount / total) * 100) : 0;
 
-    // Sort by check_in_date (latest first)
     const sorted = [...bookings].sort((a: Booking, b: Booking) => {
       const aDate = new Date(a.check_in_date).getTime();
       const bDate = new Date(b.check_in_date).getTime();
@@ -100,6 +104,14 @@ export default function DashboardPage() {
     };
   }, [bookings, hotels]);
 
+  // ✅ FILTER BOOKINGS USING SEARCH TERM
+  const filteredBookings = latestBookingsForTable.filter(
+    (b) =>
+      b.guest.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      b.hotel.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      b.status.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div>
       <div className="nav">
@@ -109,6 +121,12 @@ export default function DashboardPage() {
       <div className="dash">
         {/* Top buttons */}
         <div className="btns">
+          <SearchBar
+            placeholder="Search..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+
           <Link to="/reservations" className="link-reset">
             <Button
               name="Resevations"
@@ -178,12 +196,13 @@ export default function DashboardPage() {
 
           {loading && <p>Loading latest bookings...</p>}
           {error && <p style={{ color: "red" }}>{error}</p>}
-          {!loading && !error && latestBookingsForTable.length === 0 && (
-            <p>No bookings found.</p>
+
+          {!loading && !error && filteredBookings.length > 0 && (
+            <Table data={filteredBookings} />
           )}
 
-          {!loading && !error && latestBookingsForTable.length > 0 && (
-            <Table data={latestBookingsForTable} />
+          {!loading && !error && filteredBookings.length === 0 && (
+            <p>No results match your search.</p>
           )}
         </div>
       </div>

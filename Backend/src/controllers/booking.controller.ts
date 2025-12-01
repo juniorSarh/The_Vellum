@@ -5,6 +5,7 @@ import {
   getBookingById,
   updateBooking,
   deleteBooking,
+  getBookingsByCustomerId
 } from "../services/booking.service";
 export const getAllBookingsController = async (req: Request, res: Response) => {
   try {
@@ -13,6 +14,19 @@ export const getAllBookingsController = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error fetching bookings:", error);
     res.status(500).json({ message: "Failed to fetch bookings" });
+  }
+};
+
+// GET BOOKINGS BY CUSTOMER ID
+export const getBookingsByCustomerIdController = async (req: Request, res: Response) => {
+  try {
+    const customerId = Number(req.params.customerId);
+    const bookings = await getBookingsByCustomerId(customerId);
+    res.json(bookings);
+  }
+  catch (error) {
+    console.error("Error fetching bookings by customer ID:", error);
+    res.status(500).json({ message: "Failed to fetch bookings by customer ID" });
   }
 };
 export const getBookingByIdController = async (req: Request, res: Response) => {

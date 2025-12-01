@@ -6,7 +6,7 @@ import "../../src/Userprofile.css";
 import logo from "../../src/assets/The-vellum-logo.png";
 import Footer from "../../src/components/Footer";
 import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
-import { logout, setUser} from "../../src/storeSlices/customerSlice";
+import { logout, setUser } from "../../src/storeSlices/customerSlice";
 import PrivatNav from "../../src/components/PrivatNav";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -15,7 +15,9 @@ const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
 
   // Logged-in customer
-  const customer = useAppSelector((state: RootState) => state.customer.customer);
+  const customer = useAppSelector(
+    (state: RootState) => state.customer.customer
+  );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [profilePic, setProfilePic] = useState<string | null>(null);
@@ -45,7 +47,7 @@ const ProfilePage: React.FC = () => {
         `http://localhost:4040/api/customers/upload/${customer.id}/image`,
         {
           method: "PATCH",
-          body: formData, // multipart/form-data
+          body: formData,
         }
       );
 
@@ -55,13 +57,12 @@ const ProfilePage: React.FC = () => {
       }
 
       const result = await response.json();
-         console.log("Upload result:", result);
+      console.log("Upload result:", result);
 
       if (result.image) {
-        // Update Redux & localStorage
-         const updatedCustomer = { ...customer, image: result.image } as any;
-           dispatch(setUser(updatedCustomer));
-        
+        const updatedCustomer = { ...customer, image: result.image } as any;
+        dispatch(setUser(updatedCustomer));
+
         setProfilePic(`http://localhost:4040/uploads/${result.image}`);
       }
     } catch (err) {
@@ -74,6 +75,10 @@ const ProfilePage: React.FC = () => {
     navigate("/");
   };
 
+  const handleMyBookingsClick = () => {
+    navigate("/booking-history"); // 👈 your booking history route
+  };
+
   return (
     <>
       <PrivatNav />
@@ -83,10 +88,21 @@ const ProfilePage: React.FC = () => {
             <div className="sidebar-logo">
               <img src={logo} alt="Logo" />
             </div>
-            <Link to="/favourites">
-              <button className="sidebar-option">Favorites</button>
+
+            <Link to="/favourites" >
+              <button className="sidebar-option" type="button">
+                Favorites
+              </button>
             </Link>
-            <button className="sidebar-option">My Bookings</button>
+
+
+            <button
+              className="sidebar-option"
+              type="button"
+              onClick={handleMyBookingsClick} // 👈 navigate to history
+            >
+              My Bookings
+            </button>
           </aside>
 
           <div className="profile-content">
@@ -95,10 +111,10 @@ const ProfilePage: React.FC = () => {
               <label htmlFor="upload-photo" className="profile-image-circle">
                 <img
                   src={
-                    profilePic || // instant preview before upload
-                    (customer?.image // saved image from DB/localStorage
+                    profilePic ||
+                    (customer?.image
                       ? `http://localhost:4040/uploads/${customer.image}`
-                      : "/default-avatar.png") // fallback
+                      : "/default-avatar.png")
                   }
                   alt="Profile"
                   className="profile-img"

@@ -12,18 +12,13 @@ export interface Booking {
   booking_id?: number;
   customer_id: number;
   room_id: number;
-  hotel_id?: number; // from backend
-
-  check_in_date: string; // ISO strings from backend
-  check_out_date: string;
-
-  status: string;
+  check_in_date: string; // ISO string
+  check_out_date: string; // ISO string
+  status: string; // "pending", "confirmed", "cancelled"
   additional_requests?: string | null;
-
-  // PG numeric usually comes back as a string; allow both
   total_cost: number | string;
 
-  // Joined fields from backend (BookingWithDetails)
+  // Optional joined fields from backend (customer + hotel)
   customer_first_name?: string;
   customer_last_name?: string;
   hotel_name?: string;
@@ -32,17 +27,8 @@ export interface Booking {
 
 interface BookingState {
   bookings: Booking[];
-  booking: Booking | null;
-  // used for Paystack flow (data to create booking after successful payment)
-  pendingBooking: Omit<
-    Booking,
-    | "booking_id"
-    | "hotel_id"
-    | "customer_first_name"
-    | "customer_last_name"
-    | "hotel_name"
-    | "room_type"
-  > | null;
+  booking?: Booking | null;
+  pendingBooking?: Booking;
   loading: boolean;
   error: string | null;
 }
@@ -50,7 +36,6 @@ interface BookingState {
 const initialState: BookingState = {
   bookings: [],
   booking: null,
-  pendingBooking: null,
   loading: false,
   error: null,
 };
@@ -58,10 +43,10 @@ const initialState: BookingState = {
 const API_URL = "http://localhost:4040/api/bookings";
 
 // ----------------------------
-// Async Thunks (fetch-based)
+// Async Thunks
 // ----------------------------
 
-// 1️⃣ Fetch all bookings
+// 1️⃣ Fetch ALL bookings (admin usage)
 export const fetchBookings = createAsyncThunk<
   Booking[],
   void,
@@ -72,18 +57,38 @@ export const fetchBookings = createAsyncThunk<
     const result = await response.json();
 
     if (!response.ok) {
-      console.error("Fetch bookings failed:", response.status, result);
       return rejectWithValue(result.error || "Failed to fetch bookings");
     }
 
     return result as Booking[];
-  } catch (err) {
-    console.error("Fetch bookings error:", err);
+  } catch {
     return rejectWithValue("Failed to fetch bookings");
   }
 });
 
-// 2️⃣ Fetch booking by ID
+// 2️⃣ Fetch bookings by customer id (booking history)
+export const fetchBookingsByCustomer = createAsyncThunk<
+  Booking[],
+  number,
+  { rejectValue: string }
+>("bookings/fetchByCustomer", async (customerId, { rejectWithValue }) => {
+  try {
+    const response = await fetch(`${API_URL}/customer/${customerId}`);
+    const result = await response.json();
+
+    if (!response.ok) {
+      return rejectWithValue(
+        result.error || "Failed to fetch customer bookings"
+      );
+    }
+
+    return result as Booking[];
+  } catch {
+    return rejectWithValue("Failed to fetch customer bookings");
+  }
+});
+
+// 3️⃣ Fetch single booking by id
 export const fetchBookingById = createAsyncThunk<
   Booking,
   number,
@@ -94,29 +99,19 @@ export const fetchBookingById = createAsyncThunk<
     const result = await response.json();
 
     if (!response.ok) {
-      console.error("Fetch booking by ID failed:", response.status, result);
       return rejectWithValue(result.error || "Failed to fetch booking");
     }
 
     return result as Booking;
-  } catch (err) {
-    console.error("Fetch booking by ID error:", err);
+  } catch {
     return rejectWithValue("Failed to fetch booking");
   }
 });
 
-// 3️⃣ Create booking (called AFTER Paystack success)
+// 4️⃣ Create booking
 export const createBooking = createAsyncThunk<
   Booking,
-  Omit<
-    Booking,
-    | "booking_id"
-    | "hotel_id"
-    | "customer_first_name"
-    | "customer_last_name"
-    | "hotel_name"
-    | "room_type"
-  >,
+  Omit<Booking, "booking_id">,
   { rejectValue: string }
 >("bookings/create", async (bookingData, { rejectWithValue }) => {
   try {
@@ -126,27 +121,19 @@ export const createBooking = createAsyncThunk<
       body: JSON.stringify(bookingData),
     });
 
-    let result: any = {};
-    try {
-      result = await response.json();
-    } catch {
-      result = {};
-    }
+    const result = await response.json();
 
     if (!response.ok) {
-      console.error("Create booking failed:", response.status, result);
       return rejectWithValue(result.error || "Failed to create booking");
     }
 
-    console.log("Create booking success:", result);
     return result as Booking;
-  } catch (err) {
-    console.error("Create booking network error:", err);
+  } catch {
     return rejectWithValue("Failed to create booking");
   }
 });
 
-// 4️⃣ Update booking
+// 5️⃣ Update booking
 export const updateBooking = createAsyncThunk<
   Booking,
   { id: number; updates: Partial<Booking> },
@@ -162,18 +149,16 @@ export const updateBooking = createAsyncThunk<
     const result = await response.json();
 
     if (!response.ok) {
-      console.error("Update booking failed:", response.status, result);
       return rejectWithValue(result.error || "Failed to update booking");
     }
 
     return result as Booking;
-  } catch (err) {
-    console.error("Update booking error:", err);
+  } catch {
     return rejectWithValue("Failed to update booking");
   }
 });
 
-// 5️⃣ Delete booking
+// 6️⃣ Delete booking
 export const deleteBooking = createAsyncThunk<
   number,
   number,
@@ -186,13 +171,11 @@ export const deleteBooking = createAsyncThunk<
 
     if (!response.ok) {
       const result = await response.json().catch(() => ({}));
-      console.error("Delete booking failed:", response.status, result);
       return rejectWithValue(result.error || "Failed to delete booking");
     }
 
     return id;
-  } catch (err) {
-    console.error("Delete booking error:", err);
+  } catch {
     return rejectWithValue("Failed to delete booking");
   }
 });
@@ -213,27 +196,13 @@ const bookingSlice = createSlice({
     setBookings(state, action: PayloadAction<Booking[]>) {
       state.bookings = action.payload;
     },
-
-    // Store booking payload while user is on payment gateway
-    setPendingBooking(
-      state,
-      action: PayloadAction<
-        Omit<
-          Booking,
-          | "booking_id"
-          | "hotel_id"
-          | "customer_first_name"
-          | "customer_last_name"
-          | "hotel_name"
-          | "room_type"
-        >
-      >
-    ) {
+    // Store checkout booking details before payment
+    setPendingBooking(state, action: PayloadAction<Booking>) {
       state.pendingBooking = action.payload;
     },
-
+    // Clear pending booking (after payment / cancel)
     clearPendingBooking(state) {
-      state.pendingBooking = null;
+      state.pendingBooking = undefined;
     },
   },
   extraReducers: (builder) => {
@@ -247,12 +216,30 @@ const bookingSlice = createSlice({
       (state, action: PayloadAction<Booking[]>) => {
         state.loading = false;
         state.bookings = action.payload;
-        console.log(action.payload);
       }
     );
     builder.addCase(fetchBookings.rejected, (state, action) => {
       state.loading = false;
-      state.error = (action.payload as string) || "Failed to fetch bookings";
+      state.error = action.payload || "Failed to fetch bookings";
+    });
+
+    // Fetch by customer
+    builder.addCase(fetchBookingsByCustomer.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(
+      fetchBookingsByCustomer.fulfilled,
+      (state, action: PayloadAction<Booking[]>) => {
+        state.loading = false;
+        // 👇 this will now be ONLY that customer's bookings
+        state.bookings = action.payload;
+      }
+    );
+    builder.addCase(fetchBookingsByCustomer.rejected, (state, action) => {
+      state.loading = false;
+      state.error =
+        action.payload || "Failed to fetch customer booking history";
     });
 
     // Fetch by ID
@@ -269,7 +256,7 @@ const bookingSlice = createSlice({
     );
     builder.addCase(fetchBookingById.rejected, (state, action) => {
       state.loading = false;
-      state.error = (action.payload as string) || "Failed to fetch booking";
+      state.error = action.payload || "Failed to fetch booking";
     });
 
     // Create
@@ -281,13 +268,15 @@ const bookingSlice = createSlice({
       createBooking.fulfilled,
       (state, action: PayloadAction<Booking>) => {
         state.loading = false;
+        // Add new booking to the top
         state.bookings.unshift(action.payload);
-        state.pendingBooking = null;
+        // Clear pending booking after successful creation
+        state.pendingBooking = undefined;
       }
     );
     builder.addCase(createBooking.rejected, (state, action) => {
       state.loading = false;
-      state.error = (action.payload as string) || "Failed to create booking";
+      state.error = action.payload || "Failed to create booking";
     });
 
     // Update
@@ -312,7 +301,7 @@ const bookingSlice = createSlice({
     );
     builder.addCase(updateBooking.rejected, (state, action) => {
       state.loading = false;
-      state.error = (action.payload as string) || "Failed to update booking";
+      state.error = action.payload || "Failed to update booking";
     });
 
     // Delete
@@ -334,7 +323,7 @@ const bookingSlice = createSlice({
     );
     builder.addCase(deleteBooking.rejected, (state, action) => {
       state.loading = false;
-      state.error = (action.payload as string) || "Failed to delete booking";
+      state.error = action.payload || "Failed to delete booking";
     });
   },
 });
