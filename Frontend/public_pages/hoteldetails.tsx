@@ -537,8 +537,6 @@ import {
 } from "../src/storeSlices/favouritesSlice";
 import type { RootState } from "../store";
 
-// import { addToFavourites } from "../src/storeSlices/favouritesSlice";
-
 export default function HotelDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -681,7 +679,33 @@ export default function HotelDetails() {
     }
   };
 
-  // FETCH ROOMS + HOTEL
+//  const dispatch = useAppDispatch();
+
+
+// Inside your component:
+
+const customer_id = useAppSelector((state : RootState) => state.customer.customer?.id);
+const favourites = useAppSelector((state : RootState) => state.favourites.list);
+
+// Check if a hotel is in favourites
+const isFavourite = (hotel_id: number) => {
+  return favourites.some((f) => f.hotel_id === hotel_id);
+};
+
+// Toggle favourite (add or remove)
+const handleToggleFavourite = (hotel_id: number) => {
+  console.log(customer_id)
+  if (!customer_id) return;
+
+  if (isFavourite(hotel_id)) {
+    dispatch(removeFavourite({ customer_id, hotel_id }));
+  } else {
+    dispatch(addToFavourites({ customer_id, hotel_id }));
+  }
+};
+  
+
+// FETCH ROOMS + HOTEL
   useEffect(() => {
     if (id) {
       dispatch(getHotelById(Number(id)));
@@ -762,6 +786,7 @@ export default function HotelDetails() {
 
 
   return (
+    <>
     <div className="hotel-details-page">
       {/* NAV */}
       <div className="nav-row">
@@ -973,15 +998,15 @@ export default function HotelDetails() {
         </div>
 
         {/* RIGHT */}
-        <div className="hotel-right">
-          <div className="right-top-actions">
+        {/* <div className="hotel-right">
+          <div className="right-top-actions"> */}
             {/* <Button
               icon={isFavorite ? <FaHeart color="#EAC248" /> : <FaRegHeart />}
               backgroundColor="white"
               color="black"
               className="icon-btn"
-              onClick={toggleFavourite}
-            /> */}
+              onClick={() => handleToggleFavourite(hotel.hotel_id!!)} // Pass hotel_id here
+            />
 
             <Button
               icon={<FaShare />}
@@ -1094,9 +1119,11 @@ export default function HotelDetails() {
       <div className="footer">
         <Footer />
       </div>
-    </div>
+    {/* </div> */}
+    </>
   );
 }
+
 
 
 
