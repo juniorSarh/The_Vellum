@@ -8,6 +8,7 @@ import type { RootState } from "../../store";
 import { FiShare2 } from "react-icons/fi";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import "../../src/bookingHistory.css";
+import SearchBar from "../../src/components/searchBar";
 
 const BookingHistory = () => {
   const dispatch = useAppDispatch();
@@ -33,6 +34,40 @@ const BookingHistory = () => {
       prev.includes(id) ? prev.filter((fav) => fav !== id) : [...prev, id]
     );
   };
+
+const handleShare = (booking: (typeof bookings)[0]) => {
+  if (!booking) return;
+
+  const checkIn = new Date(booking.check_in_date).toLocaleDateString();
+  const checkOut = new Date(booking.check_out_date).toLocaleDateString();
+  const total =
+    typeof booking.total_cost === "string"
+      ? parseFloat(booking.total_cost).toFixed(2)
+      : Number(booking.total_cost).toFixed(2);
+
+  const shareText = `📌 My Booking Details:
+Hotel: ${booking.hotel_name ?? "Hotel"}
+Room: ${booking.room_type ?? "N/A"}
+Check-in: ${checkIn}
+Check-out: ${checkOut}
+Total: R${total}`;
+
+  const shareData = {
+    title: "My Booking",
+    text: shareText,
+  };
+
+  if (navigator.share) {
+    navigator.share(shareData).catch((err) => console.error(err));
+  } else {
+    navigator.clipboard
+      .writeText(shareText)
+      .then(() => alert("Booking details copied to clipboard!"))
+      .catch(() => alert("Failed to copy booking details."));
+  }
+};
+
+
 
   const handleCommentChange = (id: number, value: string) => {
     setComments((prev) => ({ ...prev, [id]: value }));
@@ -63,6 +98,10 @@ const BookingHistory = () => {
         <div className="bookings-wrapper">
           <div className="bookings-header">
             <h2 className="section-title">Your Booking History</h2>
+
+            <div className="search-bar ">
+              <SearchBar placeholder="Search bookings..." onChange={() => {}} />
+            </div>
           </div>
 
           {loading && <p className="bh-loading">Loading your bookings...</p>}
@@ -91,10 +130,13 @@ const BookingHistory = () => {
                           onClick={() => toggleFavorite(b.booking_id!)}
                         />
                       )}
-                      <FiShare2 className="share-btn" />
+                      <FiShare2
+                        className="share-btn"
+                        onClick={() => handleShare(b)}
+                      />
                     </div>
                   )}
-                  
+
                   <div>
                     <p className="booking-hotel">{b.hotel_name ?? "Hotel"}</p>
                     {b.room_type && (

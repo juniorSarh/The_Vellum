@@ -268,5 +268,25 @@
   background: #004d40;
 }
 
+/* SEARCH BAR STYLING */
+.bookings-header .search-bar {
+  width: 250px;
+  max-width: 100%;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.bookings-header .search-bar:focus {
+  border-color: #00796b;
+  box-shadow: 0 2px 8px rgba(0, 121, 107, 0.2);
+}
+
+.bookings-header .search-bar::placeholder {
+  color: #999;
+  font-style: italic;
+}
 
 
