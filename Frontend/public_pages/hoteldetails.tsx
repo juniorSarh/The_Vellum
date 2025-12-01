@@ -154,6 +154,9 @@ export default function HotelDetails() {
     setReservation((prev) => ({ ...prev, [name]: value }));
   };
 
+const [visibleCount, setVisibleCount] = useState(8);
+
+
   // --- SHARE HANDLER ---
   const handleShare = async () => {
     const shareData = {
@@ -515,6 +518,7 @@ export default function HotelDetails() {
           </div>
 
           {/* REVIEWS PANEL */}
+          {/* REVIEWS PANEL */}
           <div className="review-panel">
             <div className="review-header">
               <p className="review-title">Guest Reviews</p>
@@ -523,7 +527,7 @@ export default function HotelDetails() {
                   {averageRating > 0 ? averageRating.toFixed(1) : "0.0"}
                 </span>
                 <div className="rating-stars">{renderStars(averageRating)}</div>
-                <span className="rating-count">({reviewCount})</span>
+                <span className="rating-count">({reviewCount} reviews)</span>
               </div>
             </div>
 
@@ -538,9 +542,10 @@ export default function HotelDetails() {
               </p>
             )}
 
+            {/* Show limited reviews */}
             {!reviewsLoading &&
               !reviewsError &&
-              reviews.map((rev) => (
+              reviews.slice(0, visibleCount).map((rev) => (
                 <div key={rev.review_id} className="review-item">
                   <div className="review-meta">
                     <span className="review-name">
@@ -565,6 +570,18 @@ export default function HotelDetails() {
                   <p className="review-comment">{rev.comment}</p>
                 </div>
               ))}
+
+            {/* VIEW MORE / LESS BUTTON */}
+            {reviews.length > 8 && (
+              <button
+                className="view-more-btn"
+                onClick={() =>
+                  setVisibleCount(visibleCount === 8 ? reviews.length : 8)
+                }
+              >
+                {visibleCount === 8 ? "View More Reviews" : "Show Less"}
+              </button>
+            )}
           </div>
 
           {/* GOOGLE MAPS EMBED */}

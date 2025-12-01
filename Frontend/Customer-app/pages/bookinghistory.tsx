@@ -13,7 +13,7 @@ import PrivatNav from "../../src/components/PrivatNav";
 import Footer from "../../src/components/Footer";
 import type { RootState } from "../../store";
 import { FiShare2 } from "react-icons/fi";
-// import { AiFillHeart, AiOutlineHeart } from "react-icons/ai"; // if/when you re-enable
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai"; 
 import "../../src/bookingHistory.css";
 import SearchBar from "../../src/components/searchBar";
 
@@ -227,7 +227,6 @@ Total: R${total}`;
                   <div className="booking-header">
                     {b.booking_id && (
                       <div className="top-right-buttons">
-                        {/* Re-enable if you want favourite hearts here
                         {favourites.some(
                           (f) =>
                             f.hotel_id === (b as any).hotel_id ||
@@ -248,7 +247,7 @@ Total: R${total}`;
                             onClick={() => toggleFavorite(b)}
                           />
                         )}
-                        */}
+                       
                         <FiShare2
                           className="share-btn"
                           onClick={() => handleShare(b)}
