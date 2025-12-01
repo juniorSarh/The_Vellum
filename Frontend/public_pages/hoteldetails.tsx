@@ -5,6 +5,7 @@ import Footer from "../src/components/Footer";
 import {
   FaArrowLeft,
   FaRegHeart,
+  FaHeart,
   FaShare,
   FaMapMarkerAlt,
 } from "react-icons/fa";
@@ -14,11 +15,10 @@ import { useAppDispatch, useAppSelector } from "../src/storeSlices/hooks";
 import { getHotelById } from "../src/storeSlices/hotelSlice";
 import { fetchRooms } from "../src/storeSlices/roomSlice";
 import Input from "../src/components/input";
-
-
 import {
   addToFavourites,
   removeFavourite,
+  fetchUserFavourites,
 } from "../src/storeSlices/favouritesSlice";
 import type { RootState } from "../store";
 
@@ -27,31 +27,37 @@ export default function HotelDetails() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
+  // --- GLOBAL STATE ---
   const { hotels, loading, error } = useAppSelector((state) => state.hotel);
   const { rooms } = useAppSelector((state) => state.room);
 
+  // Logged-in customer
+  const customer_id = useAppSelector(
+    (state: RootState) => state.customer.customer?.id
+  );
+
+  // Favourites list from Redux
+  const favouritesList = useAppSelector((state) => state.favourites.list);
+
+  // Find current hotel from store
   const hotel = hotels.find((h) => h.hotel_id === Number(id)) || null;
 
-  // -------- IMAGE GALLERY STATE --------
+  // --- IMAGE GALLERY STATE ---
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
-  // Clean gallery array from hotel.images
   const galleryImages =
     hotel?.images?.filter((img) => img && img.trim().length) || [];
 
-  // Combined list: main_image first (if exists), then gallery
   const allImagesRaw: string[] = [
     ...(hotel?.main_image && hotel.main_image.trim().length
       ? [hotel.main_image]
       : []),
     ...galleryImages,
   ];
-  // remove duplicates
   const allImages = Array.from(new Set(allImagesRaw));
 
-  // Decide default active image whenever hotel changes
   useEffect(() => {
     if (!hotel) {
       setActiveImage(null);
@@ -67,7 +73,6 @@ export default function HotelDetails() {
     setActiveImage(main || firstGallery);
   }, [hotel, galleryImages.length]);
 
-  // Helper to build image URL (handle relative vs absolute)
   const buildImageUrl = (url: string) =>
     url.startsWith("http") ? url : `http://localhost:4040/${url}`;
 
@@ -90,7 +95,7 @@ export default function HotelDetails() {
     setLightboxIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
   };
 
-  // -------- RESERVATION FORM STATE --------
+  // --- RESERVATION FORM STATE ---
   const [reservation, setReservation] = useState({
     room_type: "",
     check_in_date: "",
@@ -98,7 +103,6 @@ export default function HotelDetails() {
     people: "",
   });
 
-  // ROOM PRICE BASED ON TYPE
   const getPriceForRoomType = (type: string) => {
     const room = rooms.find(
       (r) => r.room_type.toLowerCase() === type.toLowerCase()
@@ -106,7 +110,6 @@ export default function HotelDetails() {
     return room ? room.price : 0;
   };
 
-  // TOTAL PRICE CALCULATION
   const calculateTotalPrice = () => {
     if (
       !reservation.room_type ||
@@ -131,13 +134,12 @@ export default function HotelDetails() {
 
   const totalPrice = calculateTotalPrice();
 
-  // FORM HANDLER
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     setReservation((prev) => ({ ...prev, [name]: value }));
   };
 
-  // SHARE HANDLER
+  // --- SHARE HANDLER ---
   const handleShare = async () => {
     const shareData = {
       title: hotel?.name || "Hotel",
@@ -164,33 +166,7 @@ export default function HotelDetails() {
     }
   };
 
-//  const dispatch = useAppDispatch();
-
-
-// Inside your component:
-
-const customer_id = useAppSelector((state : RootState) => state.customer.customer?.id);
-const favourites = useAppSelector((state : RootState) => state.favourites.list);
-
-// Check if a hotel is in favourites
-const isFavourite = (hotel_id: number) => {
-  return favourites.some((f) => f.hotel_id === hotel_id);
-};
-
-// Toggle favourite (add or remove)
-const handleToggleFavourite = (hotel_id: number) => {
-  console.log(customer_id)
-  if (!customer_id) return;
-
-  if (isFavourite(hotel_id)) {
-    dispatch(removeFavourite({ customer_id, hotel_id }));
-  } else {
-    dispatch(addToFavourites({ customer_id, hotel_id }));
-  }
-};
-  
-
-// FETCH ROOMS + HOTEL
+  // --- FETCH HOTEL + ROOMS ---
   useEffect(() => {
     if (id) {
       dispatch(getHotelById(Number(id)));
@@ -198,11 +174,18 @@ const handleToggleFavourite = (hotel_id: number) => {
     }
   }, [dispatch, id]);
 
+  // --- FETCH USER FAVOURITES ONCE LOGGED IN ---
+  useEffect(() => {
+    if (customer_id) {
+      dispatch(fetchUserFavourites(customer_id));
+    }
+  }, [dispatch, customer_id]);
+
   if (loading) return <p className="loading">Loading hotel...</p>;
   if (error) return <p className="error">{error}</p>;
   if (!hotel) return <p>No hotel found.</p>;
 
-  // Nights for checkout
+  // Nights for checkout display
   const checkIn = reservation.check_in_date
     ? new Date(reservation.check_in_date)
     : null;
@@ -218,6 +201,26 @@ const handleToggleFavourite = (hotel_id: number) => {
           )
         )
       : 0;
+
+  // --- FAVOURITES LOGIC ---
+  const isFavorite = hotel?.hotel_id
+    ? favouritesList.some((fav) => fav.hotel_id === hotel.hotel_id)
+    : false;
+
+  const toggleFavourite = () => {
+    if (!customer_id || !hotel?.hotel_id) {
+      alert("Please log in to add favorites");
+      return;
+    }
+
+    const hotelId = hotel.hotel_id;
+
+    if (isFavorite) {
+      dispatch(removeFavourite({ customer_id, hotel_id: hotelId }));
+    } else {
+      dispatch(addToFavourites({ customer_id, hotel_id: hotelId }));
+    }
+  };
 
   return (
     <div className="hotel-details-page">
@@ -240,7 +243,7 @@ const handleToggleFavourite = (hotel_id: number) => {
           <h1 className="hotel-title">{hotel.name}</h1>
           <p className="hotel-location">{hotel.location}</p>
 
-          {/* MAIN IMAGE DISPLAY */}
+          {/* MAIN IMAGE */}
           <div
             className={
               activeImage
@@ -256,7 +259,7 @@ const handleToggleFavourite = (hotel_id: number) => {
             )}
           </div>
 
-          {/* GALLERY THUMBNAILS */}
+          {/* THUMBS */}
           {(hotel.main_image || galleryImages.length > 0) && (
             <div className="gallery-thumbnails">
               {hotel.main_image && hotel.main_image.trim().length > 0 && (
@@ -289,18 +292,6 @@ const handleToggleFavourite = (hotel_id: number) => {
               ))}
             </div>
           )}
-
-          {/* VIEW ALL PHOTOS BUTTON */}
-          {/* {allImages.length > 0 && (
-            <button
-              type="button"
-              className="view-all-photos-btn"
-              onClick={() => openLightboxAt(activeImage || allImages[0])}
-            >
-              View all {allImages.length} photo
-              {allImages.length > 1 ? "s" : ""}
-            </button>
-          )} */}
 
           <h2 className="desc-title">Description</h2>
           <p className="hotel-description">
@@ -357,6 +348,7 @@ const handleToggleFavourite = (hotel_id: number) => {
                 value={reservation.people}
                 onChange={handleChange}
               />
+
               <div className="nights-display">
                 <p>
                   <strong>Nights:</strong> {nights}
@@ -389,7 +381,6 @@ const handleToggleFavourite = (hotel_id: number) => {
                     return;
                   }
 
-                  // Find the room by type to get room_id + price
                   const selectedRoom = rooms.find(
                     (r) =>
                       r.room_type.toLowerCase() ===
@@ -397,7 +388,7 @@ const handleToggleFavourite = (hotel_id: number) => {
                   );
 
                   const pricePerNight = selectedRoom ? selectedRoom.price : 0;
-                  const roomId = selectedRoom ? selectedRoom.room_id : 1; // fallback
+                  const roomId = selectedRoom ? selectedRoom.room_id : 1;
 
                   const checkInDate = new Date(reservation.check_in_date);
                   const checkOutDate = new Date(reservation.check_out_date);
@@ -433,14 +424,16 @@ const handleToggleFavourite = (hotel_id: number) => {
         {/* RIGHT */}
         <div className="hotel-right">
           <div className="right-top-actions">
+            {/* FAVOURITE BUTTON */}
             <Button
-              icon={<FaRegHeart />}
+              icon={isFavorite ? <FaHeart color="#EAC248" /> : <FaRegHeart />}
               backgroundColor="white"
               color="black"
               className="icon-btn"
-              onClick={() => handleToggleFavourite(hotel.hotel_id!!)} // Pass hotel_id here
+              onClick={toggleFavourite}
             />
 
+            {/* SHARE BUTTON */}
             <Button
               icon={<FaShare />}
               backgroundColor="white"
@@ -483,7 +476,7 @@ const handleToggleFavourite = (hotel_id: number) => {
         </div>
       </div>
 
-      {/* LIGHTBOX OVERLAY */}
+      {/* LIGHTBOX */}
       {isLightboxOpen && allImages.length > 0 && (
         <div className="lightbox-overlay" onClick={closeLightbox}>
           <div
