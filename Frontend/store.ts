@@ -5,6 +5,7 @@ import hotelReducer from "./src/storeSlices/hotelSlice";
 import roomReducer from "./src/storeSlices/roomSlice";
 import bookingReducer from "./src/storeSlices/bookingSlice";
 import paymentSlice from "./src/storeSlices/paymentSlice";
+import favouritesReducer from "./src/storeSlices/favouritesSlice";
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     payment: paymentSlice,
     room: roomReducer,
     booking: bookingReducer,
+    favourites: favouritesReducer,
   },
 });
 
