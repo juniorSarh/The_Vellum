@@ -12,6 +12,7 @@ import imageRouter from "./src/routes/image.route";
 import userImageRouter from "./src/routes/userImageRoutes";
 
 import hotelRouter from "./src/routes/hotel.routes";
+import reviewRouter from "./src/routes/review.routes";  
 import roomRouter from "./src/routes/room.routes";
 import bookingrouter from "./src/routes/boooking.routes";
 import favouriteRouter from "./src/routes/favourites.routes";
@@ -23,6 +24,7 @@ import { createHotelTable } from "./src/services/hotel.services";
 import { createRoomTable } from "./src/services/room.service";
 import { createBookingsTable } from "./src/services/booking.service";
 import { createFavouritesTable } from "./src/services/favourites.service";
+import { createReviewsTable } from "./src/services/review.service";
 import paymentRouter from "./src/routes/payment.routes";
 import { get } from "http";
 
@@ -50,6 +52,7 @@ app.use("/api/initialize", paymentRouter);
 app.use("/api/hotels", hotelRouter);
 app.use("/api/rooms", roomRouter);
 app.use("/api/bookings", bookingrouter);
+app.use("/api/reviews", reviewRouter);
 app.use("/api/favourites", favouriteRouter);
 
 // Health check endpoint
@@ -117,6 +120,7 @@ async function startServer() {
     await createRoomTable();
     await createBookingsTable();
     await createFavouritesTable();
+    await createReviewsTable();
 
     // Start the server
     app.listen(port, () => {

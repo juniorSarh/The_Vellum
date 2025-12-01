@@ -289,4 +289,17 @@
   font-style: italic;
 }
 
+.booking-rating {
+  margin-bottom: 5px;
+}
+
+.booking-rating .star {
+  font-size: 20px;
+  cursor: pointer;
+  color: #ccc;
+}
+
+.booking-rating .star.filled {
+  color: gold;
+}
 
