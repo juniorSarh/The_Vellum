@@ -1,12 +1,16 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import NavBar from "../src/components/navBar";
 import Button from "../src/components/Button";
 import Footer from "../src/components/Footer";
 import {
   FaArrowLeft,
   FaRegHeart,
+  FaHeart,
   FaShare,
   FaMapMarkerAlt,
+  FaStar,
+  FaRegStar,
+  FaStarHalfAlt,
 } from "react-icons/fa";
 import "../src/assets/css/hotelDetails.css";
 import { useParams, useNavigate } from "react-router-dom";
@@ -17,39 +21,49 @@ import Input from "../src/components/input";
 import {
   addToFavourites,
   removeFavourite,
+  fetchUserFavourites,
 } from "../src/storeSlices/favouritesSlice";
 import type { RootState } from "../store";
 
-type Review = {
-  review_id?: number;
-  customer_id: number;
+// ---- REVIEW TYPE ----
+interface Review {
+  review_id: number;
   hotel_id: number;
-  star_rating?: number | null;
-  comment?: string | null;
-  created_at?: string;
-  // optionally include user details if backend returns them
-  user_name?: string;
-};
+  customer_id: number;
+  rating: number;
+  comment: string;
+  created_at: string;
+  customer_first_name?: string;
+  customer_last_name?: string;
+}
 
 export default function HotelDetails() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const { hotels, loading, error } = useAppSelector(
-    (state: RootState) => state.hotel
-  );
-  const { rooms } = useAppSelector((state: RootState) => state.room);
+  // --- GLOBAL STATE ---
+  const { hotels, loading, error } = useAppSelector((state) => state.hotel);
+  const { rooms } = useAppSelector((state) => state.room);
 
+  // Logged-in customer
+  const customer_id = useAppSelector(
+    (state: RootState) => state.customer.customer?.id
+  );
+
+  // Favourites list from Redux
+  const favouritesList = useAppSelector((state) => state.favourites.list);
+
+  // Find current hotel from store
   const hotel = hotels.find((h) => h.hotel_id === Number(id)) || null;
 
-  // -------- IMAGE GALLERY STATE --------
+  // --- IMAGE GALLERY STATE ---
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
   const galleryImages =
-    hotel?.images?.filter((img: string) => img && img.trim().length) || [];
+    hotel?.images?.filter((img) => img && img.trim().length) || [];
 
   const allImagesRaw: string[] = [
     ...(hotel?.main_image && hotel.main_image.trim().length
@@ -64,11 +78,13 @@ export default function HotelDetails() {
       setActiveImage(null);
       return;
     }
+
     const main =
       hotel.main_image && hotel.main_image.trim().length
         ? hotel.main_image
         : null;
     const firstGallery = galleryImages.length > 0 ? galleryImages[0] : null;
+
     setActiveImage(main || firstGallery);
   }, [hotel, galleryImages.length]);
 
@@ -83,12 +99,18 @@ export default function HotelDetails() {
   };
 
   const closeLightbox = () => setIsLightboxOpen(false);
-  const goPrev = () =>
-    setLightboxIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
-  const goNext = () =>
-    setLightboxIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
 
-  // -------- RESERVATION STATE --------
+  const goPrev = () => {
+    if (allImages.length === 0) return;
+    setLightboxIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
+  };
+
+  const goNext = () => {
+    if (allImages.length === 0) return;
+    setLightboxIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
+  };
+
+  // --- RESERVATION FORM STATE ---
   const [reservation, setReservation] = useState({
     room_type: "",
     check_in_date: "",
@@ -111,28 +133,35 @@ export default function HotelDetails() {
     ) {
       return 0;
     }
+
     const pricePerNight = getPriceForRoomType(reservation.room_type);
+
     const checkIn = new Date(reservation.check_in_date);
     const checkOut = new Date(reservation.check_out_date);
+
     const diffTime = checkOut.getTime() - checkIn.getTime();
     const numDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
     if (numDays <= 0) return 0;
+
     return pricePerNight * numDays;
   };
 
   const totalPrice = calculateTotalPrice();
+
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     setReservation((prev) => ({ ...prev, [name]: value }));
   };
 
-  // SHARE
+  // --- SHARE HANDLER ---
   const handleShare = async () => {
     const shareData = {
       title: hotel?.name || "Hotel",
       text: `Check out ${hotel?.name} in ${hotel?.location}`,
       url: window.location.href,
     };
+
     if (navigator.share) {
       try {
         await navigator.share(shareData);
@@ -152,30 +181,7 @@ export default function HotelDetails() {
     }
   };
 
-  // FAVOURITES
-  const customer_id = useAppSelector(
-    (state: RootState) => state.customer.customer?.id
-  );
-  const favourites = useAppSelector(
-    (state: RootState) => state.favourites.list || []
-  );
-
-  const isFavourite = (hotel_id: number) =>
-    favourites.some((f) => f.hotel_id === hotel_id);
-
-  const handleToggleFavourite = (hotel_id: number) => {
-    if (!customer_id) {
-      alert("Please log in to manage favourites.");
-      return;
-    }
-    if (isFavourite(hotel_id)) {
-      dispatch(removeFavourite({ customer_id, hotel_id }));
-    } else {
-      dispatch(addToFavourites({ customer_id, hotel_id }));
-    }
-  };
-
-  // FETCH ROOMS + HOTEL
+  // --- FETCH HOTEL + ROOMS ---
   useEffect(() => {
     if (id) {
       dispatch(getHotelById(Number(id)));
@@ -183,152 +189,74 @@ export default function HotelDetails() {
     }
   }, [dispatch, id]);
 
-  // ------------- REVIEWS LOGIC -------------
+  // --- FETCH USER FAVOURITES ONCE LOGGED IN ---
+  useEffect(() => {
+    if (customer_id) {
+      dispatch(fetchUserFavourites(customer_id));
+    }
+  }, [dispatch, customer_id]);
+
+  // --- REVIEWS STATE ---
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [totalReviews, setTotalReviews] = useState<number>(0);
-  const [avgRating, setAvgRating] = useState<number | null>(null);
   const [reviewsLoading, setReviewsLoading] = useState(false);
   const [reviewsError, setReviewsError] = useState<string | null>(null);
-  const [offset, setOffset] = useState(0);
-  const LIMIT = 10;
-  const [hasMore, setHasMore] = useState(false);
 
-  const computeAvgAndTotal = (list: Review[], totalFromApi?: number) => {
-    const arr = list || [];
-    const sum = arr.reduce((acc, r) => acc + (r.star_rating ?? 0), 0);
-    const count = typeof totalFromApi === "number" ? totalFromApi : arr.length;
-    setTotalReviews(count);
-    setAvgRating(
-      count > 0 ? parseFloat((sum / (arr.length || 1)).toFixed(2)) : null
-    );
-  };
-
-  const fetchReviewsForHotel = useCallback(
-    async (opts?: { reset?: boolean; nextOffset?: number }) => {
+  useEffect(() => {
+    const fetchReviews = async () => {
       if (!id) return;
-      const hotelId = Number(id);
-      const nextOff =
-        typeof opts?.nextOffset === "number"
-          ? opts.nextOffset
-          : opts?.reset
-          ? 0
-          : offset;
-      const q = `hotel_id=${hotelId}&limit=${LIMIT}&offset=${nextOff}`;
-      const url = `http://localhost:4040/api/reviews?${q}`;
-
       setReviewsLoading(true);
       setReviewsError(null);
 
       try {
-        const res = await fetch(url);
-        const json = await res.json();
-
-        // API might return either array of reviews OR an object like { reviews: [...], total: N }
-        let fetched: Review[] = [];
-        let totalFromApi: number | undefined = undefined;
-
-        if (Array.isArray(json)) {
-          fetched = json as Review[];
-          totalFromApi = json.length;
-        } else if (json && Array.isArray(json.reviews)) {
-          fetched = json.reviews;
-          if (typeof json.total === "number") totalFromApi = json.total;
-        } else {
-          // unexpected shape
-          throw new Error("Unexpected reviews response shape");
+        const res = await fetch(
+          `http://localhost:4040/api/reviews/hotel/${id}`
+        );
+        if (!res.ok) {
+          const msg = (await res.json().catch(() => null))?.message;
+          throw new Error(msg || "Failed to fetch reviews");
         }
-
-        if (opts?.reset) {
-          setReviews(fetched);
-        } else {
-          // append
-          setReviews((prev) => {
-            // avoid duplicates by review_id if present
-            const existingIds = new Set(prev.map((r) => r.review_id));
-            const uniqueToAdd = fetched.filter(
-              (r) => r.review_id == null || !existingIds.has(r.review_id)
-            );
-            return [...prev, ...uniqueToAdd];
-          });
-        }
-
-        // set hasMore: if totalFromApi exists, compare; otherwise, infer from fetched length
-        const currentTotal =
-          typeof totalFromApi === "number" ? totalFromApi : undefined;
-        if (typeof currentTotal === "number") {
-          setHasMore((prevReviews) =>
-            prevReviews
-              ? (opts?.reset
-                  ? fetched.length
-                  : reviews.length + fetched.length) < currentTotal
-              : fetched.length < currentTotal
-          );
-        } else {
-          // infer: if fetched length === LIMIT then likely more
-          setHasMore(fetched.length === LIMIT);
-        }
-
-        // if total provided, set it; else compute
-        if (typeof currentTotal === "number") {
-          computeAvgAndTotal(
-            opts?.reset ? fetched : [...reviews, ...fetched],
-            currentTotal
-          );
-          setTotalReviews(currentTotal);
-        } else {
-          computeAvgAndTotal(opts?.reset ? fetched : [...reviews, ...fetched]);
-        }
-
-        setOffset(nextOff + fetched.length);
+        const data: Review[] = await res.json();
+        setReviews(data);
       } catch (err: any) {
-        console.error("Failed to fetch reviews", err);
+        console.error("Error loading reviews:", err);
         setReviewsError(err.message || "Failed to load reviews");
       } finally {
         setReviewsLoading(false);
       }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [id, offset, reviews.length] // intentionally minimal deps
-  );
-
-  // initial fetch
-  useEffect(() => {
-    // reset pagination on hotel change
-    setOffset(0);
-    setReviews([]);
-    setHasMore(false);
-    fetchReviewsForHotel({ reset: true, nextOffset: 0 });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
-
-  // Listen for cross-page "reviewSubmitted" event to refresh the list
-  useEffect(() => {
-    const handler = (e: any) => {
-      const payload = e.detail || {};
-      // if event provides hotel_id, confirm it matches current page (optional)
-      if (!payload.hotel_id || Number(payload.hotel_id) === Number(id)) {
-        // refresh and reset
-        setOffset(0);
-        fetchReviewsForHotel({ reset: true, nextOffset: 0 });
-      }
     };
-    window.addEventListener("reviewSubmitted", handler);
-    return () => window.removeEventListener("reviewSubmitted", handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    fetchReviews();
   }, [id]);
 
-  // compute average/total whenever reviews array changes and server didn't provide a total
-  useEffect(() => {
-    computeAvgAndTotal(reviews);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reviews]);
+  const reviewCount = reviews.length;
+  const averageRating =
+    reviewCount > 0
+      ? reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviewCount
+      : 0;
 
-  // load more
-  const loadMore = async () => {
-    await fetchReviewsForHotel({ nextOffset: offset });
+  const renderStars = (rating: number) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalf = rating - fullStars >= 0.5;
+    const totalStars = 5;
+
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(<FaStar key={`full-${i}`} />);
+    }
+    if (hasHalf) {
+      stars.push(<FaStarHalfAlt key="half" />);
+    }
+    while (stars.length < totalStars) {
+      stars.push(<FaRegStar key={`empty-${stars.length}`} />);
+    }
+    return stars;
   };
 
-  // Nights for checkout
+  if (loading) return <p className="loading">Loading hotel...</p>;
+  if (error) return <p className="error">{error}</p>;
+  if (!hotel) return <p>No hotel found.</p>;
+
+  // Nights for checkout display
   const checkIn = reservation.check_in_date
     ? new Date(reservation.check_in_date)
     : null;
@@ -345,17 +273,36 @@ export default function HotelDetails() {
         )
       : 0;
 
-  if (loading) return <p className="loading">Loading hotel...</p>;
-  if (error) return <p className="error">{error}</p>;
-  if (!hotel) return <p>No hotel found.</p>;
+  // --- FAVOURITES LOGIC ---
+  const isFavorite = hotel?.hotel_id
+    ? favouritesList.some((fav) => fav.hotel_id === hotel.hotel_id)
+    : false;
+
+  const toggleFavourite = () => {
+    if (!customer_id || !hotel?.hotel_id) {
+      alert("Please log in to add favorites");
+      return;
+    }
+
+    const hotelId = hotel.hotel_id;
+
+    if (isFavorite) {
+      dispatch(removeFavourite({ customer_id, hotel_id: hotelId }));
+    } else {
+      dispatch(addToFavourites({ customer_id, hotel_id: hotelId }));
+    }
+  };
 
   return (
     <div className="hotel-details-page">
+      {/* NAV */}
       <div className="nav-row">
         <NavBar />
       </div>
 
+      {/* MAIN */}
       <div className="hotel-details-wrapper">
+        {/* LEFT */}
         <div className="hotel-left">
           <Button
             icon={<FaArrowLeft />}
@@ -367,6 +314,7 @@ export default function HotelDetails() {
           <h1 className="hotel-title">{hotel.name}</h1>
           <p className="hotel-location">{hotel.location}</p>
 
+          {/* MAIN IMAGE */}
           <div
             className={
               activeImage
@@ -382,6 +330,7 @@ export default function HotelDetails() {
             )}
           </div>
 
+          {/* THUMBS */}
           {(hotel.main_image || galleryImages.length > 0) && (
             <div className="gallery-thumbnails">
               {hotel.main_image && hotel.main_image.trim().length > 0 && (
@@ -420,10 +369,12 @@ export default function HotelDetails() {
             {hotel.description || "No description available."}
           </p>
 
+          {/* RESERVATION SECTION */}
           <div className="reservation-section">
             <h2>Make a Reservation</h2>
 
             <div className="reservation-form">
+              {/* Room type */}
               <div className="form-group">
                 <label>Room Type</label>
                 <select
@@ -444,6 +395,7 @@ export default function HotelDetails() {
                 </select>
               </div>
 
+              {/* Dates */}
               <Input
                 label="Check-in Date"
                 type="date"
@@ -458,6 +410,8 @@ export default function HotelDetails() {
                 value={reservation.check_out_date}
                 onChange={handleChange}
               />
+
+              {/* People */}
               <Input
                 label="Number of People"
                 type="number"
@@ -472,12 +426,14 @@ export default function HotelDetails() {
                 </p>
               </div>
 
+              {/* TOTAL PRICE DISPLAY */}
               <div className="total-price-box">
                 <p>
                   <strong>Total Price: </strong> R{totalPrice}
                 </p>
               </div>
 
+              {/* RESERVE BUTTON */}
               <Button
                 name="Reserve"
                 backgroundColor="#846d29"
@@ -501,6 +457,7 @@ export default function HotelDetails() {
                       r.room_type.toLowerCase() ===
                       reservation.room_type.toLowerCase()
                   );
+
                   const pricePerNight = selectedRoom ? selectedRoom.price : 0;
                   const roomId = selectedRoom ? selectedRoom.room_id : 1;
 
@@ -535,16 +492,19 @@ export default function HotelDetails() {
           </div>
         </div>
 
-        {/* RIGHT PANEL */}
+        {/* RIGHT */}
         <div className="hotel-right">
           <div className="right-top-actions">
+            {/* FAVOURITE BUTTON */}
             <Button
-              icon={<FaRegHeart />}
+              icon={isFavorite ? <FaHeart color="#EAC248" /> : <FaRegHeart />}
               backgroundColor="white"
               color="black"
               className="icon-btn"
-              onClick={() => handleToggleFavourite(hotel.hotel_id!!)}
+              onClick={toggleFavourite}
             />
+
+            {/* SHARE BUTTON */}
             <Button
               icon={<FaShare />}
               backgroundColor="white"
@@ -554,78 +514,60 @@ export default function HotelDetails() {
             />
           </div>
 
+          {/* REVIEWS PANEL */}
           <div className="review-panel">
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <div>
-                <p style={{ margin: 0 }}>
-                  <strong>Total Reviews: </strong>{" "}
-                  {reviewsLoading ? "..." : totalReviews}
-                </p>
-                <p style={{ margin: 0 }}>
-                  <strong>Average Rating: </strong>{" "}
-                  {avgRating !== null ? `${avgRating} / 5` : "N/A"}
-                </p>
+            <div className="review-header">
+              <p className="review-title">Guest Reviews</p>
+              <div className="rating-summary">
+                <span className="rating-value">
+                  {averageRating > 0 ? averageRating.toFixed(1) : "0.0"}
+                </span>
+                <div className="rating-stars">{renderStars(averageRating)}</div>
+                <span className="rating-count">({reviewCount})</span>
               </div>
             </div>
 
-            <div style={{ marginTop: 12 }}>
-              {reviewsLoading && reviews.length === 0 && (
-                <p>Loading reviews...</p>
-              )}
-              {reviewsError && <p className="error">{reviewsError}</p>}
-              {reviews.length === 0 && !reviewsLoading && (
-                <p>No reviews yet. Be the first to leave one!</p>
-              )}
+            {reviewsLoading && (
+              <p className="review-loading">Loading reviews...</p>
+            )}
+            {reviewsError && <p className="review-error">{reviewsError}</p>}
 
-              {reviews.slice(0, LIMIT).map((r) => (
-                <div
-                  key={r.review_id ?? Math.random()}
-                  className="review-item"
-                  style={{ marginBottom: 8 }}
-                >
-                  <div style={{ fontWeight: 600 }}>
-                    {r.user_name ?? `User ${r.customer_id ?? "—"}`}{" "}
-                    <span
-                      style={{
-                        fontWeight: 400,
-                        marginLeft: 8,
-                        fontSize: 13,
-                        color: "#666",
-                      }}
-                    >
-                      {r.created_at
-                        ? new Date(r.created_at).toLocaleDateString()
-                        : ""}
+            {!reviewsLoading && !reviewsError && reviews.length === 0 && (
+              <p className="review-empty">
+                No reviews yet. Be the first to stay here.
+              </p>
+            )}
+
+            {!reviewsLoading &&
+              !reviewsError &&
+              reviews.map((rev) => (
+                <div key={rev.review_id} className="review-item">
+                  <div className="review-meta">
+                    <span className="review-name">
+                      {rev.customer_first_name || rev.customer_last_name
+                        ? `${rev.customer_first_name ?? ""} ${
+                            rev.customer_last_name ?? ""
+                          }`.trim()
+                        : "Guest"}
+                    </span>
+                    <span className="review-date">
+                      {new Date(rev.created_at).toLocaleDateString()}
                     </span>
                   </div>
-                  <div style={{ margin: "4px 0" }}>
-                    {"★".repeat(Math.max(0, r.star_rating ?? 0)) +
-                      "☆".repeat(5 - Math.max(0, r.star_rating ?? 0))}
+
+                  <div className="review-rating-row">
+                    <div className="review-stars">
+                      {renderStars(rev.rating || 0)}
+                    </div>
+                    <span className="review-rating-badge">{rev.rating}/5</span>
                   </div>
-                  <div style={{ color: "#333" }}>{r.comment ?? ""}</div>
+
+                  <p className="review-comment">{rev.comment}</p>
                 </div>
               ))}
-            </div>
-
-            {hasMore && (
-              <div style={{ marginTop: 8 }}>
-                <button
-                  className="view-more-btn"
-                  onClick={loadMore}
-                  disabled={reviewsLoading}
-                >
-                  {reviewsLoading ? "Loading..." : "View more reviews"}
-                </button>
-              </div>
-            )}
           </div>
 
+          {/* GOOGLE MAPS EMBED */}
           <div className="map-box">
             <div className="map-header">
               <FaMapMarkerAlt className="map-icon" />
@@ -645,6 +587,7 @@ export default function HotelDetails() {
         </div>
       </div>
 
+      {/* LIGHTBOX */}
       {isLightboxOpen && allImages.length > 0 && (
         <div className="lightbox-overlay" onClick={closeLightbox}>
           <div
@@ -709,6 +652,7 @@ export default function HotelDetails() {
         </div>
       )}
 
+      {/* FOOTER */}
       <div className="footer">
         <Footer />
       </div>

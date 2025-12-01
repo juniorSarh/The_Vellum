@@ -8,6 +8,7 @@ import {
   deleteReview,
   getReviewsByHotelWithCustomer,
 } from "../services/review.service";
+
 // GET /api/reviews?customer_id=&hotel_id=
 export const listReviewsHandler = async (req: Request, res: Response) => {
   try {
@@ -17,6 +18,7 @@ export const listReviewsHandler = async (req: Request, res: Response) => {
     const hotel_id = req.query.hotel_id
       ? Number(req.query.hotel_id)
       : undefined;
+
     const reviews = await getReviews({ customer_id, hotel_id });
     res.json(reviews);
   } catch (error) {
@@ -24,7 +26,8 @@ export const listReviewsHandler = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Failed to list reviews" });
   }
 };
-// :white_tick: NEW: GET /api/reviews/hotel/:hotelId
+
+// ✅ NEW: GET /api/reviews/hotel/:hotelId
 // returns reviews with rating + customer names
 export const getReviewsByHotelHandler = async (req: Request, res: Response) => {
   try {
@@ -32,6 +35,7 @@ export const getReviewsByHotelHandler = async (req: Request, res: Response) => {
     if (isNaN(hotelId)) {
       return res.status(400).json({ message: "Invalid hotel id" });
     }
+
     const reviews = await getReviewsByHotelWithCustomer(hotelId);
     res.json(reviews);
   } catch (error) {
@@ -39,6 +43,7 @@ export const getReviewsByHotelHandler = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Failed to fetch hotel reviews" });
   }
 };
+
 // GET /api/reviews/:id
 export const getReviewByIdHandler = async (req: Request, res: Response) => {
   try {
@@ -53,6 +58,7 @@ export const getReviewByIdHandler = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Failed to fetch review" });
   }
 };
+
 // POST /api/reviews
 export const createReviewHandler = async (req: Request, res: Response) => {
   try {
@@ -63,6 +69,7 @@ export const createReviewHandler = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Failed to create review" });
   }
 };
+
 // PUT /api/reviews/:id
 export const updateReviewHandler = async (req: Request, res: Response) => {
   try {
@@ -77,6 +84,7 @@ export const updateReviewHandler = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Failed to update review" });
   }
 };
+
 // DELETE /api/reviews/:id
 export const deleteReviewHandler = async (req: Request, res: Response) => {
   try {

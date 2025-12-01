@@ -1,6 +1,7 @@
 // src/services/review.service.ts
 import { sql } from "../../src/config/db";
 import { Review, ReviewCreate, ReviewUpdate } from "../models/review.model";
+
 // ======================================
 // CREATE REVIEWS TABLE
 // ======================================
@@ -17,12 +18,14 @@ export const createReviewsTable = async () => {
     );
   `;
 };
+
 // ======================================
 // CREATE REVIEW
 // ======================================
 // expects ReviewCreate to have: customer_id, hotel_id, star_rating?, comment?
 export const createReview = async (data: ReviewCreate) => {
   const { customer_id, hotel_id, star_rating = null, comment = null } = data;
+
   const result = await sql`
     INSERT INTO reviews (customer_id, hotel_id, star_rating, comment)
     VALUES (${customer_id}, ${hotel_id}, ${star_rating}, ${comment})
@@ -30,6 +33,7 @@ export const createReview = async (data: ReviewCreate) => {
   `;
   return result[0] as Review;
 };
+
 // ======================================
 // GET REVIEWS (optional filter by customer_id / hotel_id)
 // ======================================
@@ -38,6 +42,7 @@ export const getReviews = async (filters?: {
   hotel_id?: number;
 }) => {
   const { customer_id, hotel_id } = filters || {};
+
   if (customer_id && hotel_id) {
     return (await sql`
       SELECT review_id, customer_id, hotel_id, star_rating, comment, created_at
@@ -46,6 +51,7 @@ export const getReviews = async (filters?: {
       ORDER BY created_at DESC;
     `) as Review[];
   }
+
   if (customer_id) {
     return (await sql`
       SELECT review_id, customer_id, hotel_id, star_rating, comment, created_at
@@ -54,6 +60,7 @@ export const getReviews = async (filters?: {
       ORDER BY created_at DESC;
     `) as Review[];
   }
+
   if (hotel_id) {
     return (await sql`
       SELECT review_id, customer_id, hotel_id, star_rating, comment, created_at
@@ -62,12 +69,14 @@ export const getReviews = async (filters?: {
       ORDER BY created_at DESC;
     `) as Review[];
   }
+
   return (await sql`
     SELECT review_id, customer_id, hotel_id, star_rating, comment, created_at
     FROM reviews
     ORDER BY created_at DESC;
   `) as Review[];
 };
+
 // ======================================
 // SPECIAL: GET REVIEWS BY HOTEL WITH CUSTOMER NAMES
 // (for /api/reviews/hotel/:hotelId)
@@ -88,6 +97,7 @@ export const getReviewsByHotelWithCustomer = async (hotelId: number) => {
     WHERE r.hotel_id = ${hotelId}
     ORDER BY r.created_at DESC;
   `;
+
   // returns objects like:
   // {
   //   review_id,
@@ -101,6 +111,7 @@ export const getReviewsByHotelWithCustomer = async (hotelId: number) => {
   // }
   return rows;
 };
+
 // ======================================
 // GET REVIEW BY ID
 // ======================================
@@ -112,11 +123,13 @@ export const getReviewById = async (id: number) => {
   `;
   return result[0] as Review | undefined;
 };
+
 // ======================================
 // UPDATE REVIEW (partial)
 // ======================================
 export const updateReview = async (id: number, data: ReviewUpdate) => {
   const { star_rating = null, comment = null } = data;
+
   const result = await sql`
     UPDATE reviews
     SET
@@ -127,6 +140,7 @@ export const updateReview = async (id: number, data: ReviewUpdate) => {
   `;
   return result[0] as Review | undefined;
 };
+
 // ======================================
 // DELETE REVIEW
 // ======================================
