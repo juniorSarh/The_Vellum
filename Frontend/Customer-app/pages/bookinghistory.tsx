@@ -1,33 +1,43 @@
 // src/pages/BookingHistory.tsx
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
 import { fetchBookingsByCustomer } from "../../src/storeSlices/bookingSlice";
 import PrivatNav from "../../src/components/PrivatNav";
 import Footer from "../../src/components/Footer";
 import type { RootState } from "../../store";
+import { FiShare2 } from "react-icons/fi";
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import "../../src/bookingHistory.css";
 
 const BookingHistory = () => {
   const dispatch = useAppDispatch();
 
-  // Logged-in customer from customerSlice
   const customer = useAppSelector(
     (state: RootState) => state.customer.customer
   );
-
-  // Bookings from bookingSlice
   const { bookings, loading, error } = useAppSelector(
     (state: RootState) => state.booking
   );
 
-  // Fetch bookings for this specific customer
+  const [favorites, setFavorites] = useState<number[]>([]);
+  const [comments, setComments] = useState<{ [key: number]: string }>({});
+
   useEffect(() => {
     if (customer?.id) {
       dispatch(fetchBookingsByCustomer(customer.id));
     }
   }, [customer, dispatch]);
 
-  // If not logged in
+  const toggleFavorite = (id: number) => {
+    setFavorites((prev) =>
+      prev.includes(id) ? prev.filter((fav) => fav !== id) : [...prev, id]
+    );
+  };
+
+  const handleCommentChange = (id: number, value: string) => {
+    setComments((prev) => ({ ...prev, [id]: value }));
+  };
+
   if (!customer) {
     return (
       <>
@@ -65,7 +75,26 @@ const BookingHistory = () => {
           <div className="bookings-list">
             {bookings.map((b) => (
               <div key={b.booking_id} className="booking-card">
+                {/* Favorite heart in top-right corner */}
+
                 <div className="booking-header">
+                  {b.booking_id && (
+                    <div className="top-right-buttons">
+                      {favorites.includes(b.booking_id) ? (
+                        <AiFillHeart
+                          className="favorite-btn active"
+                          onClick={() => toggleFavorite(b.booking_id!)}
+                        />
+                      ) : (
+                        <AiOutlineHeart
+                          className="favorite-btn"
+                          onClick={() => toggleFavorite(b.booking_id!)}
+                        />
+                      )}
+                      <FiShare2 className="share-btn" />
+                    </div>
+                  )}
+                  
                   <div>
                     <p className="booking-hotel">{b.hotel_name ?? "Hotel"}</p>
                     {b.room_type && (
@@ -74,6 +103,7 @@ const BookingHistory = () => {
                       </p>
                     )}
                   </div>
+
                   <span
                     className={`booking-status ${
                       b.status ? b.status.toLowerCase() : ""
@@ -93,23 +123,36 @@ const BookingHistory = () => {
                   <span>{new Date(b.check_out_date).toLocaleDateString()}</span>
                 </div>
 
-                {/* Safely display total_cost */}
                 {(() => {
                   const raw = b.total_cost;
                   const numeric =
                     typeof raw === "string" ? parseFloat(raw) : Number(raw);
-
                   const display = Number.isFinite(numeric)
                     ? numeric.toFixed(2)
                     : String(raw ?? "0.00");
-
                   return <div className="booking-total">Total: R{display}</div>;
                 })()}
+
+                {/* Comment Section */}
+                <div className="booking-comment">
+                  <textarea
+                    placeholder="Leave a comment..."
+                    value={comments[b.booking_id!] || ""}
+                    onChange={(e) =>
+                      handleCommentChange(b.booking_id!, e.target.value)
+                    }
+                  />
+                  <button
+                    className="comment-btn"
+                    onClick={() => alert("Comment submitted!")}
+                  >
+                    Submit
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         </div>
-
         <Footer />
       </div>
     </>
