@@ -1,16 +1,29 @@
+/* PAGE LAYOUT */
 .page-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: #f7f7f7;
 }
 
+/* Wrapper for main content */
 .bookings-wrapper {
   width: 85%;
-  margin: auto;
+  max-width: 1100px;
+  margin: 20px auto 40px auto;
   flex: 1;
-  padding: 20px;
+  padding: 20px 10px;
 }
 
+/* Header row (title + maybe future filters) */
+.bookings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+/* Back button (if you add it later) */
 .back-btn {
   font-size: 24px;
   background: none;
@@ -18,15 +31,133 @@
   cursor: pointer;
 }
 
+/* Section title */
 .section-title {
-  font-size: 18px;
-  font-weight: bold;
-  margin-top: 25px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #222;
 }
 
+/* Empty message */
 .empty-message {
   margin-top: 20px;
   font-size: 14px;
-  opacity: 0.6;
+  opacity: 0.7;
   font-style: italic;
+}
+
+/* Error text */
+.bh-error {
+  margin-top: 15px;
+  color: #b00020;
+  font-size: 14px;
+}
+
+/* LOADING */
+.bh-loading {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+/* BOOKINGS LIST */
+.bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 15px;
+}
+
+/* INDIVIDUAL BOOKING CARD */
+.booking-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Top row: hotel name + status */
+.booking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.booking-hotel {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+}
+
+/* Status pill */
+.booking-status {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* Different status colours */
+.booking-status.confirmed {
+  background: #e0f2f1;
+  color: #00796b;
+}
+.booking-status.pending {
+  background: #fff8e1;
+  color: #ff8f00;
+}
+.booking-status.cancelled {
+  background: #ffebee;
+  color: #c62828;
+}
+
+/* Details rows */
+.booking-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #444;
+}
+
+.booking-row span:first-child {
+  font-weight: 500;
+}
+
+/* TOTAL LINE */
+.booking-total {
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #222;
+}
+
+/* SMALL LABEL FOR ROOM TYPE */
+.booking-room-type {
+  font-size: 13px;
+  color: #666;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .bookings-wrapper {
+    width: 94%;
+    padding: 10px 0;
+  }
+
+  .section-title {
+    font-size: 20px;
+  }
+
+  .booking-card {
+    padding: 12px 12px;
+  }
+
+  .booking-row {
+    font-size: 13px;
+    flex-direction: column;
+    gap: 2px;
+  }
 }
