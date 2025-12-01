@@ -8,12 +8,13 @@ import { Hotel } from "../models/hotel.model"; // adjust the path if different
 export const createHotelTable = async () => {
   await sql`
     CREATE TABLE IF NOT EXISTS hotels (
-      hotel_id   SERIAL PRIMARY KEY,
-      admin_id   INTEGER REFERENCES admins(id) ON DELETE SET NULL,
-      name       TEXT NOT NULL,
-      location   TEXT NOT NULL,
+      hotel_id    SERIAL PRIMARY KEY,
+      admin_id    INTEGER REFERENCES admins(id) ON DELETE SET NULL,
+      name        TEXT NOT NULL,
+      location    TEXT NOT NULL,
       star_rating INTEGER,
       description TEXT,
+      main_image  TEXT,
       images      TEXT[]
     );
   `;
@@ -29,13 +30,30 @@ export const createHotel = async (hotel: Omit<Hotel, "hotel_id">) => {
     location,
     star_rating = null,
     description = null,
+    main_image = null,
     images = null,
   } = hotel;
 
   const result = await sql`
-    INSERT INTO hotels (admin_id, name, location, star_rating, description, images)
-    VALUES (${admin_id}, ${name}, ${location}, ${star_rating}, ${description}, ${images})
-    RETURNING hotel_id, admin_id, name, location, star_rating, description, images;
+    INSERT INTO hotels (
+      admin_id,
+      name,
+      location,
+      star_rating,
+      description,
+      main_image,
+      images
+    )
+    VALUES (
+      ${admin_id},
+      ${name},
+      ${location},
+      ${star_rating},
+      ${description},
+      ${main_image},
+      ${images}
+    )
+    RETURNING hotel_id, admin_id, name, location, star_rating, description, main_image, images;
   `;
 
   return result[0] as Hotel;
@@ -46,7 +64,7 @@ export const createHotel = async (hotel: Omit<Hotel, "hotel_id">) => {
 // ============================
 export const getHotels = async () => {
   return (await sql`
-    SELECT hotel_id, admin_id, name, location, star_rating, description, images
+    SELECT hotel_id, admin_id, name, location, star_rating, description, main_image, images
     FROM hotels
     ORDER BY hotel_id;
   `) as Hotel[];
@@ -57,7 +75,7 @@ export const getHotels = async () => {
 // ============================
 export const getHotelById = async (hotel_id: number) => {
   const result = await sql`
-    SELECT hotel_id, admin_id, name, location, star_rating, description, images
+    SELECT hotel_id, admin_id, name, location, star_rating, description, main_image, images
     FROM hotels
     WHERE hotel_id = ${hotel_id};
   `;
@@ -70,7 +88,7 @@ export const getHotelById = async (hotel_id: number) => {
 // ============================
 export const getHotelsByAdmin = async (admin_id: number) => {
   return (await sql`
-    SELECT hotel_id, admin_id, name, location, star_rating, description, images
+    SELECT hotel_id, admin_id, name, location, star_rating, description, main_image, images
     FROM hotels
     WHERE admin_id = ${admin_id}
     ORDER BY hotel_id;
@@ -84,20 +102,28 @@ export const updateHotel = async (
   hotel_id: number,
   hotelData: Partial<Hotel>
 ) => {
-  const { admin_id, name, location, star_rating, description, images } =
-    hotelData;
+  const {
+    admin_id,
+    name,
+    location,
+    star_rating,
+    description,
+    main_image,
+    images,
+  } = hotelData;
 
   const result = await sql`
     UPDATE hotels
     SET
-      admin_id   = COALESCE(${admin_id}, admin_id),
-      name       = COALESCE(${name}, name),
-      location   = COALESCE(${location}, location),
-      star_rating= COALESCE(${star_rating}, star_rating),
-      description= COALESCE(${description}, description),
-      images     = COALESCE(${images}, images)
+      admin_id    = COALESCE(${admin_id},    admin_id),
+      name        = COALESCE(${name},        name),
+      location    = COALESCE(${location},    location),
+      star_rating = COALESCE(${star_rating}, star_rating),
+      description = COALESCE(${description}, description),
+      main_image  = COALESCE(${main_image},  main_image),
+      images      = COALESCE(${images},      images)
     WHERE hotel_id = ${hotel_id}
-    RETURNING hotel_id, admin_id, name, location, star_rating, description, images;
+    RETURNING hotel_id, admin_id, name, location, star_rating, description, main_image, images;
   `;
 
   return result[0] as Hotel | undefined;

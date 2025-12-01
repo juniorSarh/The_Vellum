@@ -15,8 +15,12 @@ import { getHotelById } from "../src/storeSlices/hotelSlice";
 import { fetchRooms } from "../src/storeSlices/roomSlice";
 import Input from "../src/components/input";
 
-// ⚠️ Adjust this import & action name to match your actual favourites slice
-//import { addToFavourites } from "../src/storeSlices/favouritesSlice";
+
+import {
+  addToFavourites,
+  removeFavourite,
+} from "../src/storeSlices/favouritesSlice";
+import type { RootState } from "../store";
 
 export default function HotelDetails() {
   const { id } = useParams();
@@ -28,7 +32,65 @@ export default function HotelDetails() {
 
   const hotel = hotels.find((h) => h.hotel_id === Number(id)) || null;
 
-  // FORM STATE
+  // -------- IMAGE GALLERY STATE --------
+  const [activeImage, setActiveImage] = useState<string | null>(null);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  // Clean gallery array from hotel.images
+  const galleryImages =
+    hotel?.images?.filter((img) => img && img.trim().length) || [];
+
+  // Combined list: main_image first (if exists), then gallery
+  const allImagesRaw: string[] = [
+    ...(hotel?.main_image && hotel.main_image.trim().length
+      ? [hotel.main_image]
+      : []),
+    ...galleryImages,
+  ];
+  // remove duplicates
+  const allImages = Array.from(new Set(allImagesRaw));
+
+  // Decide default active image whenever hotel changes
+  useEffect(() => {
+    if (!hotel) {
+      setActiveImage(null);
+      return;
+    }
+
+    const main =
+      hotel.main_image && hotel.main_image.trim().length
+        ? hotel.main_image
+        : null;
+    const firstGallery = galleryImages.length > 0 ? galleryImages[0] : null;
+
+    setActiveImage(main || firstGallery);
+  }, [hotel, galleryImages.length]);
+
+  // Helper to build image URL (handle relative vs absolute)
+  const buildImageUrl = (url: string) =>
+    url.startsWith("http") ? url : `http://localhost:4040/${url}`;
+
+  const openLightboxAt = (url?: string | null) => {
+    if (!url || allImages.length === 0) return;
+    const idx = allImages.findIndex((img) => img === url);
+    setLightboxIndex(idx >= 0 ? idx : 0);
+    setIsLightboxOpen(true);
+  };
+
+  const closeLightbox = () => setIsLightboxOpen(false);
+
+  const goPrev = () => {
+    if (allImages.length === 0) return;
+    setLightboxIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
+  };
+
+  const goNext = () => {
+    if (allImages.length === 0) return;
+    setLightboxIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
+  };
+
+  // -------- RESERVATION FORM STATE --------
   const [reservation, setReservation] = useState({
     room_type: "",
     check_in_date: "",
@@ -102,22 +164,33 @@ export default function HotelDetails() {
     }
   };
 
-  // FAVOURITES HANDLER
-  // const handleAddToFavourites = () => {
-  //   if (!hotel) return;
+//  const dispatch = useAppDispatch();
 
-  //   dispatch(
-  //     addToFavourites({
-  //       hotel_id: hotel.hotel_id,
-  //       name: hotel.name,
-  //       location: hotel.location,
-  //       // add other fields you want saved in favourites:
-  //       // image: hotel.images?.[0] || null,
-  //     })
-  //   );
-  // };
 
-  // FETCH ROOMS + HOTEL
+// Inside your component:
+
+const customer_id = useAppSelector((state : RootState) => state.customer.customer?.id);
+const favourites = useAppSelector((state : RootState) => state.favourites.list);
+
+// Check if a hotel is in favourites
+const isFavourite = (hotel_id: number) => {
+  return favourites.some((f) => f.hotel_id === hotel_id);
+};
+
+// Toggle favourite (add or remove)
+const handleToggleFavourite = (hotel_id: number) => {
+  console.log(customer_id)
+  if (!customer_id) return;
+
+  if (isFavourite(hotel_id)) {
+    dispatch(removeFavourite({ customer_id, hotel_id }));
+  } else {
+    dispatch(addToFavourites({ customer_id, hotel_id }));
+  }
+};
+  
+
+// FETCH ROOMS + HOTEL
   useEffect(() => {
     if (id) {
       dispatch(getHotelById(Number(id)));
@@ -167,27 +240,74 @@ export default function HotelDetails() {
           <h1 className="hotel-title">{hotel.name}</h1>
           <p className="hotel-location">{hotel.location}</p>
 
-          <div className="image-container">
-            {hotel.images && hotel.images.length > 0 ? (
-              <img
-                src={
-                  hotel.images[0].startsWith("http")
-                    ? hotel.images[0]
-                    : `http://localhost:4040/${hotel.images[0]}`
-                }
-                alt={hotel.name}
-              />
+          {/* MAIN IMAGE DISPLAY */}
+          <div
+            className={
+              activeImage
+                ? "image-container image-container-clickable"
+                : "image-container"
+            }
+            onClick={() => activeImage && openLightboxAt(activeImage)}
+          >
+            {activeImage ? (
+              <img src={buildImageUrl(activeImage)} alt={hotel.name} />
             ) : (
               <p>No image available</p>
             )}
           </div>
+
+          {/* GALLERY THUMBNAILS */}
+          {(hotel.main_image || galleryImages.length > 0) && (
+            <div className="gallery-thumbnails">
+              {hotel.main_image && hotel.main_image.trim().length > 0 && (
+                <button
+                  type="button"
+                  className={`thumb-btn ${
+                    activeImage === hotel.main_image ? "active" : ""
+                  }`}
+                  onClick={() => setActiveImage(hotel.main_image!)}
+                >
+                  <img
+                    src={buildImageUrl(hotel.main_image)}
+                    alt={`${hotel.name} main`}
+                  />
+                </button>
+              )}
+
+              {galleryImages.map((img, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  className={`thumb-btn ${activeImage === img ? "active" : ""}`}
+                  onClick={() => setActiveImage(img)}
+                >
+                  <img
+                    src={buildImageUrl(img)}
+                    alt={`${hotel.name} ${index + 1}`}
+                  />
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* VIEW ALL PHOTOS BUTTON */}
+          {/* {allImages.length > 0 && (
+            <button
+              type="button"
+              className="view-all-photos-btn"
+              onClick={() => openLightboxAt(activeImage || allImages[0])}
+            >
+              View all {allImages.length} photo
+              {allImages.length > 1 ? "s" : ""}
+            </button>
+          )} */}
 
           <h2 className="desc-title">Description</h2>
           <p className="hotel-description">
             {hotel.description || "No description available."}
           </p>
 
-          {/* RESERVATION SECTION NOW ON LEFT */}
+          {/* RESERVATION SECTION */}
           <div className="reservation-section">
             <h2>Make a Reservation</h2>
 
@@ -279,15 +399,16 @@ export default function HotelDetails() {
                   const pricePerNight = selectedRoom ? selectedRoom.price : 0;
                   const roomId = selectedRoom ? selectedRoom.room_id : 1; // fallback
 
-                  const checkIn = new Date(reservation.check_in_date);
-                  const checkOut = new Date(reservation.check_out_date);
-                  const diffTime = checkOut.getTime() - checkIn.getTime();
-                  const nights =
+                  const checkInDate = new Date(reservation.check_in_date);
+                  const checkOutDate = new Date(reservation.check_out_date);
+                  const diffTime =
+                    checkOutDate.getTime() - checkInDate.getTime();
+                  const nightsCalc =
                     Math.ceil(diffTime / (1000 * 60 * 60 * 24)) > 0
                       ? Math.ceil(diffTime / (1000 * 60 * 60 * 24))
                       : 0;
 
-                  const totalPrice = pricePerNight * nights;
+                  const totalCost = pricePerNight * nightsCalc;
 
                   navigate(`/checkout/${hotel.hotel_id}`, {
                     state: {
@@ -297,9 +418,9 @@ export default function HotelDetails() {
                       check_in_date: reservation.check_in_date,
                       check_out_date: reservation.check_out_date,
                       people: reservation.people,
-                      nights,
+                      nights: nightsCalc,
                       price_per_night: pricePerNight,
-                      total_cost: totalPrice,
+                      total_cost: totalCost,
                       room_id: roomId,
                     },
                   });
@@ -312,16 +433,14 @@ export default function HotelDetails() {
         {/* RIGHT */}
         <div className="hotel-right">
           <div className="right-top-actions">
-            {/* LIKE → FAVOURITES */}
             <Button
               icon={<FaRegHeart />}
               backgroundColor="white"
               color="black"
               className="icon-btn"
-              //onClick={handleAddToFavourites}
+              onClick={() => handleToggleFavourite(hotel.hotel_id!!)} // Pass hotel_id here
             />
 
-            {/* SHARE */}
             <Button
               icon={<FaShare />}
               backgroundColor="white"
@@ -363,6 +482,71 @@ export default function HotelDetails() {
           </div>
         </div>
       </div>
+
+      {/* LIGHTBOX OVERLAY */}
+      {isLightboxOpen && allImages.length > 0 && (
+        <div className="lightbox-overlay" onClick={closeLightbox}>
+          <div
+            className="lightbox-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="lightbox-close-btn"
+              onClick={closeLightbox}
+            >
+              ×
+            </button>
+
+            <div className="lightbox-main-image">
+              <img
+                src={buildImageUrl(allImages[lightboxIndex])}
+                alt={`${hotel.name} large`}
+              />
+            </div>
+
+            {allImages.length > 1 && (
+              <div className="lightbox-nav">
+                <button
+                  type="button"
+                  className="lightbox-nav-btn"
+                  onClick={goPrev}
+                >
+                  ‹
+                </button>
+                <span className="lightbox-counter">
+                  {lightboxIndex + 1} / {allImages.length}
+                </span>
+                <button
+                  type="button"
+                  className="lightbox-nav-btn"
+                  onClick={goNext}
+                >
+                  ›
+                </button>
+              </div>
+            )}
+
+            <div className="lightbox-thumbs">
+              {allImages.map((img, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  className={`lightbox-thumb-btn ${
+                    index === lightboxIndex ? "active" : ""
+                  }`}
+                  onClick={() => setLightboxIndex(index)}
+                >
+                  <img
+                    src={buildImageUrl(img)}
+                    alt={`${hotel.name} ${index + 1}`}
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* FOOTER */}
       <div className="footer">

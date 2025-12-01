@@ -9,6 +9,8 @@ import "../../src/Landing.css";
 
 import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
 import { setHotels, type Hotel } from "../../src/storeSlices/hotelSlice";
+import { fetchUserFavourites } from "../../src/storeSlices/favouritesSlice";
+import type { RootState } from "../../store";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -16,6 +18,16 @@ export default function Home() {
 
   const dispatch = useAppDispatch();
   const { hotels, loading, error } = useAppSelector((state) => state.hotel);
+  const customer_id = useAppSelector(
+    (state: RootState) => state.customer.customer?.id!!
+  );
+  const favourites = useAppSelector((state) => state.favourites.list);
+
+  const isFavorite = (hotelId: number) => {
+    return favourites.some((fav) => {
+      return fav.hotel_id === hotelId;
+    });
+  };
 
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
@@ -28,6 +40,7 @@ export default function Home() {
         const res = await fetch("http://localhost:4040/api/hotels");
         const data = await res.json();
         dispatch(setHotels(data));
+        dispatch(fetchUserFavourites(customer_id));
       } catch (err) {
         console.error("Failed to load hotels on home page:", err);
       }
@@ -84,8 +97,10 @@ export default function Home() {
             filteredHotels.map((hotel) => (
               <HotelCard
                 key={hotel.hotel_id}
+                hotelId={hotel.hotel_id!!}
                 name={hotel.name}
                 location={hotel.location}
+                isFavorite={isFavorite(hotel.hotel_id!!)}
                 // Placeholder price (you can later compute from rooms, etc.)
                 isLoggedIn={true}
                 image={
