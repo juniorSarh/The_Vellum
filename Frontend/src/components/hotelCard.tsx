@@ -11,7 +11,7 @@ import type { RootState } from "../../store";
 interface HotelCardProps {
   image: string;
   name: string;
-  hotelId: number;
+  hotelId: number | undefined;
   location: string;
   isFavorite?: boolean;
   isLoggedIn: boolean;
@@ -30,23 +30,30 @@ const HotelCard: React.FC<HotelCardProps> = ({
   const [isfavorite, setIsFavorite] = useState(isFavorite);
   const dispatch = useAppDispatch();
 
-  const { hotels } = useAppSelector((state) => state.hotel);
   const customer_id = useAppSelector(
     (state: RootState) => state.customer.customer?.id!!
   );
   
 
+  const addHotel = (hotelId: number | undefined) => {
+    if (hotelId === undefined && !isFavorite) {
+      dispatch(addToFavourites({ customer_id, hotel_id: favourite_id}));
+    } else if(hotelId === undefined && isFavorite){
+      dispatch(removeFavourite({ customer_id, hotel_id: favourite_id }));
+    }
+    if (hotelId && !isFavorite) {
+      dispatch(addToFavourites({ customer_id, hotel_id: hotelId}));
+    } else if(hotelId && isFavorite){
+      dispatch(removeFavourite({ customer_id, hotel_id: hotelId}));
+    }
+  }
   const favouritesList = useAppSelector((state : RootState) => state.favourites.list);
   const favourite_id = favouritesList.map((fav) => fav.hotel_id)[0];
 
   const toggleFavorite = (e: React.MouseEvent) => {
     e.stopPropagation(); // prevent triggering card onClick
     setIsFavorite(!isFavorite);
-    if (!isFavorite) {
-      dispatch(addToFavourites({ customer_id, hotel_id:favourite_id }));
-    } else {
-      dispatch(removeFavourite({ customer_id, hotel_id:favourite_id}));
-    }
+    addHotel(hotelId);
   };
 
   return (

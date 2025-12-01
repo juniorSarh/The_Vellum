@@ -6,6 +6,10 @@ import {
 } from "../../src/storeSlices/favouritesSlice";
 import HotelCard from "../../src/components/hotelCard";
 import type { RootState } from "../../store";
+import PrivatNav from "../../src/components/PrivatNav";
+import Footer from "../../src/components/Footer";
+import "../../src/assets/css/favourites.css";
+import SearchBar from "../../src/components/searchBar";
 
 const FavouritesPage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -24,31 +28,38 @@ const FavouritesPage: React.FC = () => {
     dispatch(removeFavourite({ customer_id, hotel_id }));
   };
 
-  if (loading) return <p>Loading favourites...</p>;
+  if (loading) return <h2 style={{ textAlign: "center" }}>Loading favourites...</h2>;
   if (error) return <p>Error: {error}</p>;
-  if (!list.length) return <p>No favourites yet.</p>;
+  if (!list.length) return <h2 style={{ textAlign: "center" }}>No favourites yet.</h2>;
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-        gap: "1rem",
-      }}
-    >
-      {list.map((fav) => (
-        <HotelCard
-          key={fav.favourite_id}
-          hotelId={fav.favourite_id}
-          image={fav.images?.[0] || ""}
-          name={fav.hotel_name || ""}
-          isFavorite= {true}
-          location={fav.location || ""}
-          isLoggedIn={true}
-          onClick={() => handleRemoveFavourite(fav.hotel_id)}
-        />
-      ))}
-    </div>
+    <>
+      <PrivatNav />
+
+      <div className="contant">
+        <div className="search">
+          <SearchBar />
+        </div>
+        <div className="heading">
+          <h2>Your Favourites</h2>
+        </div>
+        <div className="favourites-grid">
+          {list.map((fav) => (
+            <HotelCard
+              key={fav.favourite_id}
+              hotelId={undefined}
+              image={fav.images?.[0] || ""}
+              name={fav.hotel_name || ""}
+              isFavorite={true}
+              location={fav.location || ""}
+              isLoggedIn={true}
+              onClick={() => handleRemoveFavourite(fav.hotel_id)}
+            />
+          ))}
+        </div>
+      </div>
+      <Footer />
+    </>
   );
 };
 
