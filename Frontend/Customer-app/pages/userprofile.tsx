@@ -9,7 +9,7 @@ import Footer from "../../src/components/Footer";
 import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
 import { logout, setUser } from "../../src/storeSlices/customerSlice";
 import PrivatNav from "../../src/components/PrivatNav";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const ProfilePage: React.FC = () => {
   const dispatch = useAppDispatch();
