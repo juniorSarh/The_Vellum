@@ -107,69 +107,56 @@ const ProfilePage: React.FC = () => {
               My Bookings
             </button>
           </aside>
+{/* Profile Image */}
+<div className="profile-image-container">
+  <div className="profile-image-wrapper">
+    <label htmlFor="upload-photo" className="profile-image-circle">
+      <img
+        src={
+          profilePic ||
+          (customer?.image
+            ? `https://the-vellum.onrender.com/uploads/${customer.image}`
+            : "/default-avatar.png")
+        }
+        alt="Profile"
+        className="profile-img"
+      />
+    </label>
+    <input
+      id="upload-photo"
+      type="file"
+      style={{ display: "none" }}
+      accept="image/*"
+      onChange={handleImageUpload}
+    />
+    <Button
+      name="Upload Photo"
+      className="upload-photo-btn"
+      backgroundColor="#846D29"
+      color="white"
+      onClick={() => document.getElementById("upload-photo")?.click()}
+    />
+  </div>
+</div>
 
-          <div className="profile-content">
-            {/* Profile Image */}
-            <div className="profile-image-container">
-              <label htmlFor="upload-photo" className="profile-image-circle">
-                <img
-                  src={
-                    profilePic ||
-                    (customer?.image
-                      ? `https://the-vellum.onrender.com/uploads/${customer.image}`
-                      : "/default-avatar.png")
-                  }
-                  alt="Profile"
-                  className="profile-img"
-                />
-              </label>
-              <input
-                id="upload-photo"
-                type="file"
-                style={{ display: "none" }}
-                accept="image/*"
-                onChange={handleImageUpload}
-              />
-            </div>
-
-            {/* Customer Info */}
-            <div className="profile-info">
-              <p className="profile-label">First Name</p>
-              <p className="profile-value">{customer?.first_name}</p>
-
-              <p className="profile-label">Last Name</p>
-              <p className="profile-value">{customer?.last_name}</p>
-
-              <p className="profile-label">Email</p>
-              <p className="profile-value">{customer?.email}</p>
-
-              <p className="profile-label">Phone</p>
-              <p className="profile-value">{customer?.phone || "Not set"}</p>
-
-              <p className="profile-label">Address</p>
-              <p className="profile-value">{customer?.address || "Not set"}</p>
-            </div>
-
-            {/* Actions */}
-            <div className="profile-actions">
-              <Button
-                name="Edit Profile"
-                backgroundColor="#846D29"
-                color="white"
-                className="profile-btn"
-                onClick={() => setIsModalOpen(true)}
-              />
-              <Button
-                name="Logout"
-                backgroundColor="#846D29"
-                color="white"
-                className="profile-btn"
-                onClick={handleLogout}
-              />
-            </div>
-          </div>
-
-          <ProfileModal
+{/* Actions */}
+<div className="profile-actions">
+  <Button
+    name="Edit Profile"
+    backgroundColor="#846D29"
+    color="white"
+    className="profile-btn"
+    onClick={() => setIsModalOpen(true)}
+  />
+  <Button
+    name="Logout"
+    backgroundColor="#846D29"
+    color="white"
+    className="profile-btn"
+    onClick={handleLogout}
+  />
+</div>
+            <ProfileModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
             user={customer}

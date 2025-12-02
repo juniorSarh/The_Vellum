@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import NavBar from "../src/components/navBar";
 import Footer from "../src/components/Footer";
 import HotelCard from "../src/components/hotelCard";
 import SearchBar from "../src/components/searchBar";
