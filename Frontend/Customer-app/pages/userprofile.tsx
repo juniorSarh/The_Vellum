@@ -3,7 +3,6 @@ import Button from "../../src/components/Button";
 import ProfileModal from "../../src/components/profileModal";
 import type { RootState } from "../../store";
 import "../../src/Userprofile.css";
-import { FaArrowLeft } from "react-icons/fa";
 import logo from "../../src/assets/The-vellum-logo.png";
 import Footer from "../../src/components/Footer";
 import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
@@ -94,11 +93,7 @@ const ProfilePage: React.FC = () => {
       <div className="page-container">
         <div className="profile-wrapper">
           <aside className="profile-sidebar">
-            <Button
-              icon={<FaArrowLeft />}
-              className="back-btn"
-              onClick={() => window.history.back()}
-            />
+          
 
             <div className="sidebar-logo">
               <img src={logo} alt="Logo" />
