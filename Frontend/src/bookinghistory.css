@@ -303,3 +303,14 @@
   color: gold;
 }
 
+.back-btn {
+  margin: 20px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #846D29;
+  color: black;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
