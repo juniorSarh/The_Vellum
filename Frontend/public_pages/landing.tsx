@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import NavBar from "../src/components/navBar";
 import Footer from "../src/components/Footer";
 import HotelCard from "../src/components/hotelCard";
 import SearchBar from "../src/components/searchBar";
@@ -8,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useAppDispatch, useAppSelector } from "../src/storeSlices/hooks";
 import { setHotels, type Hotel } from "../src/storeSlices/hotelSlice";
+import PrivatNav from "../src/components/PrivatNav";
 
 export default function Landing() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -50,7 +50,7 @@ export default function Landing() {
 
   return (
     <div className="landing-wrapper">
-      <NavBar />
+     <PrivatNav />
 
       {/* Hero Section */}
       <section className="hero-banner">

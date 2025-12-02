@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import NavBar from "../src/components/navBar";
 import Button from "../src/components/Button";
 import Footer from "../src/components/Footer";
 import {
@@ -24,6 +23,7 @@ import {
   fetchUserFavourites,
 } from "../src/storeSlices/favouritesSlice";
 import type { RootState } from "../store";
+import PrivatNav from "../src/components/PrivatNav";
 
 // ---- REVIEW TYPE ----
 interface Review {
@@ -297,10 +297,7 @@ export default function HotelDetails() {
 
   return (
     <div className="hotel-details-page">
-      {/* NAV */}
-      <div className="nav-row">
-        <NavBar />
-      </div>
+      <PrivatNav />
 
       {/* MAIN */}
       <div className="hotel-details-wrapper">
