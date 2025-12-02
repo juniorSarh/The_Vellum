@@ -9,6 +9,8 @@ import {
 } from "../../src/storeSlices/bookingSlice";
 import "../../src/assets/css/checkout.css";
 import type { RootState } from "../../store";
+import PrivatNav from "../../src/components/PrivatNav";
+import Footer from "../../src/components/Footer";
 
 type CheckoutLocationState = {
   hotelName: string;
@@ -82,6 +84,10 @@ const CheckoutPage = () => {
   };
 
   return (
+    <>
+    <div className="checkout-header">
+         <PrivatNav />
+    </div>
     <div className="checkout-wrapper">
       <div className="checkout-slip">
         <h2 className="slip-title">Reservation Summary</h2>
@@ -138,6 +144,12 @@ const CheckoutPage = () => {
         </div>
       </div>
     </div>
+
+<div>
+      <Footer />
+</div>
+
+    </>
   );
 };
 

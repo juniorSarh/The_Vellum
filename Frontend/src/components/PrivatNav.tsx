@@ -1,5 +1,5 @@
 import Button from "../components/Button";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../PrivatNav.css";
 import logo from "../assets/The-vellum-logo.png";
 import { FaUser } from "react-icons/fa";
@@ -11,6 +11,8 @@ import type { RootState } from "../../store";
 const PrivatNav = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname;
 
   const { customer } = useSelector((state: RootState) => state.customer);
   const { admin } = useSelector((state: RootState) => state.admin);
@@ -29,18 +31,29 @@ const PrivatNav = () => {
       </div>
 
       <div className="navbar-right">
-        {/* If ADMIN logged in */}
+        {/* -------- ADMIN LOGGED IN -------- */}
         {admin && (
           <>
-            <Link to="/admin-profile" className="link-reset">
-              <Button
-                name=""
-                icon={<FaUser />}
-                backgroundColor="white"
-                color="black"
-                className="nav-btn"
-              />
-            </Link>
+            {currentPath === "/dashboard" ? (
+              <Link to="/admin-profile" className="link-reset">
+                <Button
+                  name="Profile"
+                  icon={<FaUser size={18} />}
+                  backgroundColor="white"
+                  color="black"
+                  className="nav-btn"
+                />
+              </Link>
+            ) : (
+              <Link to="/dashboard" className="link-reset">
+                <Button
+                  name="Dashboard"
+                  backgroundColor="white"
+                  color="black"
+                  className="nav-btn"
+                />
+              </Link>
+            )}
 
             <Button
               name="Logout"
@@ -52,38 +65,73 @@ const PrivatNav = () => {
           </>
         )}
 
-        {/* If CUSTOMER logged in */}
+        {/* -------- CUSTOMER LOGGED IN -------- */}
         {customer && (
           <>
-            <Link to="/home">
+            {["/home", "/checkout", "/hotel/:id"].includes(currentPath) ? (
+              <>
+                <Link to="/user-profile" className="link-reset">
+                  <Button
+                    name="Profile"
+                    icon={<FaUser size={18} />}
+                    backgroundColor="white"
+                    color="black"
+                    className="nav-btn"
+                  />
+                </Link>
+
+                <Button
+                  name="Logout"
+                  backgroundColor="white"
+                  color="black"
+                  className="nav-btn"
+                  onClick={handleLogout}
+                />
+              </>
+            ) : (
+              <>
+                <Link to="/home" className="link-reset">
+                  <Button
+                    name="Home"
+                    backgroundColor="white"
+                    color="black"
+                    className="nav-btn"
+                  />
+                </Link>
+
+                <Button
+                  name="Logout"
+                  backgroundColor="white"
+                  color="black"
+                  className="nav-btn"
+                  onClick={handleLogout}
+                />
+              </>
+            )}
+          </>
+        )}
+
+        {/* -------- GUEST (NOT LOGGED IN) -------- */}
+        {!admin && !customer && (
+          <>
+            <Link to="/register" className="link-reset">
               <Button
-                name="Home"
-                backgroundColor="white"
+                name="Register"
                 color="black"
+                backgroundColor="white"
                 className="nav-btn"
               />
             </Link>
 
-            <Button
-              name="Logout"
-              backgroundColor="white"
-              color="black"
-              className="nav-btn"
-              onClick={handleLogout}
-            />
+            <Link to="/login" className="link-reset">
+              <Button
+                name="Login"
+                color="black"
+                backgroundColor="white"
+                className="nav-btn"
+              />
+            </Link>
           </>
-        )}
-
-        {/* If nobody is logged in */}
-        {!admin && !customer && (
-          <Link to="/login" className="link-reset">
-            <Button
-              name="Login"
-              backgroundColor="white"
-              color="black"
-              className="nav-btn"
-            />
-          </Link>
         )}
       </div>
     </nav>
