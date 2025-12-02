@@ -1,13 +1,5 @@
-.hotels-page-container {
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: #f5f5f5;
-}
-
 .content{
-  padding: 1%;
+  padding: 1.2%;
 }
 
 .top-actions {
@@ -22,6 +14,13 @@
   border: none;
   font-size: 20px;
   cursor: pointer;
+}
+
+.table-title{
+  font-size: 27px;
+  font-weight: 600;
+  padding-top: 20px;
+  margin-bottom: 10px;
 }
 
 .hero-search {
@@ -43,52 +42,143 @@
   transform: translateY(-4px);
 }
 
+
 /* TABLE */
+/* Hotels Table Wrapper */
 .hotels-table-wrapper {
-  padding: 20px;
+  width: 100%;
+  overflow-x: auto;
+  margin: 20px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Hotels Table */
 .hotels-table {
   width: 100%;
   border-collapse: collapse;
+  background: white;
 }
 
-.hotels-table th,
-.hotels-table td {
-  padding: 14px;
-  text-align: left;
-  background: #e6e6e6;
-  border-bottom: 10px solid white;
-}
-
-.hotels-table th {
-  background: #dcdcdc;
+/* Table Header */
+.hotels-table thead {
+  background: #E5E5E5;
+  color: black;
   font-weight: bold;
 }
 
-.action-icons {
-  display: flex;
-  gap: 20px;
+.hotels-table thead th {
+  padding: 16px 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  border-bottom: 3px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Table Body */
+.hotels-table tbody tr {
+  border-bottom: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.hotels-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.hotels-table tbody td {
+  padding: 14px 12px;
+  vertical-align: middle;
+  color: #374151;
+}
+
+/* Empty State */
+.hotels-table tbody td[colspan] {
+  padding: 40px 20px;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* Action Icons Column */
+.hotels-table .action-icons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Icon Buttons */
 .icon-button {
-  background: transparent;
+  padding: 8px;
   border: none;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 18px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  color: #6b7280;
+  min-width: 36px;
+  min-height: 36px;
 }
 
 .icon-button:hover {
-  opacity: 0.7;
-  transform: translateY(-4px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.icon-button.add-rooms {
+  background: #827236;
+  color: white;
+}
+
+.icon-button.add-rooms:hover {
+  background: #827236;
 }
 
 .icon-button.edit {
-  color: #333;
+  background: white;
+  color:#3b82f6;
 }
+
+.icon-button.edit:hover {
+  background:white;
+  color:  #2563eb;
+}
+
 .icon-button.delete {
-  color: #b30000;
+  background:white;
+  color: #ef4444;
 }
+
+.icon-button.delete:hover {
+  background: white;
+  color: #dc2626;
+}
+
+/* View Rooms Button */
+.view-rooms-btn {
+  padding: 8px 16px;
+  background: #837130;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 13px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.view-rooms-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
+  opacity: 0.9;
+}
+
 
 /* VIEW ROOMS BUTTON */
 .view-rooms-btn {
@@ -280,21 +370,186 @@ footer,
   width: 100%;
 }
 
-/* RESPONSIVE */
-@media (max-width: 800px) {
-  .hotels-table th,
-  .hotels-table td {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =================== MEDIA QUERIES =================== */
+
+/* Small devices (phones, max-width: 600px) */
+@media (max-width: 600px) {
+  .content {
+    padding: 8px;
+  }
+
+  .table-title {
+    font-size: 20px;
+    padding-top: 10px;
+    margin-bottom: 8px;
+  }
+
+  .top-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .add-hotel-btn {
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+
+  /* Table responsiveness */
+  .hotels-table-wrapper {
+    overflow-x: auto;
+    margin: 15px 0;
+  }
+
+  .hotels-table thead th,
+  .hotels-table tbody td {
+    padding: 10px 8px;
     font-size: 12px;
-    padding: 10px;
   }
 
-  .action-icons .icon {
-    font-size: 16px;
+  .action-icons {
+    flex-wrap: wrap;
+    gap: 4px;
   }
 
-  .modal-card,
+  .icon-button {
+    padding: 6px;
+    min-width: 30px;
+    min-height: 30px;
+  }
+
+  .view-rooms-btn {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  /* Rooms Table in modal */
+  .rooms-table th,
+  .rooms-table td {
+    padding: 8px;
+    font-size: 12px;
+  }
+
   .modal-content {
-    width: 90%;
-    padding: 20px 18px;
+    width: 95%;
+    padding: 20px;
+  }
+
+  .modal-card {
+    padding: 24px 20px;
+    max-width: 95%;
+  }
+
+  .modal-title {
+    font-size: 20px;
+  }
+
+  .modal-form input,
+  .modal-form select,
+  .hotel-form input,
+  .hotel-form select,
+  .hotel-form textarea {
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+
+  .modal-btn {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+}
+
+/* Medium devices (tablets, max-width: 900px) */
+@media (max-width: 900px) {
+  .top-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .table-title {
+    font-size: 24px;
+  }
+
+  .hotels-table thead th,
+  .hotels-table tbody td {
+    padding: 12px 10px;
+    font-size: 13px;
+  }
+
+  .icon-button {
+    min-width: 32px;
+    min-height: 32px;
+  }
+
+  .view-rooms-btn {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  .modal-card {
+    max-width: 85%;
+  }
+
+  .modal-form input,
+  .modal-form select,
+  .hotel-form input,
+  .hotel-form select,
+  .hotel-form textarea {
+    font-size: 14px;
+  }
+
+  .modal-btn {
+    font-size: 14px;
+  }
+}
+
+/* Large devices (desktops, max-width: 1200px) */
+@media (max-width: 1200px) {
+  .table-title {
+    font-size: 25px;
+  }
+
+  .hotels-table thead th,
+  .hotels-table tbody td {
+    font-size: 14px;
+    padding: 14px 10px;
+  }
+
+  .icon-button {
+    min-width: 34px;
+    min-height: 34px;
+  }
+
+  .view-rooms-btn {
+    font-size: 13px;
+    padding: 6px 14px;
+  }
+
+  .modal-card {
+    max-width: 700px;
   }
 }

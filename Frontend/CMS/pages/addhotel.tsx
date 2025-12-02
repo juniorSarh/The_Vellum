@@ -5,7 +5,7 @@ import Footer from "../../src/components/Footer";
 import HotelForm from "../../src/components/hotelModal";
 import "../../src/assets/css/addHotel.css";
 
-import { FaEdit, FaTrash, FaArrowLeft } from "react-icons/fa";
+import { FaEdit, FaTrash, FaArrowLeft, FaPlus } from "react-icons/fa";
 import Button from "../../src/components/Button";
 
 import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
@@ -273,6 +273,7 @@ export default function AddHotel() {
           {/* LOADING / ERROR */}
           {loading && <p className="status-text">Loading hotels...</p>}
           {error && <p className="status-text error-text">{error}</p>}
+          <h2 className="table-title">Hotels List</h2>
 
           {/* TABLE */}
           <div className="hotels-table-wrapper"></div>
@@ -287,8 +288,8 @@ export default function AddHotel() {
                 <th>Description</th>
                 <th>Gallery</th>
                 <th>Rooms Available</th>
-                <th>List of Rooms</th>
                 <th>Actions</th>
+                <th>List of Rooms</th>
               </tr>
             </thead>
 
@@ -337,20 +338,13 @@ export default function AddHotel() {
                     {/* Rooms Available */}
                     <td>{getRoomsAvailableForHotel(hotel.hotel_id)}</td>
 
-                    {/* View Rooms */}
-                    <td>
-                      <Button
-                        className="view-rooms-btn"
-                        name="View Rooms"
-                        onClick={() => openRoomsListModal(hotel)}
-                      />
-                    </td>
-
                     {/* Actions */}
+
                     <td className="action-icons">
                       <Button
+                        // icon={<FaPlus />}
+                        name="add"
                         className="icon-button add-rooms"
-                        name="add-rooms"
                         onClick={() => openRoomFormForAdd(hotel)}
                       />
 
@@ -364,6 +358,15 @@ export default function AddHotel() {
                         icon={<FaTrash className="icon delete" />}
                         className="icon-button delete"
                         onClick={() => handleDeleteHotel(hotel.hotel_id)}
+                      />
+                    </td>
+
+                    {/* View Rooms */}
+                    <td>
+                      <Button
+                        className="view-rooms-btn"
+                        name="View Rooms"
+                        onClick={() => openRoomsListModal(hotel)}
                       />
                     </td>
                   </tr>
