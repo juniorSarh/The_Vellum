@@ -40,7 +40,7 @@ const initialState: BookingState = {
   error: null,
 };
 
-const API_URL = "http://localhost:4040/api/bookings";
+const API_URL = "https://the-vellum.onrender.com/api/bookings";
 
 // ----------------------------
 // Async Thunks

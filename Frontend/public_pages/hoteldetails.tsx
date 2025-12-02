@@ -89,7 +89,7 @@ export default function HotelDetails() {
   }, [hotel, galleryImages.length]);
 
   const buildImageUrl = (url: string) =>
-    url.startsWith("http") ? url : `http://localhost:4040/${url}`;
+    url.startsWith("http") ? url : `https://the-vellum.onrender.com/${url}`;
 
   const openLightboxAt = (url?: string | null) => {
     if (!url || allImages.length === 0) return;
@@ -154,8 +154,7 @@ export default function HotelDetails() {
     setReservation((prev) => ({ ...prev, [name]: value }));
   };
 
-const [visibleCount, setVisibleCount] = useState(8);
-
+  const [visibleCount, setVisibleCount] = useState(8);
 
   // --- SHARE HANDLER ---
   const handleShare = async () => {
@@ -212,7 +211,7 @@ const [visibleCount, setVisibleCount] = useState(8);
 
       try {
         const res = await fetch(
-          `http://localhost:4040/api/reviews/hotel/${id}`
+          `https://the-vellum.onrender.com/api/reviews/hotel/${id}`
         );
         if (!res.ok) {
           const msg = (await res.json().catch(() => null))?.message;
