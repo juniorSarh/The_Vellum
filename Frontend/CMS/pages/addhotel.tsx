@@ -4,7 +4,7 @@ import Footer from "../../src/components/Footer";
 import HotelForm from "../../src/components/hotelModal";
 import "../../src/assets/css/addHotel.css";
 
-import { FaEdit, FaTrash, FaArrowLeft, FaPlus } from "react-icons/fa";
+import { FaEdit, FaTrash, FaArrowLeft} from "react-icons/fa";
 import Button from "../../src/components/Button";
 
 import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
