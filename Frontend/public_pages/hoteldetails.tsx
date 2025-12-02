@@ -24,6 +24,7 @@ import {
   fetchUserFavourites,
 } from "../src/storeSlices/favouritesSlice";
 import type { RootState } from "../store";
+import PrivatNav from "../src/components/PrivatNav";
 
 // ---- REVIEW TYPE ----
 interface Review {
@@ -154,8 +155,7 @@ export default function HotelDetails() {
     setReservation((prev) => ({ ...prev, [name]: value }));
   };
 
-const [visibleCount, setVisibleCount] = useState(8);
-
+  const [visibleCount, setVisibleCount] = useState(8);
 
   // --- SHARE HANDLER ---
   const handleShare = async () => {
@@ -298,10 +298,7 @@ const [visibleCount, setVisibleCount] = useState(8);
 
   return (
     <div className="hotel-details-page">
-      {/* NAV */}
-      <div className="nav-row">
-        <NavBar />
-      </div>
+      <PrivatNav />
 
       {/* MAIN */}
       <div className="hotel-details-wrapper">

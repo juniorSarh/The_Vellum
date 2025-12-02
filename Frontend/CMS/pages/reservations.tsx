@@ -167,11 +167,9 @@ const ReservationList = () => {
   
   return (
     <div className="reservationPage">
-      <div className="nav">
+  
         <PrivatNav />
-      </div>
-
-      <div className="resBody">
+    <div className="resBody">
         <div className="backButton">
           <Button
             name=""
