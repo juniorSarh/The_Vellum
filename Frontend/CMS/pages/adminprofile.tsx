@@ -38,7 +38,7 @@ export default function AdminProfile() {
 
     try {
       const response = await fetch(
-        `http://localhost:4040/api/admins/upload/${adminId}/image`,
+        `https://the-vellum.onrender.com/api/admins/upload/${adminId}/image`,
         {
           method: "PATCH",
           body: formData,
@@ -59,7 +59,9 @@ export default function AdminProfile() {
         dispatch(setAdmin(updatedAdmin));
 
         // 4️⃣ Update stored image URL
-        setProfilePic(`http://localhost:4040/uploads/${result.image}`);
+        setProfilePic(
+          `https://the-vellum.onrender.com/uploads/${result.image}`
+        );
       }
     } catch (err) {
       console.error("Upload failed:", err);
@@ -86,7 +88,7 @@ export default function AdminProfile() {
                   src={
                     profilePic || // instant preview before upload
                     (admin?.image // saved image from DB/localStorage
-                      ? `http://localhost:4040/uploads/${admin.image}`
+                      ? `https://the-vellum.onrender.com/uploads/${admin.image}`
                       : "/default-avatar.png") // fallback
                   }
                   alt="Profile"
@@ -155,9 +157,3 @@ export default function AdminProfile() {
     </div>
   );
 }
-
-
-
-
-           
-

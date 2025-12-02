@@ -26,7 +26,7 @@ const initialState: ReviewState = {
   error: null,
 };
 
-const BASE_URL = "http://localhost:4040/api/reviews";
+const BASE_URL = "https://the-vellum.onrender.com/api/reviews";
 
 // ==============================================================
 // 1️⃣ FETCH REVIEWS (optional filters)

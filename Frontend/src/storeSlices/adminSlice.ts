@@ -45,7 +45,7 @@ export const registerAdmin = createAsyncThunk<
   { rejectValue: string }
 >("admin/register", async (data, { rejectWithValue }) => {
   try {
-    const response = await fetch("http://localhost:4040/api/admins/register", {
+    const response = await fetch("https://the-vellum.onrender.com/api/admins/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -70,7 +70,7 @@ export const loginAdmin = createAsyncThunk<
   { rejectValue: string }
 >("admin/login", async (data, { rejectWithValue }) => {
   try {
-    const response = await fetch("http://localhost:4040/api/admins/login", {
+    const response = await fetch("https://the-vellum.onrender.com/api/admins/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -96,7 +96,7 @@ export const updateAdminProfile = createAsyncThunk<
 >("admin/updateProfile", async ({ id, updates }, { rejectWithValue }) => {
   try {
     const response = await fetch(
-      `http://localhost:4040/api/admins/${id}`,
+      `https://the-vellum.onrender.com/api/admins/${id}`,
       {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },

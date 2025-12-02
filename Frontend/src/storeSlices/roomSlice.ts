@@ -26,7 +26,7 @@ const initialState: RoomState = {
   error: null,
 };
 
-const BASE_URL = "http://localhost:4040/api/rooms";
+const BASE_URL = "https://the-vellum.onrender.com/api/rooms";
 
 // ==============================================================
 // 1️⃣ ADD ROOM (adroom)
