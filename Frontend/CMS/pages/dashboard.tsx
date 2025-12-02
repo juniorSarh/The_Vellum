@@ -114,11 +114,10 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <div className="nav">
-        <PrivatNav />
-      </div>
 
       <div className="dash">
+        <PrivatNav />
+
         {/* Top buttons */}
         <div className="btns">
           <SearchBar

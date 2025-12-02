@@ -54,11 +54,8 @@ const RegisteredUsers = () => {
 
   return (
     <div className="reservationPage">
-      <div className="nav">
-        <PrivatNav />
-      </div>
-
-      <div className="resBody">
+      <PrivatNav />
+    <div className="resBody">
         <div className="top-section">
           <div className="backButton">
             <Button

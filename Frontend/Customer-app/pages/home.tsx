@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Footer from "../../src/components/Footer";
 import HotelCard from "../../src/components/hotelCard";
 import SearchBar from "../../src/components/searchBar";
-import PrivateNavBar from "../../src/components/PrivateNaveBar";
+import PrivateNav from "../../src/components/PrivatNav";
 import "../../src/Landing.css";
 
 import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
@@ -60,7 +60,7 @@ export default function Home() {
 
   return (
     <div className="landing-wrapper">
-      <PrivateNavBar />
+      <PrivateNav />
 
       {/* Hero Section */}
       <section className="hero-banner">

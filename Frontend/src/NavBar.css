@@ -1,70 +1,94 @@
+/* Navbar container */
 .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   background-color: black;
-  padding: 12px 20px;
+  padding: 12px 24px; /* slightly more horizontal padding */
   border-bottom: 2px solid #bfbfbf;
+  min-height: 60px; /* consistent height */
+  box-sizing: border-box;
 }
 
+/* Left section: logo + title */
 .navbar-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
-img {
-  width: 25px;
-  height: 25px;
+/* Logo styling */
+.navbar-left img {
+  width: 32px;
+  height: 32px;
   background: white;
   border: 1px solid #000;
+  border-radius: 6px;
+  object-fit: cover;
 }
 
+/* Title text */
 .title {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: bold;
   color: white;
- 
+  margin: 0;
 }
 
+/* Right section: buttons */
 .navbar-right {
   display: flex;
   align-items: center;
-  gap: 10px;
-  border: none;
-
+  gap: 12px;
 }
 
+/* General buttons */
 .nav-btn {
-  padding: 6px 16px;
-border: none;
+  padding: 8px 18px;
+  border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  transition: 0.3s ease;
+  font-size: 15px;
+  border-radius: 6px;
+  min-height: 42px; /* same as PrivatNav */
+  transition: all 0.3s ease;
 }
 
+/* Hover effect for buttons */
 .nav-btn:hover {
   background: #ebebeb;
 }
 
-.link-reset{
-text-decoration: none;
+/* Reset links */
+.link-reset {
+  text-decoration: none;
 }
 
+/* Profile icon button */
 .profile-btn {
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  font-weight: 400;
+  display: flex;
   justify-content: center;
   align-items: center;
-  text-align: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
   border: none;
   cursor: pointer;
+  background: white;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* Hover effect for profile icon */
 .profile-btn:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Align icon inside profile button */
+.profile-btn svg {
+  font-size: 22px;
+  color: black;
 }

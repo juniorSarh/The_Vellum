@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 
 
 const BookingHistory = () => {
+  const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useAppDispatch();
 
   // Logged-in customer
@@ -189,6 +190,28 @@ Total: R${total}`;
     }
   };
 
+  // handle search
+  // search handler
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+  };
+
+  // Filter favourites based on search term
+  // Filter bookings based on search term (hotel name + location)
+  const filteredBookings = bookings.filter((b) => {
+    const term = searchTerm.toLowerCase();
+
+    const hotelName = b.hotel_name?.toLowerCase() || "";
+    const location = (b as any).location?.toLowerCase() || ""; // make sure your booking has location
+    const roomType = b.room_type?.toLowerCase() || "";
+
+    return (
+      hotelName.includes(term) ||
+      location.includes(term) ||
+      roomType.includes(term)
+    );
+  });
+
   // --- Guards & UI ---
 
   if (!customer) {
@@ -220,7 +243,10 @@ Total: R${total}`;
           <div className="bookings-header">
             <h2 className="section-title">Your Booking History</h2>
             <div className="search-bar">
-              <SearchBar placeholder="Search bookings..." onChange={() => {}} />
+              <SearchBar
+                placeholder="Find previous bookings..."
+                onChange={(value) => handleSearchChange(value)}
+              />
             </div>
           </div>
 
@@ -229,130 +255,143 @@ Total: R${total}`;
           )}
 
           <div className="bookings-list">
-            {bookings.map((b) => {
-              const bookingKey = b.booking_id ?? 0;
+            {/* Show message when search returns no results */}
+            {searchTerm && filteredBookings.length === 0 && (
+              <p className="empty-message">
+                Couldn't find a match, please try a different search.
+              </p>
+            )}
 
-              return (
-                <div key={b.booking_id} className="booking-card">
-                  <div className="booking-header">
-                    {b.booking_id && (
-                      <div className="top-right-buttons">
-                        {favourites.some(
-                          (f) =>
-                            f.hotel_id === (b as any).hotel_id ||
-                            // fallback: match by room->hotel
-                            rooms.find(
-                              (r) =>
-                                r.room_id === b.room_id &&
-                                r.hotel_id === f.hotel_id
-                            )
-                        ) ? (
-                          <AiFillHeart
-                            className="favorite-btn active"
-                            onClick={() => toggleFavorite(b)}
+            {/* Render filtered results */}
+            {filteredBookings.length > 0 &&
+              filteredBookings.map((b) => {
+                 const bookingKey = b.booking_id ?? 0;
+
+                return (
+                  <div key={b.booking_id} className="booking-card">
+                    <div className="booking-header">
+                      {b.booking_id && (
+                        <div className="top-right-buttons">
+                          {favourites.some(
+                            (f) =>
+                              f.hotel_id === (b as any).hotel_id ||
+                              // fallback: match by room->hotel
+                              rooms.find(
+                                (r) =>
+                                  r.room_id === b.room_id &&
+                                  r.hotel_id === f.hotel_id
+                              )
+                          ) ? (
+                            <AiFillHeart
+                              className="favorite-btn active"
+                              onClick={() => toggleFavorite(b)}
+                            />
+                          ) : (
+                            <AiOutlineHeart
+                              className="favorite-btn"
+                              onClick={() => toggleFavorite(b)}
+                            />
+                          )}
+
+                          <FiShare2
+                            className="share-btn"
+                            onClick={() => handleShare(b)}
                           />
-                        ) : (
-                          <AiOutlineHeart
-                            className="favorite-btn"
-                            onClick={() => toggleFavorite(b)}
-                          />
-                        )}
-
-                        <FiShare2
-                          className="share-btn"
-                          onClick={() => handleShare(b)}
-                        />
-                      </div>
-                    )}
-
-                    <div>
-                      <p className="booking-hotel">{b.hotel_name ?? "Hotel"}</p>
-                      {b.room_type && (
-                        <p className="booking-room-type">
-                          Room type: {b.room_type}
-                        </p>
+                        </div>
                       )}
+
+                      <div>
+                        <p className="booking-hotel">
+                          {b.hotel_name ?? "Hotel"}
+                        </p>
+                        {b.room_type && (
+                          <p className="booking-room-type">
+                            Room type: {b.room_type}
+                          </p>
+                        )}
+                      </div>
+
+                      <span
+                        className={`booking-status ${
+                          b.status ? b.status.toLowerCase() : ""
+                        }`}
+                      >
+                        {b.status}
+                      </span>
                     </div>
 
-                    <span
-                      className={`booking-status ${
-                        b.status ? b.status.toLowerCase() : ""
-                      }`}
-                    >
-                      {b.status}
-                    </span>
-                  </div>
+                    <div className="booking-row">
+                      <span>Check-in:</span>
+                      <span>
+                        {new Date(b.check_in_date).toLocaleDateString()}
+                      </span>
+                    </div>
 
-                  <div className="booking-row">
-                    <span>Check-in:</span>
-                    <span>
-                      {new Date(b.check_in_date).toLocaleDateString()}
-                    </span>
-                  </div>
+                    <div className="booking-row">
+                      <span>Check-out:</span>
+                      <span>
+                        {new Date(b.check_out_date).toLocaleDateString()}
+                      </span>
+                    </div>
 
-                  <div className="booking-row">
-                    <span>Check-out:</span>
-                    <span>
-                      {new Date(b.check_out_date).toLocaleDateString()}
-                    </span>
-                  </div>
+                    <div className="booking-total">
+                      Total: R
+                      {(() => {
+                        const raw = b.total_cost;
+                        const numeric =
+                          typeof raw === "string"
+                            ? parseFloat(raw)
+                            : Number(raw);
+                        return Number.isFinite(numeric)
+                          ? numeric.toFixed(2)
+                          : String(raw ?? "0.00");
+                      })()}
+                    </div>
 
-                  <div className="booking-total">
-                    Total: R
-                    {(() => {
-                      const raw = b.total_cost;
-                      const numeric =
-                        typeof raw === "string" ? parseFloat(raw) : Number(raw);
-                      return Number.isFinite(numeric)
-                        ? numeric.toFixed(2)
-                        : String(raw ?? "0.00");
-                    })()}
-                  </div>
+                    {/* Rating stars */}
+                    <div className="booking-rating">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <span
+                          key={star}
+                          className={`star ${
+                            ratings[bookingKey] >= star ? "filled" : ""
+                          }`}
+                          onClick={() =>
+                            b.booking_id && handleRatingChange(bookingKey, star)
+                          }
+                        >
+                          ★
+                        </span>
+                      ))}
+                    </div>
 
-                  {/* Rating stars */}
-                  <div className="booking-rating">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <span
-                        key={star}
-                        className={`star ${
-                          ratings[bookingKey] >= star ? "filled" : ""
-                        }`}
+                    {/* Comment + submit */}
+                    <div className="booking-comment">
+                      <textarea
+                        placeholder="Leave a comment..."
+                        value={comments[bookingKey] || ""}
+                        onChange={(e) =>
+                          handleCommentChange(bookingKey, e.target.value)
+                        }
+                      />
+
+                      <button
+                        className="comment-btn"
+                        disabled={
+                          !b.booking_id ||
+                          !comments[bookingKey]?.trim() ||
+                          !ratings[bookingKey]
+                        }
                         onClick={() =>
-                          b.booking_id && handleRatingChange(bookingKey, star)
+                          submitComment(b, comments[bookingKey] || "")
                         }
                       >
-                        ★
-                      </span>
-                    ))}
+                        Submit
+                      </button>
+                    </div>
                   </div>
-
-                  {/* Comment + submit */}
-                  <div className="booking-comment">
-                    <textarea
-                      placeholder="Leave a comment..."
-                      value={comments[bookingKey] || ""}
-                      onChange={(e) =>
-                        handleCommentChange(bookingKey, e.target.value)
-                      }
-                    />
-
-                    <button
-                      className="comment-btn"
-                      disabled={
-                        !b.booking_id ||
-                        !comments[bookingKey]?.trim() ||
-                        !ratings[bookingKey]
-                      }
-                      onClick={() =>
-                        submitComment(b, comments[bookingKey] || "")
-                      }
-                    >
-                      Submit
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
           </div>
         </div>
         <Footer />

@@ -1,6 +1,5 @@
 // src/pages/AddHotel.tsx (or wherever this lives)
 import { useState, useEffect } from "react";
-import PrivateNavBar from "../../src/components/PrivateNaveBar";
 import Footer from "../../src/components/Footer";
 import HotelForm from "../../src/components/hotelModal";
 import "../../src/assets/css/addHotel.css";
@@ -23,6 +22,7 @@ import {
   type Room,
 } from "../../src/storeSlices/roomSlice";
 import SearchBar from "../../src/components/searchBar";
+import PrivatNav from "../../src/components/PrivatNav";
 
 export default function AddHotel() {
   // Hotel modals
@@ -244,10 +244,8 @@ export default function AddHotel() {
 
   return (
     <div className="hotels-page-container">
-      {/* NAVBAR */}
-      <div className="nav">
-        <PrivateNavBar />
-      </div>
+     <PrivatNav />
+   
 
       <div className="top-actions">
         <Button
@@ -347,23 +345,25 @@ export default function AddHotel() {
 
                   {/* Actions */}
                   <td className="action-icons">
-                    <Button
-                      className="icon-button add-rooms"
-                      name="add-rooms"
-                      onClick={() => openRoomFormForAdd(hotel)}
-                    />
+                    <div className="icons-wrapper">
+                      <Button
+                        className="icon-button add-rooms"
+                        name="add-rooms"
+                        onClick={() => openRoomFormForAdd(hotel)}
+                      />
 
-                    <Button
-                      icon={<FaEdit />}
-                      className="icon-button edit"
-                      onClick={() => openEditHotelModal(hotel)}
-                    />
+                      <Button
+                        icon={<FaEdit />}
+                        className="icon-button edit"
+                        onClick={() => openEditHotelModal(hotel)}
+                      />
 
-                    <Button
-                      icon={<FaTrash className="icon delete" />}
-                      className="icon-button delete"
-                      onClick={() => handleDeleteHotel(hotel.hotel_id)}
-                    />
+                      <Button
+                        icon={<FaTrash className="icon delete" />}
+                        className="icon-button delete"
+                        onClick={() => handleDeleteHotel(hotel.hotel_id)}
+                      />
+                    </div>
                   </td>
                 </tr>
               ))
