@@ -42,7 +42,6 @@ const FavouritesPage: React.FC = () => {
   return (
     <>
       <PrivatNav />
-
       <div className="contant">
         <div className="search">
           <SearchBar
@@ -51,7 +50,9 @@ const FavouritesPage: React.FC = () => {
             placeholder="Find your favourite hotels..."
           />
         </div>
-
+        <button className="back-btn" onClick={() => navigate("/user-profile")}>
+          ⬅
+        </button>
         {loading && (
           <h2 style={{ textAlign: "center" }}>Loading favourites...</h2>
         )}

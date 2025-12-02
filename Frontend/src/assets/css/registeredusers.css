@@ -1,11 +1,10 @@
-/* RESET */
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* PAGE WRAPPER */
 .reservationPage {
   width: 100%;
   min-height: 100vh;
@@ -14,8 +13,10 @@
   background: #f7f7f7;
 }
 
+.SearchBar{
+  padding-top: 1%;
+}
 
-/* NAVIGATION */
 .nav {
   width: 100%;
   background: white;
@@ -25,22 +26,10 @@
   z-index: 20;
 }
 
-/* MAIN CONTENT AREA */
 .resBody {
   padding: 2rem;
   width: 100%;
-  flex: 1;        /* ← Add this */
-}
-
-
-/* TOP SECTION (Back button + Search Bar) */
-.top-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-  gap: 1rem;
+  flex: 1;        
 }
 
 .backButton .back {
@@ -50,13 +39,7 @@
   cursor: pointer;
 }
 
-/* SEARCH BAR WRAPPER */
-.SearchBar {
-  width: 300px;
-  max-width: 100%;
-}
 
-/* PAGE CONTENT */
 .page-content {
   margin-top: 1rem;
 }
@@ -68,23 +51,17 @@
   color: #333;
 }
 
-/* USERS LIST */
+
 .List {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-/* FOOTER */
 footer {
   margin-top: auto;
 }
 
-/* ───────────────────────────────────────────── */
-/* 🔥 RESPONSIVE MEDIA QUERIES */
-/* ───────────────────────────────────────────── */
-
-/* TABLETS */
 @media (max-width: 992px) {
   .resBody {
     padding: 1.5rem;
@@ -102,9 +79,9 @@ footer {
     align-items: flex-start;
   }
 
-  .SearchBar {
+  /* .SearchBar {
     width: 100%;
-  }
+  } */
 
   .resBody {
     padding: 1rem;

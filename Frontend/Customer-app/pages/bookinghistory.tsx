@@ -16,6 +16,11 @@ import { FiShare2 } from "react-icons/fi";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import "../../src/bookingHistory.css";
 import SearchBar from "../../src/components/searchBar";
+import { useNavigate } from "react-router-dom";
+
+
+
+
 
 const BookingHistory = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,6 +35,8 @@ const BookingHistory = () => {
   const { bookings, loading, error } = useAppSelector(
     (state: RootState) => state.booking
   );
+
+  const navigate = useNavigate();
 
   // Favourites
   const { list: favourites } = useAppSelector(
@@ -228,6 +235,9 @@ Total: R${total}`;
   return (
     <>
       <PrivatNav />
+      <button className="back-btn" onClick={() => navigate("/user-profile")}>
+        ⬅
+      </button>
       <div className="page-container">
         <div className="bookings-wrapper">
           <div className="bookings-header">

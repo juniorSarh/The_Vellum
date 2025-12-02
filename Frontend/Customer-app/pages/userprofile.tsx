@@ -3,13 +3,12 @@ import Button from "../../src/components/Button";
 import ProfileModal from "../../src/components/profileModal";
 import type { RootState } from "../../store";
 import "../../src/Userprofile.css";
-import { FaArrowLeft } from "react-icons/fa";
 import logo from "../../src/assets/The-vellum-logo.png";
 import Footer from "../../src/components/Footer";
 import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
 import { logout, setUser } from "../../src/storeSlices/customerSlice";
 import PrivatNav from "../../src/components/PrivatNav";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const ProfilePage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -84,27 +83,29 @@ const ProfilePage: React.FC = () => {
     navigate("/booking-history"); // 👈 your booking history route
   };
 
+   const handleFavouritesClick = () => {
+     navigate("/favourites"); // 👈 your favourites route
+   };
+
   return (
     <>
       <PrivatNav />
       <div className="page-container">
         <div className="profile-wrapper">
           <aside className="profile-sidebar">
-            <Button
-              icon={<FaArrowLeft />}
-              className="back-btn"
-              onClick={() => window.history.back()}
-            />
+          
 
             <div className="sidebar-logo">
               <img src={logo} alt="Logo" />
             </div>
-
-            <Link to="/favourites">
-              <button className="sidebar-option" type="button">
-                Favorites
-              </button>
-            </Link>
+            
+            <button
+              className="sidebar-option"
+              type="button"
+              onClick={handleFavouritesClick} // 👈 navigate to favourites
+            >
+              Favorites
+            </button>
 
             <button
               className="sidebar-option"
@@ -114,56 +115,71 @@ const ProfilePage: React.FC = () => {
               My Bookings
             </button>
           </aside>
-{/* Profile Image */}
-<div className="profile-image-container">
-  <div className="profile-image-wrapper">
-    <label htmlFor="upload-photo" className="profile-image-circle">
-      <img
-        src={
-          profilePic ||
-          (customer?.image
-            ? `https://the-vellum.onrender.com/uploads/${customer.image}`
-            : "/default-avatar.png")
-        }
-        alt="Profile"
-        className="profile-img"
-      />
-    </label>
-    <input
-      id="upload-photo"
-      type="file"
-      style={{ display: "none" }}
-      accept="image/*"
-      onChange={handleImageUpload}
-    />
-    <Button
-      name="Upload Photo"
-      className="upload-photo-btn"
-      backgroundColor="#846D29"
-      color="white"
-      onClick={() => document.getElementById("upload-photo")?.click()}
-    />
-  </div>
-</div>
 
-{/* Actions */}
-<div className="profile-actions">
-  <Button
-    name="Edit Profile"
-    backgroundColor="#846D29"
-    color="white"
-    className="profile-btn"
-    onClick={() => setIsModalOpen(true)}
-  />
-  <Button
-    name="Logout"
-    backgroundColor="#846D29"
-    color="white"
-    className="profile-btn"
-    onClick={handleLogout}
-  />
-</div>
-            <ProfileModal
+          <div className="profile-content">
+            {/* Profile Image + Upload */}
+            <div className="profile-image-wrapper">
+              <div className="profile-image-container">
+                <label htmlFor="upload-photo" className="profile-image-circle">
+                  <img
+                    src={
+                      profilePic ||
+                      (customer?.image
+                        ? `https://the-vellum.onrender.com/uploads/${customer.image}`
+                        : "/default-avatar.png")
+                    }
+                    alt="Profile"
+                    className="profile-img"
+                  />
+                </label>
+                <input
+                  id="upload-photo"
+                  type="file"
+                  style={{ display: "none" }}
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                />
+              </div>
+            </div>
+
+            {/* Customer Info */}
+            <div className="profile-info">
+              <p className="profile-label">First Name</p>
+              <p className="profile-value">{customer?.first_name}</p>
+
+              <p className="profile-label">Last Name</p>
+              <p className="profile-value">{customer?.last_name}</p>
+
+              <p className="profile-label">Email</p>
+              <p className="profile-value">{customer?.email}</p>
+
+              <p className="profile-label">Phone</p>
+              <p className="profile-value">{customer?.phone || "Not set"}</p>
+
+              <p className="profile-label">Address</p>
+              <p className="profile-value">{customer?.address || "Not set"}</p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="profile-actions">
+              <Button
+                name="Edit Profile"
+                backgroundColor="#846D29"
+                color="white"
+                className="profile-btn"
+                onClick={() => setIsModalOpen(true)}
+              />
+              <Button
+                name="Logout"
+                backgroundColor="#846D29"
+                color="white"
+                className="profile-btn"
+                onClick={handleLogout}
+              />
+            </div>
+          </div>
+
+          <ProfileModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
             user={customer}
