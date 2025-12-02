@@ -30,14 +30,18 @@ const FavouritesPage: React.FC = () => {
   };
 
   // Filter favourites based on search term
-  const filteredFavourites = list.filter((fav) =>
-    fav.hotel_name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+ const filteredFavourites = list.filter((fav) => {
+   const term = searchTerm.toLowerCase();
+   return (
+     fav.hotel_name?.toLowerCase().includes(term) ||
+     fav.location?.toLowerCase().includes(term)
+   );
+ });
+
 
   return (
     <>
       <PrivatNav />
-
       <div className="contant">
         <div className="search">
           <SearchBar
@@ -46,7 +50,9 @@ const FavouritesPage: React.FC = () => {
             placeholder="Find your favourite hotels..."
           />
         </div>
-
+        <button className="back-btn" onClick={() => navigate("/user-profile")}>
+          ⬅
+        </button>
         {loading && (
           <h2 style={{ textAlign: "center" }}>Loading favourites...</h2>
         )}

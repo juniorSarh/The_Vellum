@@ -8,7 +8,7 @@ import Footer from "../../src/components/Footer";
 import { useAppDispatch, useAppSelector } from "../../src/storeSlices/hooks";
 import { logout, setUser } from "../../src/storeSlices/customerSlice";
 import PrivatNav from "../../src/components/PrivatNav";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const ProfilePage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -83,21 +83,29 @@ const ProfilePage: React.FC = () => {
     navigate("/booking-history"); // 👈 your booking history route
   };
 
+   const handleFavouritesClick = () => {
+     navigate("/favourites"); // 👈 your favourites route
+   };
+
   return (
     <>
       <PrivatNav />
       <div className="page-container">
         <div className="profile-wrapper">
           <aside className="profile-sidebar">
+          
+
             <div className="sidebar-logo">
               <img src={logo} alt="Logo" />
             </div>
-
-            <Link to="/favourites">
-              <button className="sidebar-option" type="button">
-                Favorites
-              </button>
-            </Link>
+            
+            <button
+              className="sidebar-option"
+              type="button"
+              onClick={handleFavouritesClick} // 👈 navigate to favourites
+            >
+              Favorites
+            </button>
 
             <button
               className="sidebar-option"
@@ -109,27 +117,29 @@ const ProfilePage: React.FC = () => {
           </aside>
 
           <div className="profile-content">
-            {/* Profile Image */}
-            <div className="profile-image-container">
-              <label htmlFor="upload-photo" className="profile-image-circle">
-                <img
-                  src={
-                    profilePic ||
-                    (customer?.image
-                      ? `https://the-vellum.onrender.com/uploads/${customer.image}`
-                      : "/default-avatar.png")
-                  }
-                  alt="Profile"
-                  className="profile-img"
+            {/* Profile Image + Upload */}
+            <div className="profile-image-wrapper">
+              <div className="profile-image-container">
+                <label htmlFor="upload-photo" className="profile-image-circle">
+                  <img
+                    src={
+                      profilePic ||
+                      (customer?.image
+                        ? `https://the-vellum.onrender.com/uploads/${customer.image}`
+                        : "/default-avatar.png")
+                    }
+                    alt="Profile"
+                    className="profile-img"
+                  />
+                </label>
+                <input
+                  id="upload-photo"
+                  type="file"
+                  style={{ display: "none" }}
+                  accept="image/*"
+                  onChange={handleImageUpload}
                 />
-              </label>
-              <input
-                id="upload-photo"
-                type="file"
-                style={{ display: "none" }}
-                accept="image/*"
-                onChange={handleImageUpload}
-              />
+              </div>
             </div>
 
             {/* Customer Info */}
@@ -150,7 +160,7 @@ const ProfilePage: React.FC = () => {
               <p className="profile-value">{customer?.address || "Not set"}</p>
             </div>
 
-            {/* Actions */}
+            {/* Action Buttons */}
             <div className="profile-actions">
               <Button
                 name="Edit Profile"
