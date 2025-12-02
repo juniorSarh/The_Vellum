@@ -347,23 +347,25 @@ export default function AddHotel() {
 
                   {/* Actions */}
                   <td className="action-icons">
-                    <Button
-                      className="icon-button add-rooms"
-                      name="add-rooms"
-                      onClick={() => openRoomFormForAdd(hotel)}
-                    />
+                    <div className="icons-wrapper">
+                      <Button
+                        className="icon-button add-rooms"
+                        name="add-rooms"
+                        onClick={() => openRoomFormForAdd(hotel)}
+                      />
 
-                    <Button
-                      icon={<FaEdit />}
-                      className="icon-button edit"
-                      onClick={() => openEditHotelModal(hotel)}
-                    />
+                      <Button
+                        icon={<FaEdit />}
+                        className="icon-button edit"
+                        onClick={() => openEditHotelModal(hotel)}
+                      />
 
-                    <Button
-                      icon={<FaTrash className="icon delete" />}
-                      className="icon-button delete"
-                      onClick={() => handleDeleteHotel(hotel.hotel_id)}
-                    />
+                      <Button
+                        icon={<FaTrash className="icon delete" />}
+                        className="icon-button delete"
+                        onClick={() => handleDeleteHotel(hotel.hotel_id)}
+                      />
+                    </div>
                   </td>
                 </tr>
               ))
