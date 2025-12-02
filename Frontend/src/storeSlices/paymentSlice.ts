@@ -38,7 +38,7 @@ export const initializePayment = createAsyncThunk<
       }
 
       const res = await axios.post<InitPaymentResponse>(
-        "http://localhost:4040/api/initialize",
+        "https://the-vellum.onrender.com/api/initialize",
         { email, amount: numericAmount }
       );
 

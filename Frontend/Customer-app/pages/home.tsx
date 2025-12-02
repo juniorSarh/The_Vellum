@@ -37,7 +37,7 @@ export default function Home() {
   useEffect(() => {
     const fetchHotels = async () => {
       try {
-        const res = await fetch("http://localhost:4040/api/hotels");
+        const res = await fetch("https://the-vellum.onrender.com/api/hotels");
         const data = await res.json();
         dispatch(setHotels(data));
         dispatch(fetchUserFavourites(customer_id));

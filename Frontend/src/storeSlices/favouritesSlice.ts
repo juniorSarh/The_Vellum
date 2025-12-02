@@ -28,7 +28,7 @@ export const fetchUserFavourites = createAsyncThunk(
   "favourites/fetchUserFavourites",
   async (customer_id: number, { rejectWithValue }) => {
     try {
-      const res = await fetch(`http://localhost:4040/api/favourites/customers/${customer_id}`);
+      const res = await fetch(`https://the-vellum.onrender.com/api/favourites/customers/${customer_id}`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to fetch favourites");
       return data as Favourite[];
@@ -47,7 +47,7 @@ export const addToFavourites = createAsyncThunk(
   ) => {
     try {
         console.log("Adding to favourites:", { customer_id, hotel_id });
-      const res = await fetch("http://localhost:4040/api/favourites", {
+      const res = await fetch("https://the-vellum.onrender.com/api/favourites", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ customer_id, hotel_id }),
@@ -70,7 +70,7 @@ export const removeFavourite = createAsyncThunk(
   ) => {
     try {
         console.log("Removing from favourites:", { customer_id, hotel_id });
-      const res = await fetch("http://localhost:4040/api/favourites", {
+      const res = await fetch("https://the-vellum.onrender.com/api/favourites", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ customer_id, hotel_id }),
