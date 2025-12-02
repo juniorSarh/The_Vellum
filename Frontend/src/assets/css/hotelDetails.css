@@ -199,6 +199,104 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
 }
 
+ /* REVIEWS SECTION */
+.review-panel {
+  background: #E5E5E5;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.review-title {
+  font-weight: 600;
+  font-size: 16px;
+}
+.rating-summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.rating-value {
+  font-weight: 700;
+  font-size: 16px;
+}
+.rating-stars {
+  display: flex;
+  gap: 2px;
+  font-size: 14px;
+  color: #EAC248;
+}
+.rating-count {
+  font-size: 13px;
+  opacity: 0.8;
+}
+.review-loading,
+.review-error,
+.review-empty {
+  font-size: 13px;
+  margin-top: 4px;
+}
+.review-error {
+  color: #B71C1C;
+}
+.review-item {
+  padding: 8px 0;
+  border-top: 1px solid #ccc;
+  margin-top: 6px;
+  font-size: 14px;
+}
+.review-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2px;
+  font-size: 12px;
+  opacity: 0.8;
+}
+.review-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+.review-stars {
+  display: flex;
+  gap: 2px;
+  color: #EAC248;
+  font-size: 13px;
+}
+.review-rating-badge {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid #ddd;
+}
+.review-comment {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+
+.view-more-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  color: #846d29;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.view-more-btn:hover {
+  text-decoration: underline;
+}
+
 /* ============================= */
 /* RESERVATION SECTION (LEFT)   */
 /* ============================= */

@@ -3,7 +3,6 @@ import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { useAppSelector } from "./storeSlices/hooks";
 import type { RootState } from "../store";
 
-
 import Landing from "../public_pages/landing";
 import Login from "../public_pages/login";
 import Register from "../public_pages/register";
@@ -20,6 +19,7 @@ import RegisteredUsers from "../CMS/pages/registeredusers";
 import AddHotel from "../CMS/pages/addhotel";
 import AddAdmin from "../CMS/pages/addadmin";
 import AdminProfile from "../CMS/pages/adminprofile";
+import ReservationEdit from "../CMS/pages/reservationEdit";
 import Error404 from "../public_pages/error404";
 
 // ---- ProtectedRoute wrapper ----
@@ -59,6 +59,7 @@ function App() {
         {/* Admin-style routes */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/reservations" element={<Reservations />} />
+        <Route path="/reservations/:id/edit" element={<ReservationEdit />} />
         <Route path="/registered-users" element={<RegisteredUsers />} />
         <Route path="/add-hotel" element={<AddHotel />} />
         <Route path="/add-admin" element={<AddAdmin />} />

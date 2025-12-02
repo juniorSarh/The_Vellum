@@ -91,6 +91,7 @@ export default function Landing() {
                 <HotelCard
                   key={hotel.hotel_id}
                   name={hotel.name}
+                  hotelId={hotel.hotel_id}
                   location={hotel.location}
                   isLoggedIn={false}
                   image={imageUrl}

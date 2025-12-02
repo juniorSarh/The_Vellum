@@ -105,6 +105,24 @@ export const deleteroom = createAsyncThunk<
   }
 });
 
+
+// Fetch a single room by ID
+export const fetchRoomById =async (roomId : number) => {
+  try {
+    const response = await fetch(`${BASE_URL}/${roomId}`);
+    const result = await response.json();
+
+    if (!response.ok) {
+      return result.error || "Failed to fetch room";
+    }
+
+    return result as Room;
+  } catch (err) {
+    return "Failed to fetch room";
+  }
+};
+
+
 // ==============================================================
 // Optional: FETCH ROOMS (for page load)
 // ==============================================================
@@ -142,7 +160,7 @@ const roomSlice = createSlice({
     },
     setRooms(state, action: PayloadAction<Room[]>) {
       state.rooms = action.payload;
-    },
+    }
   },
   extraReducers: (builder) => {
     // ------- fetchRooms -------
@@ -218,6 +236,8 @@ const roomSlice = createSlice({
     });
   },
 });
+
+
 
 export const { clearRoomError, setRooms } = roomSlice.actions;
 export default roomSlice.reducer;
