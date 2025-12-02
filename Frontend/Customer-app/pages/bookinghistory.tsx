@@ -13,8 +13,8 @@ import PrivatNav from "../../src/components/PrivatNav";
 import Footer from "../../src/components/Footer";
 import type { RootState } from "../../store";
 import { FiShare2 } from "react-icons/fi";
-import { AiFillHeart, AiOutlineHeart } from "react-icons/ai"; 
-import "../../src/bookinghistory.css";
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
+import "../../src/bookingHistory.css";
 import SearchBar from "../../src/components/searchBar";
 
 const BookingHistory = () => {
@@ -150,7 +150,7 @@ Total: R${total}`;
     const star_rating = ratings[bookingKey] ?? null;
 
     try {
-      const res = await fetch("http://localhost:4040/api/reviews", {
+      const res = await fetch("https://the-vellum.onrender.com/api/reviews", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -247,7 +247,7 @@ Total: R${total}`;
                             onClick={() => toggleFavorite(b)}
                           />
                         )}
-                       
+
                         <FiShare2
                           className="share-btn"
                           onClick={() => handleShare(b)}

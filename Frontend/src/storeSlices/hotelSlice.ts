@@ -30,7 +30,7 @@ const initialState: HotelState = {
 };
 
 // Base URL (match your backend port / path)
-const BASE_URL = "http://localhost:4040/api/hotels";
+const BASE_URL = "https://the-vellum.onrender.com/api/hotels";
 
 // ==============================================================
 // 1️⃣ ADD HOTEL  (adhotel)
