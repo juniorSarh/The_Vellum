@@ -1,3 +1,4 @@
+// src/pages/AddHotel.tsx (or wherever this lives)
 import { useState, useEffect } from "react";
 import PrivateNavBar from "../../src/components/PrivateNaveBar";
 import Footer from "../../src/components/Footer";
@@ -50,7 +51,7 @@ export default function AddHotel() {
   const [roomError, setRoomError] = useState<string | null>(null);
   const [roomLoading, setRoomLoading] = useState(false);
 
-  //search state
+  // search state
   const [searchTerm, setSearchTerm] = useState("");
 
   // Handle search input change
@@ -218,7 +219,7 @@ export default function AddHotel() {
     }
   };
 
-  // Rooms count per hotel
+  // Rooms for a hotel
   const getRoomsForHotel = (hotelId?: number): Room[] => {
     if (!hotelId) return [];
     return rooms.filter((room) => room.hotel_id === hotelId);
@@ -240,7 +241,6 @@ export default function AddHotel() {
         return {};
     }
   };
-
 
   return (
     <div className="hotels-page-container">
@@ -279,10 +279,12 @@ export default function AddHotel() {
         <table className="hotels-table">
           <thead>
             <tr>
+              <th>Main Image</th>
               <th>Hotel Name</th>
               <th>Location</th>
               <th>Rating</th>
               <th>Description</th>
+              <th>Gallery</th>
               <th>Rooms Available</th>
               <th>List of Rooms</th>
               <th>Actions</th>
@@ -292,17 +294,44 @@ export default function AddHotel() {
           <tbody>
             {filteredHotels.length === 0 ? (
               <tr>
-                <td colSpan={7} style={{ textAlign: "center" }}>
+                <td colSpan={9} style={{ textAlign: "center" }}>
                   No hotels match your search.
                 </td>
               </tr>
             ) : (
               filteredHotels.map((hotel) => (
                 <tr key={hotel.hotel_id}>
+                  {/* Main image */}
+                  <td>
+                    {hotel.main_image ? (
+                      <img
+                        src={hotel.main_image}
+                        alt={hotel.name}
+                        style={{
+                          width: "70px",
+                          height: "50px",
+                          objectFit: "cover",
+                          borderRadius: "6px",
+                        }}
+                      />
+                    ) : (
+                      <span>-</span>
+                    )}
+                  </td>
+
                   <td>{hotel.name}</td>
                   <td>{hotel.location}</td>
                   <td>{hotel.star_rating ?? "-"}</td>
                   <td>{hotel.description ?? "-"}</td>
+
+                  {/* Gallery info */}
+                  <td>
+                    {hotel.images && hotel.images.length > 0 ? (
+                      <span>{hotel.images.length} image(s)</span>
+                    ) : (
+                      <span>-</span>
+                    )}
+                  </td>
 
                   {/* Rooms Available */}
                   <td>{getRoomsAvailableForHotel(hotel.hotel_id)}</td>
@@ -348,7 +377,7 @@ export default function AddHotel() {
         <Footer />
       </div>
 
-      {/* HOTEL MODAL (Add/Edit) – only wrapper; form owns buttons/title */}
+      {/* HOTEL MODAL (Add/Edit) */}
       {isHotelModalOpen && (
         <div className="modal-overlay" onClick={closeHotelModal}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>

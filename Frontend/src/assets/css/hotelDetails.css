@@ -71,8 +71,6 @@ body {
   width: 65%;
 }
 
-/* Back button container (Button already styled globally) */
-
 /* Title & location */
 .hotel-title {
   font-family: "Cinzel", serif;
@@ -86,22 +84,33 @@ body {
   color: #666;
 }
 
-/* Hero image */
+/* MAIN IMAGE DISPLAY / HERO IMAGE */
 .image-container {
   width: 100%;
+  max-width: 800px;
   height: 360px;
+  margin-top: 16px;
+  margin-bottom: 10px;
   background: #e2e2e2;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
   border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .image-container img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
+}
+
+/* Make main image obviously clickable when there are photos */
+.image-container-clickable {
+  cursor: pointer;
+  position: relative;
 }
 
 /* Description */
@@ -117,6 +126,175 @@ body {
   margin-top: 6px;
   line-height: 1.6;
   color: #444;
+}
+
+/* ============================= */
+/* GALLERY THUMBNAILS           */
+/* ============================= */
+
+.gallery-thumbnails {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 20px 0;
+}
+
+/* Each thumbnail "button" */
+.thumb-btn {
+  border: none;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 8px;
+  overflow: hidden;
+  outline: 2px solid transparent;
+  transition:
+    transform 0.15s ease,
+    outline-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.thumb-btn img {
+  width: 70px;
+  height: 60px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Hover state */
+.thumb-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
+/* Active (selected) thumbnail */
+.thumb-btn.active {
+  outline-color: #846d29; /* match your brand gold */
+  box-shadow: 0 0 0 2px #ffffff;
+}
+
+/* VIEW ALL PHOTOS BUTTON */
+.view-all-photos-btn {
+  margin: 8px 0 20px 0;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid #846d29;
+  background: white;
+  color: #846d29;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.view-all-photos-btn:hover {
+  background: #846d29;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+}
+
+ /* REVIEWS SECTION */
+.review-panel {
+  background: #E5E5E5;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.review-title {
+  font-weight: 600;
+  font-size: 16px;
+}
+.rating-summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.rating-value {
+  font-weight: 700;
+  font-size: 16px;
+}
+.rating-stars {
+  display: flex;
+  gap: 2px;
+  font-size: 14px;
+  color: #EAC248;
+}
+.rating-count {
+  font-size: 13px;
+  opacity: 0.8;
+}
+.review-loading,
+.review-error,
+.review-empty {
+  font-size: 13px;
+  margin-top: 4px;
+}
+.review-error {
+  color: #B71C1C;
+}
+.review-item {
+  padding: 8px 0;
+  border-top: 1px solid #ccc;
+  margin-top: 6px;
+  font-size: 14px;
+}
+.review-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2px;
+  font-size: 12px;
+  opacity: 0.8;
+}
+.review-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+.review-stars {
+  display: flex;
+  gap: 2px;
+  color: #EAC248;
+  font-size: 13px;
+}
+.review-rating-badge {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid #ddd;
+}
+.review-comment {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+
+.view-more-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  color: #846d29;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.view-more-btn:hover {
+  text-decoration: underline;
 }
 
 /* ============================= */
@@ -214,6 +392,12 @@ body {
   font-size: 15px;
   font-weight: 500;
   color: #5a4a1b;
+}
+
+/* Nights display (simple spacing) */
+.nights-display {
+  font-size: 14px;
+  color: #555;
 }
 
 /* Reserve button */
@@ -345,6 +529,136 @@ body {
 }
 
 /* ============================= */
+/* LIGHTBOX (CENTERED MODAL)    */
+/* ============================= */
+
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* Large centered modal, not full screen */
+.lightbox-content {
+  position: relative;
+  max-width: 900px;
+  width: 95%;
+  max-height: 90vh;
+  background: #111;
+  border-radius: 12px;
+  padding: 16px 16px 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+/* CLOSE BUTTON */
+.lightbox-close-btn {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 1.8rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* MAIN IMAGE AREA – tall but leaves space below */
+.lightbox-main-image {
+  width: 100%;
+  flex: 1;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-main-image img {
+  width: 100%;
+  max-height: 60vh;  /* big, but leaves room for arrows + thumbs */
+  object-fit: contain; /* change to 'cover' if you prefer edge-to-edge crop */
+  border-radius: 8px;
+}
+
+/* NAVIGATION ARROWS + COUNTER – under the main image */
+.lightbox-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin: 0 0 6px 0;
+}
+
+.lightbox-nav-btn {
+  border: none;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 1.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.lightbox-nav-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+  transform: translateY(-1px);
+}
+
+.lightbox-counter {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+/* LIGHTBOX THUMBNAILS – visible underneath everything */
+.lightbox-thumbs {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 6px;
+  justify-content: center;
+  padding-bottom: 4px;
+}
+
+.lightbox-thumb-btn {
+  border: none;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 6px;
+  overflow: hidden;
+  outline: 2px solid transparent;
+  transition: outline-color 0.15s ease, transform 0.15s ease;
+}
+
+.lightbox-thumb-btn img {
+  width: 70px;
+  height: 60px;
+  object-fit: cover;
+  display: block;
+}
+
+.lightbox-thumb-btn:hover {
+  transform: translateY(-1px);
+}
+
+.lightbox-thumb-btn.active {
+  outline-color: #f5c542;
+}
+
+/* ============================= */
 /* RESPONSIVE BREAKPOINTS       */
 /* ============================= */
 
@@ -379,6 +693,7 @@ body {
 
   .image-container {
     height: 260px;
+    max-width: 100%;
   }
 
   .reservation-form {
@@ -387,6 +702,27 @@ body {
 
   .map-embed {
     height: 200px;
+  }
+
+  .thumb-btn img {
+    width: 80px;
+    height: 70px;
+  }
+
+  .lightbox-content {
+    max-width: 100%;
+    height: auto;
+    max-height: 90vh;
+    padding: 12px 10px 10px;
+  }
+
+  .lightbox-main-image img {
+    max-height: 50vh;
+  }
+
+  .lightbox-thumb-btn img {
+    width: 60px;
+    height: 50px;
   }
 }
 
@@ -419,6 +755,10 @@ body {
   .hotel-right {
     gap: 14px;
   }
+
+  .map-embed {
+    height: 190px;
+  }
 }
 
 @media (max-width: 420px) {
@@ -432,9 +772,5 @@ body {
 
   .reservation-form {
     padding: 14px 12px 16px;
-  }
-
-  .map-embed {
-    height: 190px;
   }
 }
