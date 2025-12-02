@@ -20,7 +20,7 @@ export default function Landing() {
   useEffect(() => {
     const fetchHotels = async () => {
       try {
-        const res = await fetch("http://localhost:4040/api/hotels");
+        const res = await fetch("https://the-vellum.onrender.com/api/hotels");
         if (!res.ok) {
           throw new Error("Failed to fetch hotels");
         }
@@ -84,7 +84,7 @@ export default function Landing() {
                 hotel.images && hotel.images.length > 0
                   ? hotel.images[0].startsWith("http")
                     ? hotel.images[0]
-                    : `http://localhost:4040/${hotel.images[0]}`
+                    : `https://the-vellum.onrender.com/${hotel.images[0]}`
                   : undefined;
 
               return (

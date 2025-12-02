@@ -25,7 +25,9 @@ const ProfilePage: React.FC = () => {
   // Load image from Redux/localStorage on mount
   useEffect(() => {
     if (customer?.image) {
-      setProfilePic(`http://localhost:4040/uploads/${customer.image}`);
+      setProfilePic(
+        `https://the-vellum.onrender.com/uploads/${customer.image}`
+      );
     }
   }, [customer]);
 
@@ -44,7 +46,7 @@ const ProfilePage: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:4040/api/customers/upload/${customer.id}/image`,
+        `https://the-vellum.onrender.com/api/customers/upload/${customer.id}/image`,
         {
           method: "PATCH",
           body: formData,
@@ -63,7 +65,9 @@ const ProfilePage: React.FC = () => {
         const updatedCustomer = { ...customer, image: result.image } as any;
         dispatch(setUser(updatedCustomer));
 
-        setProfilePic(`http://localhost:4040/uploads/${result.image}`);
+        setProfilePic(
+          `https://the-vellum.onrender.com/uploads/${result.image}`
+        );
       }
     } catch (err) {
       console.error("Upload failed:", err);
@@ -89,12 +93,11 @@ const ProfilePage: React.FC = () => {
               <img src={logo} alt="Logo" />
             </div>
 
-            <Link to="/favourites" >
+            <Link to="/favourites">
               <button className="sidebar-option" type="button">
                 Favorites
               </button>
             </Link>
-
 
             <button
               className="sidebar-option"
@@ -113,7 +116,7 @@ const ProfilePage: React.FC = () => {
                   src={
                     profilePic ||
                     (customer?.image
-                      ? `http://localhost:4040/uploads/${customer.image}`
+                      ? `https://the-vellum.onrender.com/uploads/${customer.image}`
                       : "/default-avatar.png")
                   }
                   alt="Profile"

@@ -45,7 +45,7 @@ export const registerCustomer = createAsyncThunk<
 >("customer/register", async (data, { rejectWithValue }) => {
   try {
     const response = await fetch(
-      "http://localhost:4040/api/customers/register",
+      "https://the-vellum.onrender.com/api/customers/register",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -71,7 +71,7 @@ export const loginCustomer = createAsyncThunk<
   { rejectValue: string }
 >("customer/login", async (data, { rejectWithValue }) => {
   try {
-    const response = await fetch("http://localhost:4040/api/customers/login", {
+    const response = await fetch("https://the-vellum.onrender.com/api/customers/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -93,7 +93,7 @@ export const activateCustomer = createAsyncThunk<
   { rejectValue: string }
 >("customer/activate", async (id, { rejectWithValue }) => {
   try {
-    const response = await fetch(`http://localhost:4040/api/customers/${id}/activate`, {
+    const response = await fetch(`https://the-vellum.onrender.com/api/customers/${id}/activate`, {
       method: "PATCH",
     });
 
@@ -117,7 +117,7 @@ export const updateCustomerProfile = createAsyncThunk<
   { rejectValue: string }
 >("customer/updateProfile", async ({ id, updates }, { rejectWithValue }) => {
   try {
-    const response = await fetch(`http://localhost:4040/api/customers/${id}`, {
+    const response = await fetch(`https://the-vellum.onrender.com/api/customers/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updates),
@@ -139,7 +139,7 @@ export const fetchAllCustomers = createAsyncThunk<
   { rejectValue: string }
 >("customer/fetchAll", async (_, { rejectWithValue }) => {
   try {
-    const response = await fetch("http://localhost:4040/api/customers");
+    const response = await fetch("https://the-vellum.onrender.com/api/customers");
     const result = await response.json();
 
     if (!result.success) return rejectWithValue(result.error);
@@ -157,7 +157,7 @@ export const deleteCustomer = createAsyncThunk<
   { rejectValue: string }
 >("customer/delete", async (id, { rejectWithValue }) => {
   try {
-    const response = await fetch(`http://localhost:4040/api/customers/${id}`, {
+    const response = await fetch(`https://the-vellum.onrender.com/api/customers/${id}`, {
       method: "DELETE",
     });
 
@@ -177,7 +177,7 @@ export const deactivateCustomer = createAsyncThunk<
 >("customer/deactivate", async (id, { rejectWithValue }) => {
   try {
     const response = await fetch(
-      `http://localhost:4040/api/customers/${id}/deactivate`,
+      `https://the-vellum.onrender.com/api/customers/${id}/deactivate`,
       {
         method: "PATCH",
       }
