@@ -255,7 +255,7 @@ Total: R${total}`;
             {/* Render filtered results */}
             {filteredBookings.length > 0 &&
               filteredBookings.map((b) => {
-                const bookingKey = b.booking_id ?? 0;
+                 const bookingKey = b.booking_id ?? 0;
 
                 return (
                   <div key={b.booking_id} className="booking-card">
