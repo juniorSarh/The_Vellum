@@ -249,127 +249,129 @@ export default function AddHotel() {
         <PrivateNavBar />
       </div>
 
-      <div className="top-actions">
-        <Button
-          icon={<FaArrowLeft />}
-          className="back-btn"
-          onClick={() => window.history.back()}
-        />
-        <Button
-          className="add-hotel-btn"
-          onClick={openAddHotelModal}
-          name="Add Hotel"
-        />
-      </div>
+      <div className="content">
+        <div className="top-actions">
+          <Button
+            icon={<FaArrowLeft />}
+            className="back-btn"
+            onClick={() => window.history.back()}
+          />
+          <Button
+            className="add-hotel-btn"
+            onClick={openAddHotelModal}
+            name="Add Hotel"
+          />
+        </div>
 
-      <div className="hero-search">
-        <SearchBar
-          value={searchTerm}
-          onChange={handleSearchChange}
-          placeholder="Find a hotel"
-        />
+        <div className="hero-search">
+          <SearchBar
+            value={searchTerm}
+            onChange={handleSearchChange}
+            placeholder="Find a hotel"
+          />
 
-        {/* LOADING / ERROR */}
-        {loading && <p className="status-text">Loading hotels...</p>}
-        {error && <p className="status-text error-text">{error}</p>}
+          {/* LOADING / ERROR */}
+          {loading && <p className="status-text">Loading hotels...</p>}
+          {error && <p className="status-text error-text">{error}</p>}
 
-        {/* TABLE */}
-        <div className="hotels-table-wrapper"></div>
+          {/* TABLE */}
+          <div className="hotels-table-wrapper"></div>
 
-        <table className="hotels-table">
-          <thead>
-            <tr>
-              <th>Main Image</th>
-              <th>Hotel Name</th>
-              <th>Location</th>
-              <th>Rating</th>
-              <th>Description</th>
-              <th>Gallery</th>
-              <th>Rooms Available</th>
-              <th>List of Rooms</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {filteredHotels.length === 0 ? (
+          <table className="hotels-table">
+            <thead>
               <tr>
-                <td colSpan={9} style={{ textAlign: "center" }}>
-                  No hotels match your search.
-                </td>
+                <th>Main Image</th>
+                <th>Hotel Name</th>
+                <th>Location</th>
+                <th>Rating</th>
+                <th>Description</th>
+                <th>Gallery</th>
+                <th>Rooms Available</th>
+                <th>List of Rooms</th>
+                <th>Actions</th>
               </tr>
-            ) : (
-              filteredHotels.map((hotel) => (
-                <tr key={hotel.hotel_id}>
-                  {/* Main image */}
-                  <td>
-                    {hotel.main_image ? (
-                      <img
-                        src={hotel.main_image}
-                        alt={hotel.name}
-                        style={{
-                          width: "70px",
-                          height: "50px",
-                          objectFit: "cover",
-                          borderRadius: "6px",
-                        }}
-                      />
-                    ) : (
-                      <span>-</span>
-                    )}
-                  </td>
+            </thead>
 
-                  <td>{hotel.name}</td>
-                  <td>{hotel.location}</td>
-                  <td>{hotel.star_rating ?? "-"}</td>
-                  <td>{hotel.description ?? "-"}</td>
-
-                  {/* Gallery info */}
-                  <td>
-                    {hotel.images && hotel.images.length > 0 ? (
-                      <span>{hotel.images.length} image(s)</span>
-                    ) : (
-                      <span>-</span>
-                    )}
-                  </td>
-
-                  {/* Rooms Available */}
-                  <td>{getRoomsAvailableForHotel(hotel.hotel_id)}</td>
-
-                  {/* View Rooms */}
-                  <td>
-                    <Button
-                      className="view-rooms-btn"
-                      name="View Rooms"
-                      onClick={() => openRoomsListModal(hotel)}
-                    />
-                  </td>
-
-                  {/* Actions */}
-                  <td className="action-icons">
-                    <Button
-                      className="icon-button add-rooms"
-                      name="add-rooms"
-                      onClick={() => openRoomFormForAdd(hotel)}
-                    />
-
-                    <Button
-                      icon={<FaEdit />}
-                      className="icon-button edit"
-                      onClick={() => openEditHotelModal(hotel)}
-                    />
-
-                    <Button
-                      icon={<FaTrash className="icon delete" />}
-                      className="icon-button delete"
-                      onClick={() => handleDeleteHotel(hotel.hotel_id)}
-                    />
+            <tbody>
+              {filteredHotels.length === 0 ? (
+                <tr>
+                  <td colSpan={9} style={{ textAlign: "center" }}>
+                    No hotels match your search.
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                filteredHotels.map((hotel) => (
+                  <tr key={hotel.hotel_id}>
+                    {/* Main image */}
+                    <td>
+                      {hotel.main_image ? (
+                        <img
+                          src={hotel.main_image}
+                          alt={hotel.name}
+                          style={{
+                            width: "70px",
+                            height: "50px",
+                            objectFit: "cover",
+                            borderRadius: "6px",
+                          }}
+                        />
+                      ) : (
+                        <span>-</span>
+                      )}
+                    </td>
+
+                    <td>{hotel.name}</td>
+                    <td>{hotel.location}</td>
+                    <td>{hotel.star_rating ?? "-"}</td>
+                    <td>{hotel.description ?? "-"}</td>
+
+                    {/* Gallery info */}
+                    <td>
+                      {hotel.images && hotel.images.length > 0 ? (
+                        <span>{hotel.images.length} image(s)</span>
+                      ) : (
+                        <span>-</span>
+                      )}
+                    </td>
+
+                    {/* Rooms Available */}
+                    <td>{getRoomsAvailableForHotel(hotel.hotel_id)}</td>
+
+                    {/* View Rooms */}
+                    <td>
+                      <Button
+                        className="view-rooms-btn"
+                        name="View Rooms"
+                        onClick={() => openRoomsListModal(hotel)}
+                      />
+                    </td>
+
+                    {/* Actions */}
+                    <td className="action-icons">
+                      <Button
+                        className="icon-button add-rooms"
+                        name="add-rooms"
+                        onClick={() => openRoomFormForAdd(hotel)}
+                      />
+
+                      <Button
+                        icon={<FaEdit />}
+                        className="icon-button edit"
+                        onClick={() => openEditHotelModal(hotel)}
+                      />
+
+                      <Button
+                        icon={<FaTrash className="icon delete" />}
+                        className="icon-button delete"
+                        onClick={() => handleDeleteHotel(hotel.hotel_id)}
+                      />
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* FOOTER */}
