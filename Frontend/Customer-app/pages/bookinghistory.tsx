@@ -14,7 +14,7 @@ import Footer from "../../src/components/Footer";
 import type { RootState } from "../../store";
 import { FiShare2 } from "react-icons/fi";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
-import "../../src/bookingHistory.css";
+import "../../src/bookinghistory.css";
 import SearchBar from "../../src/components/searchBar";
 
 const BookingHistory = () => {
