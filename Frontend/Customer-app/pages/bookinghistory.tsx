@@ -12,14 +12,10 @@ import { fetchRooms } from "../../src/storeSlices/roomSlice";
 import PrivatNav from "../../src/components/PrivatNav";
 import Footer from "../../src/components/Footer";
 import type { RootState } from "../../store";
-<<<<<<< HEAD
-import "../../src/bookinghistory.css";
-=======
 import { FiShare2 } from "react-icons/fi";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai"; 
 import "../../src/bookingHistory.css";
 import SearchBar from "../../src/components/searchBar";
->>>>>>> dev
 
 const BookingHistory = () => {
   const dispatch = useAppDispatch();
