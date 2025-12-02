@@ -18,7 +18,7 @@ export const initializePayment = async (req: Request, res: Response) => {
     amount: numericAmount * 100,
     currency: "ZAR" 
   });
-
+console.log('Process Env Paystack Key:', process.env.PAYSTACK_SECRET_KEY);
   const options = {
     hostname: "api.paystack.co",
     port: 443,
