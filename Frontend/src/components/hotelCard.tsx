@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import "./hotelCard.css";
 import { useAppDispatch, useAppSelector } from "../storeSlices/hooks";
@@ -27,7 +26,6 @@ const HotelCard: React.FC<HotelCardProps> = ({
   isLoggedIn,
   onClick,
 }) => {
-  const [isfavorite, setIsFavorite] = useState(isFavorite);
   const dispatch = useAppDispatch();
 
   const customer_id = useAppSelector(
@@ -51,8 +49,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
   const favourite_id = favouritesList.map((fav) => fav.hotel_id)[0];
 
   const toggleFavorite = (e: React.MouseEvent) => {
-    e.stopPropagation(); // prevent triggering card onClick
-    setIsFavorite(!isFavorite);
+    e.stopPropagation(); 
     addHotel(hotelId);
   };
 
