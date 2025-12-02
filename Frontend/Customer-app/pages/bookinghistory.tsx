@@ -13,8 +13,13 @@ import PrivatNav from "../../src/components/PrivatNav";
 import Footer from "../../src/components/Footer";
 import type { RootState } from "../../store";
 import { FiShare2 } from "react-icons/fi";
+<<<<<<< HEAD
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import "../../src/bookingHistory.css";
+=======
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai"; 
+import "../../src/bookinghistory.css";
+>>>>>>> c759f52be9f592ce3df54582e35f19677fee4af8
 import SearchBar from "../../src/components/searchBar";
 
 const BookingHistory = () => {
